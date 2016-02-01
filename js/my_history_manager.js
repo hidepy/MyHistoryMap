@@ -25,17 +25,9 @@ function loadMap(){
 }
 
 function loadHistoryMyHistory(){
-  var storage = localStorage.getItem("my_history_map");
-
-  if(storage == null){
-    storage = {};
-  }
 
   var el_history_display_area = document.getElementById("my_history");
 
-  jQuery.each(storage, function(i, val){
-    console.log(val);
-  });
 
 }
 
@@ -60,8 +52,10 @@ function addButtonClickEvent(event){
 
 function initialize_map(){
 
+  console.log("in initialize map");
+
   loadMap(); //Mapをロード
-  loadHistoryMyHistory(); //保存した場所情報をロード
+  //loadHistoryMyHistory(); //保存した場所情報をロード
 
   /*
   google.maps.event.addListener(
@@ -91,6 +85,12 @@ function initialize_map(){
   });
   */
 
+
+
+
+
+
+/*
   var info_window_content = "<div><input type='text' id='info_window_title'></div>" + 
                             "<div><input type='text' id='info_window_caption'></div>" + 
                             "<button class='btn btn-default' onClick='addButtonClickEvent()'>add!!</button>";
@@ -134,32 +134,6 @@ function initialize_map(){
 
 
   document.getElementById("contents").style.marginTop = document.getElementById("top_navigation").clientHeight;
-
+*/
 }
 
-/* 画面ロード時に1度のみ起動する */
-function initialize_screen(){
-  //ボタンにイベントをアタッチ
-  document.querySelector("#header > .container > button").addEventListener("click", function(event){
-    console.log(event);
-
-    jQuery("#header > .container").hide("fast", function(){
-      $("#header").remove();
-    });
-
-    jQuery("#top_navigation").show("fast", function(){
-      this.style.display = "inline";
-    });
-
-    initialize_map();
-
-  }, false);
-}
-
-//addOnload(initialize_map);
-
-console.log("initialize");
-
-//addOnload(initialize_screen);
-
-$(document).ready(initialize_screen);

@@ -3,21 +3,39 @@
     var module = angular.module('app', ['checklist-model']);
 
     module.controller('AppController', function($scope, $data) {
-        
-        $scope.myNameIs = "hide!!";
 
-        $scope.add = function(){
-            $scope.items.push({id: "add!!"});
-        }
+        $scope.items = [];
 
-        $scope.items = (function(){
-            var arr = [];
-            arr.push({id: "hello, "});
-            arr.push({id: "world!!"});
-            return arr;
-        })();
+        $scope.markers = [];
 
-        //$scope.items = [];
+        $scope.deleteMarkers = function(){
+            $scope.markers.forEach(function(mkr){
+                mkr.setMap(null);
+            });
+
+            $scope.markers = [];
+        };
+
+        $scope.selectMapData = function(index, event){
+            console.log("in selectMapData. " + index);
+            console.log(event)
+
+            var item = $scope.items[index];
+
+            /*
+            current_marker = new google.maps.Marker({
+                map: history_map,
+                position: (new google.maps.LatLng(item.lat, item.lng))
+            });*/
+
+            var mkr = new google.maps.Marker({
+                position: new google.maps.LatLng(item.lat, item.lng)
+            });
+
+            mkr.setMap(history_map);
+
+            $scope.markers.push(mkr);
+        };
 
         $scope.pushStart = function(){
 
@@ -43,37 +61,31 @@
             }
             jQuery.getJSONP("http://www51.atpages.jp/hidork0222/store_my_history_map_data/store_my_history_map_data.php", onDataHandler, "myCallback");
             function onDataHandler(response) {
-                /*
-
-                console.log(response.label1) //出力結果　data1
-                console.log(response.label2) //出力結果　data2
-
-                */
-
-                console.log(response);
 
                 if(response && response.length && (response.length > 0)){
                     for(var i = 0; i < response.length; i++){
 
                         var item = response[i];
-
                         
                         $scope.items.push({
-                            id: "" + item.id,
+                            id: item.id,
                             name: item.name,
-                            caption: item.caption,
                             lat: item.lat,
-                            lng: item.lng
+                            lng: item.lng,
+                            //latLng: new google.maps.LatLng(lat, lng),
+                            zip_no: item.zip_no,
+                            address: item.address,
+                            caption: item.caption,
+                            prefecture: item.prefecture,
+                            season: item.season,
+                            season_monthly: item.season_monthly,
+                            accessibility: item.accessibility,
+                            crowdness: item.crowdness,
+                            image_url: item.image_url
                         });
 
                     }
                 }
-
-                console.log($scope.items);
-
-                $scope.items.push({
-                    id: "last item..."
-                });
 
                 $scope.$apply();
 

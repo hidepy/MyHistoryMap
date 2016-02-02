@@ -18,7 +18,7 @@ function loadMap(){
     document.getElementById("history_map"),
     {
       center: (new google.maps.LatLng(35.792621, 139.806513)),
-      zoom: 15
+      zoom: 6
     }
   );
 

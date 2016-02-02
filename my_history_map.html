@@ -8,6 +8,17 @@
   <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
 
+  <style>
+  #my_history > div{
+    border-style: solid;
+    border-width: 2px;
+  }
+  #my_history > div  img{
+    width: 320px;
+    height: 240px;
+  }
+  </style>
+
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyB0HuGNOkJMH3EnJTnEZBTv_Ue7BQhree4&sensor=false"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
   <script type="text/javascript" src="js/MapPointData.js"></script>
@@ -52,7 +63,7 @@
       <h1>今までいった所を保存するよっ！</h1>
       <p>色々な所を旅してきましたね。でも、なかなかパッと何処にいったか思い出せません。。。</p>
       <p>そこで！このツールに保存しておきましょう</p>
-      <button class="btn btn-primary" ng-click="pushStart()">Start{{myNameIs}}</button>
+      <button class="btn btn-primary" ng-click="pushStart()">Start</button>
     </div>
   </div>
 
@@ -64,28 +75,37 @@
       <div id="history_map" />
     </div>
 
-    <div id="my_history">
+    くろい枠内のどこでもクリックすると、情報のマーカーをうつよ！
 
-      <ul>
-        <!--
-      <li ng-repeat="item in items" ng-click="processItemSelect($index, $event)">
-  -->
-      <li ng-repeat="item in items">
-        <div>{{item.id}}</div>
-        <div>{{item.name}}</div>
-        <div>{{item.lat}}</div>
-        <div>{{item.lng}}</div>
-      </li>
-      </ul>
+    ちなみに、情報はサーバーのMysqlからもらってきているよ！
+
+    <div id="my_history">
+      <div class="row" ng-repeat="item in items" ng-click="selectMapData($index, $event)">
+        <div class="col-md-6">
+          <div>{{item.id}}</div>
+          <div>{{item.name}}</div>
+          <div>{{item.lat}}</div>
+          <div>{{item.lng}}</div>
+          <div>{{item.zip_no}}</div>
+          <div>{{item.address}}</div>
+          <div>{{item.caption}}</div>
+          <div>{{item.prefecture}}</div>
+          <div>{{item.season}}</div>
+          <div>{{item.season_monthly}}</div>
+          <div>{{item.accessibility}}</div>
+          <div>{{item.crowdness}}</div>
+        </div>
+        <div class="col-md-6">
+          <img src="{{item.image_url}}">
+        </div>
+      </div>
     </div>
 
-
+    <div>
+      <button ng-click="deleteMarkers()">マーカーを削除</button>
+    </div>
 
   </div> <!-- /container -->
-
-{{items}}
-
-<button ng-click="add()">add</button>
 
 </body>
 </html>

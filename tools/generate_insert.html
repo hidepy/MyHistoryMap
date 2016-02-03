@@ -1,0 +1,114 @@
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>generate insert</title>
+
+<style>
+#input_text{
+	width: 100%;
+	height: 150px;
+}
+#output_text{
+	width: 100%;
+	height: 150px;
+}
+</style>
+
+<script>
+
+var TABLE_NAME = "MHM_M_POINT_DATA";
+
+var COLUMN_DEFINITION = ["p_name","name","lat","lng","prefecture","season","season_weekly","zip_no","address","caption","accessibility","crowdness","image_url"];
+
+//s->string, n->number
+var COLUMN_DEFINITION_TYPE = ["s", "s", "n", "n", "s", "s", "n", "s", "s", "s", "s", "s", "s", ];
+
+window.onload = function(){
+	document.getElementById("column_definition").innerHTML = COLUMN_DEFINITION.join(", ");
+}
+
+function convert(){
+
+	//各種要素取得
+	var el_input = document.getElementById("input_text");
+	var el_output = document.getElementById("output_text");
+	var el_quote_check = document.getElementById("checkbox_enclose_with_quote");
+	var el_split_with_tab = document.getElementById("checkbox_delimited_with_tab");
+
+	//要素をもとに値を取得
+	var input_text = el_input.value;
+	var output_text = "";
+	var quote = (el_quote_check && el_quote_check.checked) ? "'" : "";
+	var delimiter = (el_split_with_tab && el_split_with_tab.checked) ? "\t" : ",";
+
+	console.log("クォーテーション付与チェックの値: " + el_quote_check.checked);
+
+	console.log(el_quote_check);
+
+	var splitted_input = input_text.split("\n");
+
+	output_text = "INSERT INTO " + TABLE_NAME + " (";
+
+	for(var i = 0; i < COLUMN_DEFINITION.length; i++){
+		if(i != 0) output_text += ", ";
+
+		output_text += COLUMN_DEFINITION[i];
+	}
+
+	output_text += ") \nVALUES \n";
+
+	for(var i = 0; i < splitted_input.length; i++){
+
+		var row = splitted_input[i];
+		var cols = row.split(delimiter);
+
+		output_text += "(";
+
+		for(var j = 0; j < cols.length; j++){
+			if(j != 0) output_text += ", ";
+
+			output_text += (COLUMN_DEFINITION_TYPE[j] == "s") ? quote : "";
+			output_text += cols[j];
+			output_text += (COLUMN_DEFINITION_TYPE[j] == "s") ? quote : "";
+		}
+
+		output_text += ")" + ((i != (splitted_input.length - 1)) ? ",\n" : "") ;
+
+	}
+
+	el_output.value = output_text;
+
+}
+</script>
+</head>
+<body>
+
+<div>
+【カラム】
+<span id="column_definition">
+</span>
+</div>
+
+<label for="input_text">入力csv</label>
+<textarea id="input_text"></textarea>
+<button onclick="convert()">convert!!</button>
+<textarea id="output_text"></textarea>
+
+<hr>
+
+オプション
+
+<div>
+<label for="checkbox_enclose_with_quote">入力された値に、シングルクォーテーションを付与する(COLUMN_DEFINITION_TYPEに従う)</label>
+<input id="checkbox_enclose_with_quote" type="checkbox" />
+</div>
+
+<div>
+<label for="checkbox_delimited_with_tab">csvでなく\t区切りを使用する</label>
+<input id="checkbox_delimited_with_tab" type="checkbox" />
+</div>
+
+</body>
+</html>

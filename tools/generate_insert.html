@@ -20,10 +20,10 @@
 
 var TABLE_NAME = "MHM_M_POINT_DATA";
 
-var COLUMN_DEFINITION = ["p_name","name","lat","lng","prefecture","season","season_weekly","zip_no","address","caption","accessibility","crowdness","image_url"];
+var COLUMN_DEFINITION = ["p_name","name","lat","lng","prefecture","season","zip_no","address","caption","accessibility","crowdness","image_url","image_url2","image_url3","visit_date"];
 
 //s->string, n->number
-var COLUMN_DEFINITION_TYPE = ["s", "s", "n", "n", "s", "s", "n", "s", "s", "s", "s", "s", "s", ];
+var COLUMN_DEFINITION_TYPE = ["s", "s", "n", "n", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s" ];
 
 window.onload = function(){
 	document.getElementById("column_definition").innerHTML = COLUMN_DEFINITION.join(", ");

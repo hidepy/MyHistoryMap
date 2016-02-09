@@ -81,10 +81,12 @@
                             caption: item.caption,
                             prefecture: item.pref,
                             season: item.season,
-                            season_monthly: item.season_monthly,
                             accessibility: item.accessibility,
                             crowdness: item.crowdness,
-                            image_url: item.image_url
+                            image_url: item.image_url,
+                            image_url2: item.image_url2,
+                            image_url3: item.image_url3,
+                            visit_date: item.visit_date
                         });
 
                     }

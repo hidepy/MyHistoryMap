@@ -70,8 +70,6 @@
     </div>
   </div>
 
-
-
   <div id="contents">
     <div class="container">
     <div class="row">
@@ -90,8 +88,8 @@
           </div> 
           <ul class="thumb_group">
             <li class="thumb_img"><img src="{{selected_item.image_url}}"></li>
-            <li class="thumb_img"><img src="{{selected_item.image_url}}"></li>
-            <li class="thumb_img"><img src="{{selected_item.image_url}}"></li>
+            <li class="thumb_img"><img src="{{selected_item.image_url2}}"></li>
+            <li class="thumb_img"><img src="{{selected_item.image_url3}}"></li>
           </ul>             
         </div>
 
@@ -106,8 +104,8 @@
               <p>{{selected_item.zip_no}}<br>
               {{selected_item.address}}</p>
 
-              <span class="item_name">撮影日</span>
-              <p>2014/02/22</p>
+              <span class="item_name">訪れた日</span>
+              <p>{{selected_item.visit_date}}</p>
             
               <span class="item_name">コメント</span>
               <p>{{selected_item.caption}}</p>

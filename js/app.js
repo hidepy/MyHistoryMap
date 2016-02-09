@@ -4,6 +4,7 @@
 
     module.controller('AppController', function($scope, $data) {
 
+        $scope.selected_item = {};
         $scope.items = [];
 
         $scope.markers = [];
@@ -21,6 +22,7 @@
             console.log(event)
 
             var item = $scope.items[index];
+            $scope.selected_item = item;
 
             /*
             current_marker = new google.maps.Marker({
@@ -42,11 +44,11 @@
 
             console.log("push start!!");
 
-            jQuery("#header > .container").hide("fast", function(){
+            jQuery("#header > .container").hide("slow", function(){
               $("#header").remove();
             });
 
-            jQuery("#top_navigation").show("fast", function(){
+            jQuery("#top_navigation").show("slow", function(){
               this.style.display = "inline";
             });
 
@@ -66,6 +68,7 @@
                     for(var i = 0; i < response.length; i++){
 
                         var item = response[i];
+                        console.log(item);
                         
                         $scope.items.push({
                             id: item.id,
@@ -76,7 +79,7 @@
                             zip_no: item.zip_no,
                             address: item.address,
                             caption: item.caption,
-                            prefecture: item.prefecture,
+                            prefecture: item.pref,
                             season: item.season,
                             season_monthly: item.season_monthly,
                             accessibility: item.accessibility,

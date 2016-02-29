@@ -23,9 +23,9 @@
   <script type="text/javascript">
     $(function(){
      
-      $('.thumb_img img').hover(function(){
+      $('.thumb_img div').hover(function(){
           // マウスオーバーしている画像をメインの画像に反映
-          $('.main_img img').attr('src', $(this).attr('src'));
+          $('.main_img a').css('background-image', $(this).css('background-image'));
       });
     });
   </script>
@@ -74,22 +74,22 @@
     <div class="container">
     <div class="row">
 
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div id="history_map"></div>
       </div>
 
       <!--くろい枠内のどこでもクリックすると、情報のマーカーをうつよ！
       ちなみに、情報はサーバーのMysqlからもらってきているよ！-->
 
-      <div id="detail" class="col-md-6">
+      <div id="detail" class="col-md-8">
         <div class="img_box clearfix">
           <div class="main_img">
-            <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}"><img src="{{selected_item.image_url}}"></a>
+            <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
           </div> 
           <ul class="thumb_group">
-            <li class="thumb_img"><img src="{{selected_item.image_url}}"></li>
-            <li class="thumb_img"><img src="{{selected_item.image_url2}}"></li>
-            <li class="thumb_img"><img src="{{selected_item.image_url3}}"></li>
+            <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></div></li>
+            <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url2 +')'}"></div></li>
+            <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url3 +')'}"></div></li>
           </ul>             
         </div>
 
@@ -133,7 +133,7 @@
       <div class="col-md-3 col_space10" ng-repeat="item in items" ng-click="selectMapData($index, $event)">
           <div class="panel">
             <div class="panel-heading">
-              <img src="{{item.image_url}}" width="100%">
+              <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
               <div class="ravel">
                 <span class="season">{{item.season}}</span>
                 <span class="prefecture">{{item.prefecture}}</span>

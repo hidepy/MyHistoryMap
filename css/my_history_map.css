@@ -208,14 +208,17 @@ body{
 	float: left;
     width: 75%;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
 }
 
-.main_img img {
-    height: 320px;
-    width: auto;
+.main_img a{
+	display: block;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 100%;
+	height: 320px;
 }
+
 
 ul.thumb_group {
     float: left;
@@ -227,13 +230,13 @@ ul.thumb_group {
 ul.thumb_group li{
 	list-style: none;
     margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
 }
 
-.thumb_img img {
-    width: auto;
+.thumb_img div {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
     height: 100px;
 }
 
@@ -256,6 +259,14 @@ ul.thumb_group li{
 #my_history .panel-heading{
 	padding: 0;
 	position: relative;
+}
+
+#my_history .panel-heading .panel_img{
+	width: 100%;
+	height: 200px;
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
 #my_history .panel-heading .ravel{

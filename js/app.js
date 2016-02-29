@@ -37,6 +37,7 @@
             mkr.setMap(history_map);
 
             $scope.markers.push(mkr);
+            $scope.$apply();
         };
 
         $scope.pushStart = function(){
@@ -44,7 +45,7 @@
 
             console.log("push start!!");
 
-            jQuery("#header > .container").hide("slow", function(){
+            jQuery("#header > .container").hide( 300 , function(){
               $("#header").remove();
             });
 

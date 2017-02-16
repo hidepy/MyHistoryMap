@@ -53,6 +53,7 @@
               this.style.display = "inline";
             });
 
+            // GoogleMapを初期化するよ
             initialize_map();
 
             jQuery.getJSONP = function(url,callback,param) {
@@ -62,7 +63,8 @@
                     success:callback
                 });
             }
-            jQuery.getJSONP("http://www51.atpages.jp/hidork0222/store_my_history_map_data/store_my_history_map_data.php", onDataHandler, "myCallback");
+            //jQuery.getJSONP("http://www51.atpages.jp/hidork0222/store_my_history_map_data/store_my_history_map_data.php", onDataHandler, "myCallback");
+            jQuery.getJSONP("store_my_history_map_data.php", onDataHandler, "myCallback");
             function onDataHandler(response) {
 
                 if(response && response.length && (response.length > 0)){
@@ -70,7 +72,7 @@
 
                         var item = response[i];
                         console.log(item);
-                        
+
                         $scope.items.push({
                             id: item.id,
                             name: item.name,
@@ -144,7 +146,7 @@
         $scope.sf_picture = "";
         $scope.sf_selected_flavor_group = "";
         $scope.sf_map_pos = "";
-        $scope.sf_rating = 0;   
+        $scope.sf_rating = 0;
         $scope.sf_rating_corn = 0;
         $scope.sf_price = 0;
         $scope.sf_comment = "";
@@ -180,7 +182,7 @@
 
         // 味の系統リスト
         $scope.showSelectListFlavorGroup = function(){
-            
+
             selectList.removeAllItems();
 
             selectList.addItem("1", "甘さたっぷり");
@@ -228,7 +230,7 @@
                     console.log("value set ok?");
 
                     //context.drawImage(imageObj, 69, 50);
-                    
+
                     //context.drawImage(imageObj, 0, 0, 100, 100);
 
                     context.drawImage(imageObj, 0, 0, rs_width, rs_height);
@@ -278,7 +280,7 @@
             navigator.camera.getPicture(function(base64img){
                 console.log("success");
 
-                
+
                 ImgB64Resize(base64img, 300, 300,
                     function(img_b64) {
 
@@ -318,7 +320,7 @@
                 );
 
                 //document.getElementById("sf_picture").src = imageURL;
-            }, 
+            },
             function(message){
                 console.log("画像取得処理でエラーが発生しました(" + message + ")");
             }, {
@@ -540,10 +542,10 @@
 
             for(var i in $scope.items){
                 //console.log($scope.items[i].id);
-                $scope.del.items.push($scope.items[i].id);  
+                $scope.del.items.push($scope.items[i].id);
             }
         };
-        
+
         $scope.uncheckAll = function() {
             $scope.del.items = [];
         };
@@ -583,7 +585,7 @@
             console.log("in moveToModifyScreen");
 
             myNavigator.pushPage('entry_record.html', {
-                call_as_mod_screen: true, 
+                call_as_mod_screen: true,
                 item: $scope.sf
             });
 

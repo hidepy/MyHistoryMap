@@ -37,7 +37,7 @@
             mkr.setMap(history_map);
 
             $scope.markers.push(mkr);
-            $scope.$apply();
+            //$scope.$apply();
         };
 
         $scope.pushStart = function(){

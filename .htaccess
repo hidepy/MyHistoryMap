@@ -1,0 +1,8 @@
+<Files ~ "^(\.htaccess|store_my_history_map_data\.php)$">
+  SetEnvIf Referer "http://tasokori.net/" Ref1
+  SetEnvIf Referer "http://tasokori.net/webapps/zekkei-map/" Ref2
+  Order Deny,Allow
+  Deny from all
+  Allow from env=Ref1
+  Allow from env=Ref2
+</Files>

@@ -85,9 +85,18 @@
             <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
           </div> 
           <ul class="thumb_group">
+            
+            <li class="thumb_img" ng-repeat="item_img in selected_item.images">
+              <div ng-style="{'background-image': 'url('+ item_img +')'}"></div>
+            </li>
+            
+            
+            <!--
             <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></div></li>
             <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url2 +')'}"></div></li>
             <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url3 +')'}"></div></li>
+            -->
+            
           </ul>             
         </div>
 

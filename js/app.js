@@ -63,22 +63,40 @@
                     success:callback
                 });
             }
-            //jQuery.getJSONP("http://www51.atpages.jp/hidork0222/store_my_history_map_data/store_my_history_map_data.php", onDataHandler, "myCallback");
+
             jQuery.getJSONP("store_my_history_map_data.php", onDataHandler, "myCallback");
             function onDataHandler(response) {
+                if(response && response.head_info && (response.head_info.length > 0)){
+                    for(var i = 0; i < response.head_info.length; i++){
 
-                if(response && response.length && (response.length > 0)){
-                    for(var i = 0; i < response.length; i++){
-
-                        var item = response[i];
-                        console.log(item);
+                        var item = response.head_info[i];
+                        var detail_image_info = response.detail_info[item.id];
+                        var detal_images = [];
+                        if(detail_image_info){
+                            /*
+                            phpはDetailInfoとして下記を返却
+                            array_push($current, array(
+                                "id"=>$r["id"],
+                                "seq"=>$r["seq"],
+                                "image_url"=>$r["image_url"],
+                                "comment"=>$r["comment"],
+                                "visit_date"=>$r["visit_date"],
+                                "month"=>$r["month"],
+                                "timing_of_month"=>$r["timing_of_month"],
+                                "author"=>$r["author"],
+                                "recomend"=>$r["recomend"]
+                            ));
+                            */
+                            detal_images = detail_image_info.reduce(function(p, c){
+                                return Array.isArray(p) ? p.push(c.image_url) : [p.image_url, c.image_url];
+                            });
+                        }
 
                         $scope.items.push({
                             id: item.id,
                             name: item.name,
                             lat: item.lat,
                             lng: item.lng,
-                            //latLng: new google.maps.LatLng(lat, lng),
                             zip_no: item.zip_no,
                             address: item.address,
                             caption: item.caption,
@@ -87,8 +105,11 @@
                             accessibility: item.accessibility,
                             crowdness: item.crowdness,
                             image_url: item.image_url,
+                            /*
                             image_url2: item.image_url2,
                             image_url3: item.image_url3,
+                            */
+                            images: detal_images,
                             visit_date: item.visit_date
                         });
 

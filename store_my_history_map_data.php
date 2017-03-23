@@ -1,27 +1,61 @@
 <?php
 
-$callback = $_GET['callback'];
+$callback = $_GET["callback"];
 
 if(isset($callback)){
 
-	//$con = mysql_connect("localhost",  "hidork0222", "koritaso1117");
-	$con = mysql_connect("mysql118.phy.lolipop.lan",  "LAA0758614", "koritaso1117");
+	$configs = parse_ini_file("../dbconfig.ini", true);
+	if(!configs){
+		die("cannot open ini file...");
+	}
+/*
+	// iniファイルからDB接続設定を読込
+	$con = mysql_connect($configs["zekkeimap"]["dbhost"],  $configs["zekkeimap"]["dbuser"], $configs["zekkeimap"]["dbpw"]);
 
+	// 接続失敗なら終了
 	if (!$con) {
 	    die("cannot open connection...".mysql_error());
 	}
 
 	//接続成功の場合
-	$db = mysql_select_db("LAA0758614-mhm", $con);
+	$db = mysql_select_db($configs["zekkeimap"]["dbname"], $con);
 
 	if(!$db){
 		die("cannot select db...".mysql_error());
 	}
 
 	mysql_set_charset('utf8');
+*/
+	// Adminユーザか確認
+	$is_admin_user = false;
+	if(isset($_GET["adminkey"])){
+		$is_admin_user = (md5($_GET["adminkey"]) == $configs["common"]["adminkey"]);
+	}
+
+	// PDOに変更
+	$dbh = null;// ブロックスコープなしなんで、ここで宣言する必要はないのだけれど...
+	try{
+		$dsn = "mysql:host=".$configs["zekkeimap"]["dbhost"] . ";dbname=" . $configs["zekkeimap"]["dbname"] . ";charset=utf8";
+		$dbh = new PDO($dsn, $configs["zekkeimap"]["dbuser"], $configs["zekkeimap"]["dbpw"]);
+	}
+	catch(PDOException $e){
+		die("db connect error..." . $e->getMessage());
+	}
+
+
+	$cond_v_limit = 20;
+	// Adminユーザの場合
+	if($is_admin_user){
+		$cond_limit = 200;
+	}
+
+
+	/* 課題
+	order by 指定できていない
+	県指定のみになっている
+	*/ 
 
 	//DB選択成功の場合
-
 	$query = "
 	SELECT
 	  m1.id
@@ -38,17 +72,20 @@ if(isset($callback)){
 	FROM
 	  MHM_M_POINT_DATA m1
 	WHERE
-	  is_private <> '1'
-	LIMIT 50
+	  1 = 1
+	  AND m1.is_private <> 1
+	LIMIT 40
 	";
 	
 	$res = array();
 	$res_details = array();
 	$query_condition = "";
 
-	$select_res = mysql_query($query);
+	//$select_res = mysql_query($query);
+	$select_res = $dbh->query($query);
 
-	while($r = mysql_fetch_assoc($select_res)){
+	//while($r = mysql_fetch_assoc($select_res)){
+	while($r = $select_res->fetch(PDO::FETCH_ASSOC)){
 		$res[] = array(
 			"id"=>$r["id"],
 			"name"=>$r["name"],
@@ -90,9 +127,11 @@ if(isset($callback)){
 	";
 
 	if($query_condition != ""){
-		$select_res_detail = mysql_query($query_detail);
+		//$select_res_detail = mysql_query($query_detail);
+		$select_res_detail = $dbh->query($query_detail);
 
-		while($r = mysql_fetch_assoc($select_res_detail)){
+		//while($r = mysql_fetch_assoc($select_res_detail)){
+		while($r = $select_res_detail->fetch(PDO::FETCH_ASSOC)){
 
 			$current = $res_details[$r["id"]];
 
@@ -113,30 +152,18 @@ if(isset($callback)){
 			));
 
 			$res_details[$r["id"]] = $current;
-
-/*
-			$res_details[$r["id"]] = array(
-				"id"=>$r["id"],
-				"seq"=>$r["seq"],
-				"image_url"=>$r["image_url"],
-				"comment"=>$r["comment"],
-				"visit_date"=>$r["visit_date"],
-				"month"=>$r["month"],
-				"timing_of_month"=>$r["timing_of_month"],
-				"author"=>$r["author"],
-				"recomend"=>$r["recomend"]
-			);
-			*/
 		}
 	}
 
 	header( 'Content-Type: text/javascript; charset=utf-8' );
 
 	//GETかPOSTかは$.ajax側の設定次第？
-	echo $callback . "({ head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . "})";
+	echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . "})";
 
 
-	$close_flag = mysql_close($con);
+	//$close_flag = mysql_close($con);
+	// 解放
+	$dbh = null;
 }
 
 ?>

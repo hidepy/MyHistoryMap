@@ -56,15 +56,16 @@
             // GoogleMapを初期化するよ
             initialize_map();
 
-            jQuery.getJSONP = function(url,callback,param) {
+            jQuery.getJSONP = function(url, callback, callback_name, params) {
                 return jQuery.ajax({
-                    url: url + "?" + "callback=" + param,
+                    url: url + "?" + "callback=" + callback_name,
+                    data: jQuery.param(params),
                     dataType:"jsonp",
                     success:callback
                 });
             }
 
-            jQuery.getJSONP("store_my_history_map_data.php", onDataHandler, "myCallback");
+            jQuery.getJSONP("store_my_history_map_data.php", onDataHandler, "myCallback", {pref: "静岡"});
             function onDataHandler(response) {
                 if(response && response.head_info && (response.head_info.length > 0)){
                     for(var i = 0; i < response.head_info.length; i++){

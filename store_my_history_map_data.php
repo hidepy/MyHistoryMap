@@ -8,24 +8,7 @@ if(isset($callback)){
 	if(!configs){
 		die("cannot open ini file...");
 	}
-/*
-	// iniファイルからDB接続設定を読込
-	$con = mysql_connect($configs["zekkeimap"]["dbhost"],  $configs["zekkeimap"]["dbuser"], $configs["zekkeimap"]["dbpw"]);
 
-	// 接続失敗なら終了
-	if (!$con) {
-	    die("cannot open connection...".mysql_error());
-	}
-
-	//接続成功の場合
-	$db = mysql_select_db($configs["zekkeimap"]["dbname"], $con);
-
-	if(!$db){
-		die("cannot select db...".mysql_error());
-	}
-
-	mysql_set_charset('utf8');
-*/
 	// Adminユーザか確認
 	$is_admin_user = false;
 	if(isset($_GET["adminkey"])){
@@ -43,12 +26,55 @@ if(isset($callback)){
 	}
 
 
+	// --------SQLのWhere句を設定 ここから--------
+	// 地域と県の紐づけ
+	$h_pref_area = array(
+		"A01"=> "'01', '02', '03'",
+		"A02"=> "'02', '04', '05'"
+	);
+
+	// レコード取得件数を絞り込み
 	$cond_v_limit = 20;
-	// Adminユーザの場合
-	if($is_admin_user){
-		$cond_limit = 200;
+	// privateレコード取得の制限
+	$cond_s_private = " AND m1.is_private <> 1";
+	// area設定
+	$cond_s_area = "";
+	{
+		// 取得prefを設定
+		if(isset($_GET["w_pref"])){
+			$cond_s_area .= " AND m1.prefecture"
+		}
+		// 取得areaを設定
+		else if(isset($_GET["w_area"])){
+			// areaからprefに変換
+			$cond_s_area .= " AND m1.prefecture IN (".$h_pref_area[$_GET["w_area"]].")";
+		}
 	}
 
+	// Adminユーザの場合
+	if($is_admin_user){
+		// 200件取得
+		$cond_v_limit = 200;
+		// privateのものも取得対象にする
+		$cond_s_private = "";
+	}
+	// --------SQLのWhere句を設定 ここまで--------
+
+
+	// ソート順
+	$orderby_s = " ORDER BY ";
+	$orderby_cols = array();
+	if(false){
+		$orderby_cols[] = "m1.accessibility";
+	}
+	else if(false){
+		$orderby_cols[] = "m1.crowdness_ave";
+	}
+	// 優先度最後にはidソート
+	$orderby_cols[] = "m1.id";
+	
+	// 配列をカンマjoinする
+	$orderby_s .= join(",", $orderby_cols);
 
 	/* 課題
 	order by 指定できていない
@@ -72,20 +98,35 @@ if(isset($callback)){
 	FROM
 	  MHM_M_POINT_DATA m1
 	WHERE
-	  1 = 1
-	  AND m1.is_private <> 1
-	LIMIT 40
+	  1 = 1 
 	";
 	
+	// privateレコードの取得制限
+	$query .= $cond_s_private;
+	// areaレコードの条件
+	$query .= $cond_s_area;
+
+	// ソート指定
+	$query .= $orderby_s;
+
+	// 制限を付与
+	$query .= " LIMIT :limit";
+
 	$res = array();
 	$res_details = array();
 	$query_condition = "";
 
-	//$select_res = mysql_query($query);
-	$select_res = $dbh->query($query);
+	//$select_res = $dbh->query($query);
+	$stmt = $dbh->prepare($query);
+	// パラメータセット
+	{
+		// 取得件数のバインド
+		$stmt->bindValue(":limit", $cond_v_limit);
+	}
+	$stmt->execute();
 
-	//while($r = mysql_fetch_assoc($select_res)){
-	while($r = $select_res->fetch(PDO::FETCH_ASSOC)){
+	//while($r = $select_res->fetch(PDO::FETCH_ASSOC)){
+	while($r = $stmt->fetch()){
 		$res[] = array(
 			"id"=>$r["id"],
 			"name"=>$r["name"],
@@ -127,10 +168,8 @@ if(isset($callback)){
 	";
 
 	if($query_condition != ""){
-		//$select_res_detail = mysql_query($query_detail);
 		$select_res_detail = $dbh->query($query_detail);
 
-		//while($r = mysql_fetch_assoc($select_res_detail)){
 		while($r = $select_res_detail->fetch(PDO::FETCH_ASSOC)){
 
 			$current = $res_details[$r["id"]];
@@ -157,11 +196,10 @@ if(isset($callback)){
 
 	header( 'Content-Type: text/javascript; charset=utf-8' );
 
-	//GETかPOSTかは$.ajax側の設定次第？
+	// jsonpとしてcallback実行させる
 	echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . "})";
 
 
-	//$close_flag = mysql_close($con);
 	// 解放
 	$dbh = null;
 }

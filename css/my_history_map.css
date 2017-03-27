@@ -97,6 +97,7 @@ body{
 #contents {
     background: #eeeeee;
     padding: 70px 0;
+    display: none;
 }
 
 #detail{

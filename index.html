@@ -5,8 +5,8 @@
     
   <title>今までいった所をマークするよっ！</title>
 
-  <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="css/my_history_map.css" />
+  <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -17,17 +17,19 @@
   <script src="lib/angular/checklist-model.js"></script>
   <script src="js/app.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css" />
+  <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
 
-  <script type="text/javascript">
-    $(function(){
-     
-      $('.thumb_img div').hover(function(){
-          // マウスオーバーしている画像をメインの画像に反映
-          $('.main_img a').css('background-image', $(this).css('background-image'));
-      });
-    });
-  </script>
+  <style>
+  #history_map{
+    opacity: 0.15;
+  }
+  .main_img{
+    opacity: 0.15;
+  }
+  .panel_img{
+    opacity: 0.1;
+  }
+  </style>
 
 </head> 
 
@@ -70,71 +72,76 @@
 
   <div id="contents">
     <div class="container">
-    <div class="row">
-
-      <div class="col-md-4">
-        <div id="history_map"></div>
-      </div>
-
-      <!--くろい枠内のどこでもクリックすると、情報のマーカーをうつよ！
-      ちなみに、情報はサーバーのMysqlからもらってきているよ！-->
-
-      <div id="detail" class="col-md-8">
-        <div class="img_box clearfix">
-          <div class="main_img">
-            <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
-          </div> 
-          <ul class="thumb_group">
-            
-            <li class="thumb_img" ng-repeat="item_img in selected_item.images">
-              <div ng-style="{'background-image': 'url('+ item_img +')'}"></div>
-            </li>
-            
-            
-            <!--
-            <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></div></li>
-            <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url2 +')'}"></div></li>
-            <li class="thumb_img"><div ng-style="{'background-image': 'url('+ selected_item.image_url3 +')'}"></div></li>
-            -->
-            
-          </ul>             
+      <div class="row">
+        <div class="col-md-4">
+          <div id="history_map"></div>
         </div>
 
-        <div class="card">
-          <div class="card_heading">
-            <h2>{{selected_item.name}}</h2>
+        <div id="detail" class="col-md-8">
+          <div class="img_box clearfix">
+            <div class="main_img">
+              <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
+            </div> 
+            
+            <ul class="thumb_group">
+              <li class="thumb_img" ng-repeat="item_img in selected_item.images" ng-click="selectThumbnailImg($index, $event)">
+                <div ng-style="{'background-image': 'url('+ item_img +')'}"></div>
+              </li>            
+            </ul>             
           </div>
 
-          <div class="card_body clearfix">
-            <div class="left_area">
-              <span class="item_name">住所</span>
-              <p>{{selected_item.zip_no}}<br>
-              {{selected_item.address}}</p>
+          <div class="card">
+            <div class="card_heading">
+              <h2>{{selected_item.name}}</h2>
+            </div>
 
-              <span class="item_name">訪れた日</span>
-              <p>{{selected_item.visit_date}}</p>
+            <div class="card_body clearfix">
+              <div class="left_area">
+                <span class="item_name">place</span>
+                <p>{{selected_item.zip_no}}<br>
+                {{selected_item.address}}</p>
+
+                <span class="item_name">visit</span>
+                <p>{{selected_item.visit_date}}</p>
             
-              <span class="item_name">コメント</span>
-              <p>{{selected_item.caption}}</p>
-            </div>
-            <!--<div>{{selected_item.prefecture}}</div>-->
-            <div class="right_area">
-              <ul>
-                <li class="box"><span class="item_name">季節</span>
-                <p>{{selected_item.season}}</p></li>
-                <li class="box"><span class="item_name">見頃</span>
-                <p>{{selected_item.season_monthly}}</p></li>
-                <li class="box"><span class="item_name">行きやすさ</span>
-                <p>{{selected_item.accessibility}}</p></li>
-                <li class="box"><span class="item_name">混雑度</span>
-                <p>{{selected_item.crowdness}}</p></li>
-              </ul>
-            </div>
-          </div>        
-        </div><!-- /.card -->
-      </div><!-- /#detail -->
+                <span class="item_name">comment</span>
+                <p>{{selected_item.caption}}</p>
+              </div>
+              <!--
+              <div>{{selected_item.prefecture}}</div>
+              -->
+              <div class="right_area">
+                <ul>
+                  <li class="box"><span class="item_name">season</span>
+                  <p>{{selected_item.season}}</p></li>
+                  <li class="box"><span class="item_name">migoro</span>
+                  <p>{{selected_item.season_monthly}}</p></li>
+                  <li class="box"><span class="item_name">accessibility</span>
+                  <p>{{selected_item.accessibility}}</p></li>
+                  <li class="box"><span class="item_name">crowdness</span>
+                  <p>{{selected_item.crowdness}}</p></li>
+                </ul>
+              </div>
+            </div>        
+          </div><!-- /.card -->
+        </div><!-- /#detail -->
+      </div><!-- /.row -->
 
-    </div><!-- /.row -->
+    <div class="row">
+      <div class="col-md-4">
+        <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
+          <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select id="select_list_order" size="3" ng-model="selected_order">
+          <option ng-repeat="option in order_list" value="{{option.cd}}">{{option.name}}</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <button ng-click="searchPoint()">Search</button>
+      </div>
+    </div>
 
     <div id="my_history" class="row">
       <div class="col-md-3 col_space10" ng-repeat="item in items" ng-click="selectMapData($index, $event)">
@@ -154,7 +161,7 @@
     </div><!-- /#my_history -->
 
     <div>
-      <button ng-click="deleteMarkers()">マーカーを削除</button>
+      <button ng-click="deleteMarkers()">delete markers</button>
     </div>
 
   </div> <!-- /.container -->

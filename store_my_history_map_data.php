@@ -27,12 +27,6 @@ if(isset($callback)){
 
 
 	// --------SQLのWhere句を設定 ここから--------
-	// 地域と県の紐づけ
-	$h_pref_area = array(
-		"A01"=> "'01', '02', '03'",
-		"A02"=> "'02', '04', '05'"
-	);
-
 	// レコード取得件数を絞り込み
 	$cond_v_limit = 20;
 	// privateレコード取得の制限
@@ -42,12 +36,12 @@ if(isset($callback)){
 	{
 		// 取得prefを設定
 		if(isset($_GET["w_pref"])){
-			$cond_s_area .= " AND m1.prefecture"
-		}
-		// 取得areaを設定
-		else if(isset($_GET["w_area"])){
-			// areaからprefに変換
-			$cond_s_area .= " AND m1.prefecture IN (".$h_pref_area[$_GET["w_area"]].")";
+			$splitted_pref_arr = explode("_", $_GET["w_pref"], 48);
+			$pref_strings = "";
+			for($i = 0; $i < count($splitted_pref_arr); $i++){
+				$splitted_pref_arr[$i] = $dbh->quote($splitted_pref_arr[$i]);
+			}
+			$cond_s_area .= " AND m1.prefecture IN (".join(",", $splitted_pref_arr).")";
 		}
 	}
 
@@ -64,10 +58,10 @@ if(isset($callback)){
 	// ソート順
 	$orderby_s = " ORDER BY ";
 	$orderby_cols = array();
-	if(false){
+	if(isset($_GET["o_access"])){
 		$orderby_cols[] = "m1.accessibility";
 	}
-	else if(false){
+	else if(isset($_GET["o_crowdness"]){
 		$orderby_cols[] = "m1.crowdness_ave";
 	}
 	// 優先度最後にはidソート
@@ -111,17 +105,17 @@ if(isset($callback)){
 
 	// 制限を付与
 	$query .= " LIMIT :limit";
+	//$query .= " LIMIT 40";
 
 	$res = array();
 	$res_details = array();
 	$query_condition = "";
 
-	//$select_res = $dbh->query($query);
 	$stmt = $dbh->prepare($query);
 	// パラメータセット
 	{
 		// 取得件数のバインド
-		$stmt->bindValue(":limit", $cond_v_limit);
+		$stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
 	}
 	$stmt->execute();
 
@@ -147,7 +141,6 @@ if(isset($callback)){
 			$query_condition .= ", ";
 		}
 		$query_condition .= $r["id"];
-
 	}
 
 	$query_detail = "
@@ -193,15 +186,16 @@ if(isset($callback)){
 			$res_details[$r["id"]] = $current;
 		}
 	}
+	
 
 	header( 'Content-Type: text/javascript; charset=utf-8' );
 
 	// jsonpとしてcallback実行させる
 	echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . "})";
-
-
+	
 	// 解放
 	$dbh = null;
+
 }
 
 ?>

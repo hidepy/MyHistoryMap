@@ -34,22 +34,6 @@
             }
         })();
 
-        // marker選択時-> addMarkerとselectCardに分割
-        /*
-        $scope.selectMapData = function(index, event){
-            var item = $scope.items[index];
-            $scope.selected_item = item;
-
-            var mkr = new mp.Marker({
-                position: new mp.LatLng(item.lat, item.lng)
-            });
-
-            mkr.setMap(history_map);
-
-            $scope.markers.push(mkr);
-        };
-        */
-
         // 全件markerを削除
         $scope.deleteAllMarkers = function(){
             $scope.markers.forEach(function(mkr){
@@ -72,7 +56,8 @@
             console.log("addMarker clicked. idx=" + index);
 
             var mkr = new mp.Marker({
-                position: new mp.LatLng(item.lat, item.lng)
+                position: new mp.LatLng(item.lat, item.lng),
+                title: item.name
             });
             mkr.unique_idx = index;
             mkr.setMap(history_map);
@@ -102,15 +87,28 @@
 
         // Start 押下時
         $scope.pushStart = function(){
+
+
+            // ここ汚いからなんとかして...
             jQuery("#header > .container").hide( 300 , function(){
               $("#header").remove();
+
+                mp.event.trigger(history_map,'resize');
             });
-            jQuery("#top_navigation").show("slow", function(){
+
+            jQuery("#top_navigation").show(100, function(){
               this.style.display = "inline";
             });
-            jQuery("#contents").show("slow", function(){
+            jQuery("#search_condition_wrapper").show(100, function(){
               this.style.display = "inline";
             });
+            jQuery("#map_detailarea_wrapper").show(100, function(){
+              this.style.display = "inline";
+            });
+            jQuery("#cards_wrapper").show(100, function(){
+              this.style.display = "inline";
+            });
+
 
             // mapの初期化
             initialize_map();
@@ -148,11 +146,11 @@
 
     module.service("MapPointDataAdapter", function($http){
         this.getData = function(param){
-            var query_string = "";
+            var query_string = "&needonlydata=true";
             for(var p in param){
                 query_string += "&" + p + "=" + param[p];
             }
-            return $http.jsonp("store_my_history_map_data.php" + "?" + "callback=JSON_CALLBACK" + query_string)
+            return $http.jsonp(/*"store_my_history_map_data.php"*/"index.php" + "?" + "callback=JSON_CALLBACK" + query_string)
                 // 戻りはpromiseオブジェクトなんで
                 .then(function(response_wrapper){
                     var response = response_wrapper.data;

@@ -55,25 +55,30 @@ if(isset($callback)){
 	// --------SQLのWhere句を設定 ここまで--------
 
 
-	// ソート順
+	// --------SQLのOrderBy句を設定 ここから--------
+	$orderby_key_value = array(
+		"o_rec-d"=> "m1.favorite desc",
+		"o_new-d"=> "m1.update_datetime desc",
+		"o_new-a"=> "m1.update_datetime asc",
+		"o_cro-d"=> "m1.crowdness_ave desc",
+		"o_cro-a"=> "m1.crowdness_ave asc",
+		"o_acc-d"=> "m1.accessibility desc",
+		"o_acc-a"=> "m1.accessibility asc"
+	);
+
 	$orderby_s = " ORDER BY ";
 	$orderby_cols = array();
-	if(isset($_GET["o_access"])){
-		$orderby_cols[] = "m1.accessibility";
+	// orderパラメータがあって、解釈okだったら
+	if(isset($_GET["order"]) && !empty($orderby_key_value[$_GET["order"]])){
+		$orderby_cols[] = $orderby_key_value[$_GET["order"]];
 	}
-	else if(isset($_GET["o_crowdness"]){
-		$orderby_cols[] = "m1.crowdness_ave";
-	}
+	
 	// 優先度最後にはidソート
 	$orderby_cols[] = "m1.id";
 	
 	// 配列をカンマjoinする
 	$orderby_s .= join(",", $orderby_cols);
-
-	/* 課題
-	order by 指定できていない
-	県指定のみになっている
-	*/ 
+	// --------SQLのOrderBy句を設定 ここまで--------
 
 	//DB選択成功の場合
 	$query = "
@@ -119,7 +124,6 @@ if(isset($callback)){
 	}
 	$stmt->execute();
 
-	//while($r = $select_res->fetch(PDO::FETCH_ASSOC)){
 	while($r = $stmt->fetch()){
 		$res[] = array(
 			"id"=>$r["id"],
@@ -187,7 +191,6 @@ if(isset($callback)){
 		}
 	}
 	
-
 	header( 'Content-Type: text/javascript; charset=utf-8' );
 
 	// jsonpとしてcallback実行させる
@@ -195,7 +198,6 @@ if(isset($callback)){
 	
 	// 解放
 	$dbh = null;
-
 }
 
 ?>

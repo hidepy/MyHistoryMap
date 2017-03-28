@@ -3,7 +3,7 @@
 
   <meta charset="utf-8">
     
-  <title>今までいった所をマークするよっ！</title>
+  <title>my history map</title>
 
   <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
@@ -21,13 +21,16 @@
 
   <style>
   #history_map{
-    opacity: 0.15;
+    opacity: 0.1;
   }
   .main_img{
-    opacity: 0.15;
+    opacity: 0.05;
   }
   .panel_img{
-    opacity: 0.1;
+    opacity: 0.05;
+  }
+  .thumb_img{
+    opacity: 0.05;
   }
   </style>
 
@@ -44,7 +47,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">My History Map</a>
+        <a class="navbar-brand" href="#">mhm</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <form class="navbar-form navbar-right">
@@ -122,50 +125,54 @@
                   <p>{{selected_item.crowdness}}</p></li>
                 </ul>
               </div>
-            </div>        
+            </div>
           </div><!-- /.card -->
         </div><!-- /#detail -->
       </div><!-- /.row -->
 
-    <div class="row">
-      <div class="col-md-4">
-        <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
-          <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
-        </select>
+      <!-- ↓ここから検索条件指定↓ -->
+      <div class="row">
+        <div class="col-md-4">
+          <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
+            <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select id="select_list_order" size="3" ng-model="selected_order">
+            <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <button class="btn" ng-click="searchPoint()">Search</button>
+        </div>
       </div>
-      <div class="col-md-4">
-        <select id="select_list_order" size="3" ng-model="selected_order">
-          <option ng-repeat="option in order_list" value="{{option.cd}}">{{option.name}}</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <button ng-click="searchPoint()">Search</button>
-      </div>
-    </div>
+      <!-- ↑ここまで検索条件指定↑ -->
 
-    <div id="my_history" class="row">
-      <div class="col-md-3 col_space10" ng-repeat="item in items" ng-click="selectMapData($index, $event)">
-          <div class="panel">
-            <div class="panel-heading">
-              <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
-              <div class="ravel">
-                <span class="season">{{item.season}}</span>
-                <span class="prefecture">{{item.prefecture}}</span>
+      <div id="my_history" class="row">
+        <div class="col-md-3 col_space10" ng-repeat="(card_idx, item) in items" >
+            <div ng-click="addMarker(card_idx)">add marker</div>
+            <div class="panel" ng-click="selectCard(card_idx)">
+              <div class="panel-heading">
+                <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
+                <div class="ravel">
+                  <span class="season">{{item.season}}</span>
+                  <span class="prefecture">{{item.prefecture}}</span>
+                </div>
+              </div>
+              <div class="panel-body">
+                {{item.name}}
               </div>
             </div>
-            <div class="panel-body">
-              {{item.name}}
-            </div>
-          </div>
+        </div>
+      </div><!-- /#my_history -->
+
+      <div>
+        <button ng-click="addAllMarkers()">add all markers</button>
+        <button ng-click="deleteAllMarkers()">delete all markers</button>
       </div>
-    </div><!-- /#my_history -->
 
-    <div>
-      <button ng-click="deleteMarkers()">delete markers</button>
-    </div>
-
-  </div> <!-- /.container -->
-</div> <!-- /#contents -->
+    </div> <!-- /.container -->
+  </div> <!-- /#contents -->
 
 <script src="lib/lightbox/js/lightbox.js"></script>
 </body>

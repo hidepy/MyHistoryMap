@@ -1,5 +1,7 @@
 (function(){
     'use strict';
+
+    var mp = google.maps;
     var module = angular.module('app', []);
 
     module.controller('AppController', function($scope, MapPointDataAdapter) {
@@ -10,17 +12,46 @@
         $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
         $scope.selected_pref = [];
         $scope.order_list = [
-            {id: "", "default"},
-            {id: "recommend", name: "recommend"},
-            {id: "newer-desc", name: "newer-desc"},
-            {id: "newer-asc", name: "newer-asc"},
-            {id: "crowdness-desc", name: "crowdness-desc"},
-            {id: "crowdness-asc", name: "crowdness-asc"}
+            {id: "", name: "default"},
+            {id: "o_rec-d", name: "recommend"},
+            {id: "o_new-d", name: "newer-desc"},
+            {id: "o_new-a", name: "newer-asc"},
+            {id: "o_cro-d", name: "crowdness-desc"},
+            {id: "o_cro-a", name: "crowdness-asc"},
+            {id: "o_acc-d", name: "accessibility-desc"},
+            {id: "o_acc-a", name: "accessibility-asc"}
         ];
         $scope.selected_order = "";
 
+        var tasokoriadmin_key = (function(){
+            var target = location.search.substring(1).split('&').filter(function(v){
+                var splitted_v = v.split("=");
+                return splitted_v[0] == "imtasokoriadmin";
+            });
+            if(target.length == 1){
+                var splitted_str = target[0].split("=");
+                return splitted_str.length == 2 ? splitted_str[1] : "";
+            }
+        })();
+
+        // marker選択時-> addMarkerとselectCardに分割
+        /*
+        $scope.selectMapData = function(index, event){
+            var item = $scope.items[index];
+            $scope.selected_item = item;
+
+            var mkr = new mp.Marker({
+                position: new mp.LatLng(item.lat, item.lng)
+            });
+
+            mkr.setMap(history_map);
+
+            $scope.markers.push(mkr);
+        };
+        */
+
         // 全件markerを削除
-        $scope.deleteMarkers = function(){
+        $scope.deleteAllMarkers = function(){
             $scope.markers.forEach(function(mkr){
                 mkr.setMap(null);
             });
@@ -28,18 +59,39 @@
             $scope.markers = [];
         };
 
-        // marker選択時
-        $scope.selectMapData = function(index, event){
-            var item = $scope.items[index];
-            $scope.selected_item = item;
+        // 全件markerを追加
+        $scope.addAllMarkers = function(){
+            $scope.items.forEach(function(item, i){
+                $scope.addMarker(i);
+            });
+        };
 
-            var mkr = new google.maps.Marker({
-                position: new google.maps.LatLng(item.lat, item.lng)
+        // markerをセット
+        $scope.addMarker = function(index){
+            var item = $scope.items[index];
+            console.log("addMarker clicked. idx=" + index);
+
+            var mkr = new mp.Marker({
+                position: new mp.LatLng(item.lat, item.lng)
+            });
+            mkr.unique_idx = index;
+            mkr.setMap(history_map);
+            mp.event.addListener(mkr, "click", function(event){
+                // ここは苦しい...クロージャでいいらしいけど...メモリリークが気になる
+                // 変更を反映させる
+                $scope.$apply(function(){
+                    $scope.selected_item = $scope.items[mkr.unique_idx];
+                });
             });
 
-            mkr.setMap(history_map);
-
             $scope.markers.push(mkr);
+        };
+
+        $scope.selectCard = function(index){
+            var item = $scope.items[index];
+            console.log("selectCard clicked. idx=" + index);
+            // 選択明細カードを更新
+            $scope.selected_item = item;
         };
 
         // thumbnail 選択時
@@ -64,10 +116,7 @@
             initialize_map();
 
             // point dataを問合せ
-            MapPointDataAdapter.getData({})
-                .then(function(items){
-                    $scope.items = items;
-                });
+            $scope.searchPoint();
         };
 
         // point dataを検索する
@@ -77,6 +126,16 @@
             // where句のprefに関する絞込条件を設定
             if($scope.selected_pref && ($scope.selected_pref.length > 0)){
                 param["w_pref"] = $scope.selected_pref.join("_");
+            }
+
+            // order by句のパラメータを設定
+            if(!!$scope.selected_order){
+                param["order"] = $scope.selected_order;
+            }
+
+            // adminキーをセット
+            if(!!tasokoriadmin_key){
+                param["adminkey"] = tasokoriadmin_key;
             }
 
             // レコード取得

@@ -21,12 +21,8 @@
 var TABLE_NAME = "MHM_M_POINT_DATA";
 var TABLE_NAME_CHILD = "MHM_M_PICTURES";
 
-/*
-var COLUMN_DEFINITION = ["p_name","name","lat","lng","prefecture","season","zip_no","address","caption","accessibility","crowdness","image_url","image_url2","image_url3","visit_date"];
-*/
-
 var COLUMN_DEFINITION = [
-"id"," name"," lat"," lng"," prefecture"," zip_no"," address"," caption"," accessibility"," crowdness_ave"," image_url_top"
+"id"," name"," lat"," lng"," prefecture"," zip_no"," address"," caption", "favorite", " accessibility"," crowdness_ave"," image_url_top"
 ];
 
 var COLUMN_DEFINITION_CHILD = [
@@ -34,7 +30,7 @@ var COLUMN_DEFINITION_CHILD = [
 ];
 
 //s->string, n->number
-var COLUMN_DEFINITION_TYPE = ["n", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s"];
+var COLUMN_DEFINITION_TYPE = ["n", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s"];
 
 var COLUMN_DEFINITION_TYPE_CHILD = ["n", "n", "s", "s", "s", "s", "s", "s", "s"];
 

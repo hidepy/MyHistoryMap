@@ -285,3 +285,11 @@ ul.thumb_group li{
 #my_history .panel-body{
 	text-align: center;
 }
+
+#select_list_pref{
+	width: 100%;
+}
+
+#select_list_order{
+	width: 100%;
+}

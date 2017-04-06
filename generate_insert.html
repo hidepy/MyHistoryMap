@@ -22,7 +22,7 @@ var TABLE_NAME = "MHM_M_POINT_DATA";
 var TABLE_NAME_CHILD = "MHM_M_PICTURES";
 
 var COLUMN_DEFINITION = [
-"id"," name"," lat"," lng"," prefecture"," zip_no"," address"," caption", "favorite", " accessibility"," crowdness_ave"," image_url_top"
+"id","name","lat","lng","prefecture","zip_no","address","caption","favorite","accessibility","crowdness_ave","place_type","image_url_top","is_private"
 ];
 
 var COLUMN_DEFINITION_CHILD = [
@@ -30,7 +30,7 @@ var COLUMN_DEFINITION_CHILD = [
 ];
 
 //s->string, n->number
-var COLUMN_DEFINITION_TYPE = ["n", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s"];
+var COLUMN_DEFINITION_TYPE = ["n", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s"];
 
 var COLUMN_DEFINITION_TYPE_CHILD = ["n", "n", "s", "s", "s", "s", "s", "s", "s"];
 
@@ -124,7 +124,7 @@ function convert_wrapper(){
 
 <div>
 <label for="checkbox_delimited_with_tab">csvでなく\t区切りを使用する</label>
-<input id="checkbox_delimited_with_tab" type="checkbox" />
+<input id="checkbox_delimited_with_tab" type="checkbox" checked />
 </div>
 
 </body>

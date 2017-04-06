@@ -1,5 +1,8 @@
 <?php
 
+// 全ユーザ対象にセッションを開始する
+session_start();
+
 // iniファイル読込
 $configs = parse_ini_file("../dbconfig.ini", true);
 if(!configs){
@@ -7,7 +10,7 @@ if(!configs){
 } 
 
 // Adminユーザか確認
-$is_admin_user = false;
+$is_admin_user = ($_SESSION["imtasokori"] == true);
 
 // callbackパラメータを取得
 $callback = $_GET["callback"];
@@ -15,7 +18,6 @@ $callback = $_GET["callback"];
 if(isset($callback)){
 
   // PDOに変更
-  
   $dbh = null;// ブロックスコープなしなんで、ここで宣言する必要はないのだけれど...
   try{
     $dsn = "mysql:host=".$configs["zekkeimap"]["dbhost"] . ";dbname=" . $configs["zekkeimap"]["dbname"] . ";charset=utf8";
@@ -43,6 +45,8 @@ if(isset($callback)){
       $cond_s_area .= " AND m1.prefecture IN (".join(",", $splitted_pref_arr).")";
     }
   }
+
+  // Adminユーザか判定する
 
   // Adminユーザの場合
   if($is_admin_user){
@@ -92,6 +96,7 @@ if(isset($callback)){
     ,m1.caption
     ,m1.accessibility
     ,m1.crowdness_ave
+    ,m1.place_type
     ,m1.image_url_top
   FROM
     MHM_M_POINT_DATA m1
@@ -137,6 +142,7 @@ if(isset($callback)){
       "season_monthly"=>"",
       "accessibility"=>$r["accessibility"],
       "crowdness"=>$r["crowdness_ave"],
+      "place_type"=>$r["place_type"],
       "image_url"=>$r["image_url_top"]
     );
 
@@ -221,8 +227,6 @@ else{
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="js/MapPointData.js"></script>
-  <script type="text/javascript" src="js/my_history_manager.js"></script>
 
   <script src="lib/angular/angular.js"></script>
   <script src="lib/angular/checklist-model.js"></script>
@@ -231,17 +235,8 @@ else{
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
 
   <style>
-  #history_map{
+  body{
     opacity: 0.9;
-  }
-  .main_img{
-    opacity: 0.7;
-  }
-  .panel_img{
-    opacity: 0.7;
-  }
-  .thumb_img{
-    opacity: 0.7;
   }
   </style>
 
@@ -383,7 +378,8 @@ else{
 </div>';
       }
       else{
-        echo 'you are admin. no ad appears';
+        // admin判定用プロパティをたてる
+        $_SESSION["imtasokori"] = true;
       }
       ?>
       <!-- ↑ここまでadsense↑-->

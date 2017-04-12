@@ -2,6 +2,14 @@
     'use strict';
 
     var mp = google.maps;
+
+    // 画面サイズが小さければ
+    if(window.parent.screen.Width < 768){
+        jQuery("#history_map").style.height = (window.innerHeight / 2) + "px";
+        console.log("set height=" + (window.innerHeight / 2));
+        console.log("set height(actually)" + jQuery("#history_map").style.height);
+    }
+
     var module = angular.module('app', []);
 
     module.controller('AppController', function($scope, MapPointDataAdapter, MapHandler) {
@@ -65,6 +73,12 @@
             var item = $scope.items[index];
             // 選択明細カードを更新
             $scope.selected_item = item;
+
+            // card選択でdetail部分に移動
+            jQuery("body").animate({
+                scrollTop: jQuery("#detail").offset().top - 8,
+
+            }, 200);
         };
 
         // thumbnail 選択時
@@ -77,7 +91,8 @@
         $scope.pushStart = function(){
             // ヘッダをしまってMapを再描画(表示されないんで)
             jQuery("#header > .container").hide(300 , function(){
-              $("#header").remove();
+                jQuery("#header").remove();
+
                 MapHandler.update();
             });
 
@@ -90,7 +105,6 @@
             MapHandler.loadMap(document.getElementById("history_map"));
 
             // point dataを問合せ
-            //$scope.searchPoint();
             $scope.updateMapPoints();
         };
 
@@ -133,6 +147,7 @@
         };
     });
 
+    // map本体のオペを司るservice
     module.service("MapHandler", function(){
         // クロージャされる
         var map = {};
@@ -142,22 +157,17 @@
             content: "",
             maxWidth: 128
         });
-        var INFO_TEMPLATE = "<div><h3>%TITLE%</h3><p>%COMMENT%</p></div>";
+        var INFO_TEMPLATE = "<div><h3>%TITLE%</h3><p>%COMMENT%</p><p><a href='%OPEN_GOOGLEMAP%' target='_blank'>GoogleMapで開く</a></p><p><a href='%SEARCH_WITH_GOOGLE%' target='_blank'>この場所について検索する</a></p></div>";
 
         // 選択中マーカ
         var current_select_marker = -1;
 
         this.loadMap = function(el_map){
             map = new mp.Map(el_map, {
-                  center: (new mp.LatLng(35.792621, 139.406513)),
-                  zoom: 8
+                  center: (new mp.LatLng(35.792621, 138.506513)),
+                  zoom: 9
                 }
             );
-            /*
-            mp.event.addDomListener(window, "resize", function(){
-
-            });
-            */
         };
         this.update = function(){
             mp.event.trigger(map, "resize");
@@ -173,12 +183,16 @@
             // marker click時の色管理
             mp.event.addListener(mkr, "click", function(){
 
+                // 表示メッセージを変更
                 infowindow.setContent(
                     INFO_TEMPLATE
                         .replace("%TITLE%", mkr.title)
                         .replace("%COMMENT%", (item.caption || ""))
+                        .replace("%OPEN_GOOGLEMAP%", "http://maps.apple.com/?q=" + item.lat + "," + item.lng)
+                        .replace("%SEARCH_WITH_GOOGLE%", "https://www.google.co.jp/search?q=" + mkr.title)
                 );
                 
+                // popup open
                 infowindow.open(map, this);
                 
                 if(!!options && (options.index >= 0)){
@@ -194,7 +208,6 @@
                 mp.event.addListener(mkr, "click", callback);
             }
 
-
             markers.push(mkr);
         };
         this.deleteMarkers = function(){
@@ -205,6 +218,7 @@
         };
     });
 
+    // point dataを取得するservice
     module.service("MapPointDataAdapter", function($http){
         this.getData = function(param){
             var query_string = "&needonlydata=true";
@@ -220,10 +234,14 @@
                         for(var i = 0; i < response.head_info.length; i++){
                             var item = response.head_info[i];
                             var detail_image_info = response.detail_info[item.id];
-                            var detal_images = [];
+                            var detail_images = [];
+                            var detail_images_thumb = [];
                             if(detail_image_info){
-                                detal_images = detail_image_info.reduce(function(p, c){
+                                detail_images = detail_image_info.reduce(function(p, c){
                                     return Array.isArray(p) ? p.push(c.image_url) : [p.image_url, c.image_url];
+                                });
+                                detail_images_thumb = detail_images.map(function(v){
+                                    return "thumb_" + v;
                                 });
                             }
                             res_items.push({
@@ -239,7 +257,8 @@
                                 accessibility: item.accessibility,
                                 crowdness: item.crowdness,
                                 image_url: item.image_url,
-                                images: detal_images,
+                                images: detail_images,
+                                images_thumb: detail_images_thumb,
                                 visit_date: item.visit_date
                             });
                         }

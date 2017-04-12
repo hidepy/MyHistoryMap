@@ -32,6 +32,8 @@ if(isset($callback)){
   $cond_v_limit = 20;
   // privateレコード取得の制限
   $cond_s_private = " AND m1.is_private <> 1";
+  $cond_s_private_m2 = " AND m2.is_private <> 1";
+
   // area設定
   $cond_s_area = "";
   {
@@ -54,6 +56,7 @@ if(isset($callback)){
     $cond_v_limit = 200;
     // privateのものも取得対象にする
     $cond_s_private = "";
+    $cond_s_private_m2 = "";
   }
   // --------SQLのWhere句を設定 ここまで--------
 
@@ -166,8 +169,11 @@ if(isset($callback)){
   FROM
     MHM_M_PICTURES m2
   WHERE
-    m2.id IN (" . $query_condition . ")
-  ";
+    m2.id IN (" . $query_condition . ") "
+  ;
+
+  // privateレコードの取得制限
+  $query .= $cond_s_private_m2;
 
   if($query_condition != ""){
     $select_res_detail = $dbh->query($query_detail);
@@ -224,19 +230,14 @@ else{
 
   <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
+  <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
-  <script src="lib/angular/angular.js"></script>
-  <script src="lib/angular/checklist-model.js"></script>
-  <script src="js/app.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
-
   <style>
   body{
-    opacity: 0.9;
+    opacity: 0.2;
   }
   </style>
 
@@ -282,23 +283,25 @@ else{
   <div id="contents">
     <div class="container">
       <div class="row" id="map_detailarea_wrapper">
-        <div class="col-md-4">
+        <div class="col-md-5 col-xs-12">
           <div id="history_map"></div>
 
+          <!--
           <div>
             <button ng-click="addAllMarkers()">add all markers</button>
             <button ng-click="deleteAllMarkers()">delete all markers</button>
           </div>
+          -->
         </div>
 
-        <div id="detail" class="col-md-8">
+        <div id="detail" class="col-md-7 col-xs-12">
           <div class="img_box clearfix">
             <div class="main_img">
               <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
             </div> 
             
             <ul class="thumb_group">
-              <li class="thumb_img" ng-repeat="item_img in selected_item.images" ng-click="selectThumbnailImg($index, $event)">
+              <li class="thumb_img" ng-repeat="item_img in selected_item.images_thumb" ng-click="selectThumbnailImg($index, $event)">
                 <div ng-style="{'background-image': 'url('+ item_img +')'}"></div>
               </li>            
             </ul>             
@@ -343,17 +346,17 @@ else{
 
       <!-- ↓ここから検索条件指定↓ -->
       <div class="row" id="search_condition_wrapper">
-        <div class="col-md-4">
+        <div class="col-md-4 col-xs-5">
           <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
             <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
           </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-xs-5">
           <select id="select_list_order" size="8" ng-model="selected_order">
             <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
           </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-xs-2">
           <button class="btn" ng-click="searchPoint()">Search</button>
         </div>
       </div>
@@ -385,8 +388,7 @@ else{
       <!-- ↑ここまでadsense↑-->
 
       <div id="cards_wrapper" class="row">
-        <div class="col-md-3 col_space10" ng-repeat="(card_idx, item) in items" >
-            <div ng-click="addMarker(card_idx)">add marker</div>
+        <div class="col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
             <div class="panel" ng-click="selectCard(card_idx)">
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
@@ -406,5 +408,10 @@ else{
   </div> <!-- /#contents -->
 
 <script src="lib/lightbox/js/lightbox.js"></script>
+
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular/checklist-model.js"></script>
+<script src="js/app.js"></script>
+
 </body>
 </html>

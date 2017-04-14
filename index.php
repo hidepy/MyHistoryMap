@@ -160,6 +160,7 @@ if(isset($callback)){
     m2.id
     ,m2.seq
     ,m2.image_url
+    ,m2.image_url_thumb
     ,m2.comment
     ,m2.visit_date
     ,m2.month
@@ -190,6 +191,7 @@ if(isset($callback)){
         "id"=>$r["id"],
         "seq"=>$r["seq"],
         "image_url"=>$r["image_url"],
+        "image_url_thumb"=>$r["image_url_thumb"],
         "comment"=>$r["comment"],
         "visit_date"=>$r["visit_date"],
         "month"=>$r["month"],

@@ -22,16 +22,24 @@ if(isset($_POST["DO_RESIZE"])){
 		$configs["hellothumb"]["output_dir_main"],
 		$configs["hellothumb"]["output_dir_thumb"], 
 		$configs["hellothumb"]["watermark_path"],
-		$configs["hellothumb"]["delete_original"],
-		$configs["hellothumb"]["watermark_opacity"]
+		array(
+			"quality"=>$configs["hellothumb"]["quality"],
+			"quality_thumb"=>$configs["hellothumb"]["quality_thumb"],
+			"wm_opacity"=>$configs["hellothumb"]["watermark_opacity"],
+			"wm_margin_right"=>$configs["hellothumb"]["	"],
+			"wm_margin_bottom"=>$configs["hellothumb"]["watermark_margin_bottom"],
+			"delete_original"=>$configs["hellothumb"]["delete_original"]
+		)
 	);
 
+	/*
 	if($_SESSION == $_POST["token"]){
 		$if_return = "YOU'RE VALID!!";
 	}
+	*/
 
 	// sync exec resize.
-	if($_POST["DO_RESIZE"] == "togatherAtOnce"){ // deprecated...
+	if($_POST["DO_RESIZE"] == "togatherAtOnce"){
 		try{
 			// get max operation num
 			$max_fetch_str = isset($_POST["MAX_FETCH_NUM"]) ? $_POST["MAX_FETCH_NUM"] : "".MAX_FETCH_FILE_DEFAULT;
@@ -57,7 +65,7 @@ if(isset($_POST["DO_RESIZE"])){
 				if(!is_dir($path)){
 					$result_filepath[] = $imghandler->createImgForMHM($path);
 					$exec_count++;
-					
+
 					if($exec_count >= $max_fetch){
 						break;
 					}
@@ -76,36 +84,11 @@ if(isset($_POST["DO_RESIZE"])){
 			$if_return["return_cd"] = 9;
 			$if_return["msg"] = $e->getMessage();
 		}
-		finally{
-			header("Content-Type: application/json; charset=utf-8");
-			echo json_encode($if_return);
-			exit();
-		}
+
+		header("Content-Type: application/json; charset=utf-8");
+		echo json_encode($if_return);
+		exit();
 	}
-	// 廃止...
-	/*
-	else if($_POST["DO_RESIZE"] == "Each"){ // true!!
-		if(!isset($_POST["TARGET_PATH"])){
-			$if_return["msg"] = "no source found...";
-
-			header("Content-Type: application/json; charset=utf-8");
-			echo json_encode($if_return);
-			exit();
-		}
-
-		try{
-
-		}
-		catch(Exception $e){
-
-		}
-		finally{
-			header("Content-Type: application/json; charset=utf-8");
-			echo json_encode($if_return);
-			exit();
-		}
-	}
-	*/
 	else if($_POST["DO_RESIZE"] == "GetFiles"){
 
 		$res = array();
@@ -132,22 +115,25 @@ if(isset($_POST["DO_RESIZE"])){
 		exit();
 	}
 }
+else{
+	// admin判定	
+	$is_admin_user = false;
+	if(isset($_GET["adminkey"])){
+		$configs_common = parse_ini_file("../dbconfig.ini", true);
+		$is_admin_user = (md5($_GET["adminkey"]) == $configs_common["common"]["adminkey"]);
+	}
 
-// admin判定
-$is_admin_user = false;
-if(isset($_GET["adminkey"])){
-	$configs_common = parse_ini_file("../dbconfig.ini", true);
-	$is_admin_user = (md5($_GET["adminkey"]) == $configs_common["common"]["adminkey"]);
+	if(!$is_admin_user){
+		die("no auth...");
+	}
 }
 
-if(!$is_admin_user){
-	die("no auth...");
-}
 
 
+/*
 $token = md5(uniqid(rand(), true));
 $_SESSION["token"] = $token;
-
+*/
 ?>
 
 <html>
@@ -185,6 +171,7 @@ $_SESSION["token"] = $token;
 					type: "POST",
 					url: "postData.php",
 					data: "DO_RESIZE=" + PROC_TYPE + "&MAX_FETCH_NUM=" + document.getElementById("max-fetch-num").value + "&token=" + document.getElementById("token").value,
+					timeout: 30 * 1000,
 					beforeSend: function(){
 						document.getElementById("loading-wrapper").style.display = "inline";
 						jQuery("#loading-wrapper").animate({
@@ -192,11 +179,15 @@ $_SESSION["token"] = $token;
 						}, 500);
 					},
 					success: function(data){
-						if(data.item && (data.return_cd == 0)){
+						if(!data){
+							console.log("data.item is null...!!");
+							console.log(data);
+						}
+						else if(data.item && (data.return_cd == 0)){
 							data.item.map(function(v){
 								var el_ul = document.createElement("ul");
 								el_ul.id = v.main;
-								el_ul.innerHTML = ["main", "thumb", "is_deleted"].reduce(function(p, c){
+								el_ul.innerHTML = ["main", "thumb", "is_deleted", "return_cd", "msg"].reduce(function(p, c){
 									return p + "<li>" + c + " = " + v[c] + "</li>";
 								}, "");
 								return el_ul;
@@ -211,9 +202,12 @@ $_SESSION["token"] = $token;
 							document.getElementById("result").innerHTML = "FATAL ERROR...";
 						}
 					},
-					error: function(){
+					/*
+					error: function(data){
 						alert("fatal error occurred... on ajax");
+						console.log(data);
 					},
+					*/
 					complete: function(){
 						jQuery("#loading-wrapper").animate({
 							opacity: 0.0
@@ -223,59 +217,6 @@ $_SESSION["token"] = $token;
 					}
 				});
 			});
-
-			// 以下廃止... 本来は、1ファイルずつ処理実行しようと思っていたが、オーバーヘッドがすごいのでやめます。
-			/*
-			document.getElementById("exec_each").addEventListener("click", function(){
-				jQuery.ajax({
-					type: "POST",
-					url: "postData.php",
-					data: "DO_RESIZE=GetFiles",
-					success: function(data){
-						if(data.item){
-							document.getElementById("filelist").innerHTML = data.item.map(function(v){
-								return "<li>" + v + "</li>";
-							}).join("");
-
-							console.log(data.item);
-							return data.item;
-						}
-					}
-				})
-				.then(function(data_str) {
-					
-					var parsed_data = JSON.parse(data_str);
-
-					// itemsは受け取るが、実際はli listから取得する→後でステータス更新するため
-					items = parsed_data.item;
-
-					if(!!items && (items.length > 0)){
-						function sequentialExec(item){
-							return jQuery.ajax({
-								type: "POST",
-								url: "postData.php",
-								data: "DUMMY=true&token=" + document.getElementById("token").value,
-								success: function(res){
-									console.log("resize success!!");
-									console.log(res);	
-								}
-							});
-						}
-
-						var SAFETY = 20;
-
-						function dig(i){
-							console.log("in dig. i=" + i);
-							if((i > items.length) || (i > SAFETY)){ return; }
-
-							sequentialExec(items[i]).then(arguments.callee(i + 1));
-						}
-
-						dig(0, items.length);
-					}
-				});
-			});
-			*/
 		});
 	</script>
 </head>
@@ -289,14 +230,6 @@ $_SESSION["token"] = $token;
 		<p>Tsumari, tmp ni image file oite, 「GENERATE!!」 button wo oshite, toiukoto.</p>
 	</header>
 	<section>
-		<!--
-		<div>
-			<button id="exec_each">DO!!</button><button id="stop_each">STOP</button>
-			<ul id="filelist">
-			</ul>
-		</div>
-		-->
-
 		<div>
 			<label for="max-fetch-num">max fetch num:</label>
 			<input id="max-fetch-num" value="<?=MAX_FETCH_FILE_DEFAULT?>"/>

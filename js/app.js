@@ -237,11 +237,16 @@
                             var detail_images = [];
                             var detail_images_thumb = [];
                             if(detail_image_info){
+                                /*
                                 detail_images = detail_image_info.reduce(function(p, c){
-                                    return Array.isArray(p) ? p.push(c.image_url) : [p.image_url, c.image_url];
+                                    return p.push(c);//Array.isArray(p) ? p.push(c.image_url) : [p.image_url, c.image_url];
+                                }, []);
+                                */
+                                detail_images = detail_image_info.map(function(v){
+                                    return v.image_url;
                                 });
-                                detail_images_thumb = detail_images.map(function(v){
-                                    return "thumb_" + v;
+                                detail_images_thumb = detail_image_info.map(function(v){
+                                    return v.image_url_thumb;
                                 });
                             }
                             res_items.push({

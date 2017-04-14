@@ -1,9 +1,4 @@
 <?php
-define("WM_MARGIN_RIGHT", 8);
-define("WM_MARGIN_BOTTOM", 8);
-define("QUALITY", 95);
-define("QUALITY_THUMB", 50);
-
 define("MAX_WIDTH", 1280);
 define("MAX_HEIGHT", 960);
 define("MAX_WIDTH_THUMB", 320);
@@ -11,31 +6,65 @@ define("MAX_HEIGHT_THUMB", 240);
 
 class ImgHandler{
 
+	// REQUIRE
 	private $dest_root_path = "";
 	private $dest_thumb_root_path = "";
 	private $img_watermark = "";
+
+	// OPTIONAL
 	private $wm_width = 0;
 	private $wm_height = 0;
-	private $wm_opacity = 20;
-	private $DELETE_ORIGINAL = 0;
+	private $wm_opacity = 50;
+	private $wm_margin_right = 8;
+	private $wm_margin_bottom = 8;
+	private $quality = 85;
+	private $quality_thumb = 60;
+	private $delete_original = 0;
 
-	function __construct($dest, $dest_thumb, $wm, $delete_original, $opacity){
+	//function __construct($dest, $dest_thumb, $wm, $delete_original, $opacity){
+	function __construct($dest, $dest_thumb, $wm, $params){
+		// REQUIRE!!
 		$this->dest_root_path = $dest;
 		$this->dest_thumb_root_path = $dest_thumb;
-		// watermarkをimgとして生成しておく. 何度も使うし
-		//$this->img_watermark = imagecreatefromjpeg($wm);
-		$this->img_watermark = imagecreatefrompng($wm);
+		$this->img_watermark = imagecreatefrompng($wm); // watermarkをimgとして生成しておく. 何度も使うし
+
+		// OPTIONAL
+		if($params["quality"]) $this->quality = $params["quality"];
+		if($params["quality_thumb"]) $this->quality_thumb = $params["quality_thumb"];
+		if($params["wm_opacity"]) $this->wm_opacity = $params["wm_opacity"];
+		if($params["wm_margin_right"]) $this->wm_margin_right = $params["wm_margin_right"];
+		if($params["wm_margin_bottom"]) $this->wm_margin_bottom = $params["wm_margin_bottom"];
+		if($params["delete_original"]) $this->delete_original = $params["delete_original"];
+
 		$this->wm_width = imagesx($this->img_watermark);
 		$this->wm_height = imagesy($this->img_watermark);
-		$this->wm_opacity = $opacity;
 
-		$this->DELETE_ORIGINAL = $delete_original;
+		/*
+		echo "img handler setting<br>";
+		echo "dest_root_path:".$this->dest_root_path;
+		echo ",dest_thumb_root_path:".$this->dest_thumb_root_path;
+		echo ",wm_opacity:".$this->wm_opacity;
+		echo ",wm_margin_right:".$this->wm_margin_right;
+		echo ",wm_margin_bottom:".$this->wm_margin_bottom;
+		echo ",quality:".$this->quality;
+		echo ",quality_thumb:".$this->quality_thumb;
+		echo ",delete_original:".$this->delete_original;
+		echo ",img_watermark:".$this->img_watermark;
+		echo ",wm_width:".$this->wm_width;
+		echo ",wm_height:".$this->wm_height;
+		*/
 	}
 
 	public function createImgForMHM($src){
 
 		// function output
-		$result = array("main_path"=> "", "thumb_path"=> "");
+		$result = array(
+			"main_path"=> "",
+			"thumb_path"=> "", 
+			"is_deleted"=> false, 
+			"return_cd"=> 0,
+			"msg"=> ""
+		);
 		
 		// dest path
 		$src_filename = basename($src);
@@ -84,33 +113,27 @@ class ImgHandler{
 			)
 		)
 		{
-			echo "resize failure...1";
-			exit(1);
+			// error...
+			$result["return_cd"] = 9;
+			$result["msg"] = "fatal step1";
+			return $result;
 		}
 
 		// overlap
 		if(
-			/*
-			!imagecopymerge(
-				$im, // 入力-出力
-				$this->img_watermark, // src watermark
-				imagesx($im) - $this->wm_width - WM_MARGIN_RIGHT, imagesy($im) - $this->wm_height - WM_MARGIN_BOTTOM, // 重ね合わせ開始x,y
-				0, 0, // srcのコピーエリア開始x,y
-				$this->wm_width, $this->wm_height, // srcのコピーエリア終了x,y
-				$this->wm_opacity
-			)
-			*/
 			!imagecopy(
 				$im,
 				$this->img_watermark,
-				imagesx($im) - $this->wm_width - WM_MARGIN_RIGHT, imagesy($im) - $this->wm_height - WM_MARGIN_BOTTOM, // 重ね合わせ開始x,y
+				imagesx($im) - $this->wm_width - $this->wm_margin_right, imagesy($im) - $this->wm_height - $wm_margin_bottom, // 重ね合わせ開始x,y
 				0, 0,
 				$this->wm_width, $this->wm_height
 			)
 		)
 		{
-			echo "overlap failure...2";
-			exit(1);
+			// error...
+			$result["return_cd"] = 9;
+			$result["msg"] = "fatal step2";
+			return $result;
 		}
 
 		// resize to thumb
@@ -126,14 +149,16 @@ class ImgHandler{
 			)
 		)
 		{
-			echo "resize to thumb failure...3";	
-			exit(1);
+			// error...
+			$result["return_cd"] = 9;
+			$result["msg"] = "fatal step3";
+			return $result;
 		}
 
 		// 出力
 		if(
-			imagejpeg($im, $dest_main_path, QUALITY)
-			&& imagejpeg($im_thumb, $dest_thumb_path, QUALITY_THUMB)
+			imagejpeg($im, $dest_main_path, $this->quality)
+			&& imagejpeg($im_thumb, $dest_thumb_path, $this->quality_thumb)
 		){
 			// image output success!!
 			$result["main"] = $dest_main_path;
@@ -141,11 +166,12 @@ class ImgHandler{
 			$result["is_deleted"] = false;
 
 			// 一応元データを削除する
-			if($this->DELETE_ORIGINAL == 1){
+			if($this->delete_original == 1){
 				// 失敗しても本処理の結果には影響を与えないことにします
 				$result["is_deleted"] = unlink($src);
 			}
 		}
+
 
 		return $result;
 	}

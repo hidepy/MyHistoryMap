@@ -3,12 +3,18 @@
 
     var mp = google.maps;
 
-    // 画面サイズが小さければ
-    if(window.parent.screen.Width < 768){
-        jQuery("#history_map").style.height = (window.innerHeight / 2) + "px";
-        console.log("set height=" + (window.innerHeight / 2));
-        console.log("set height(actually)" + jQuery("#history_map").style.height);
-    }
+    // load event
+    document.addEventListener("DOMContentLoaded", function(){
+        // 本来は、angularの世界なんでservice化すべきとも思うが...angular以外でも使い回ししたいんで
+        window.StorageManager_Fav = new StorageManager("MHM-Favorite");
+
+        window.CommonFunctions = {
+            formatDate: function(date){
+                return ("" + date.getFullYear() + ("00" + (date.getMonth() + 1)).slice(-2) + ("00" + date.getDate()).slice(-2) + ("00" + date.getHours()).slice(-2) + ("00" + date.getMinutes()).slice(-2) + ("00" + date.getSeconds()).slice(-2) );
+            }
+        };
+    });
+
 
     var module = angular.module('app', []);
 
@@ -42,51 +48,17 @@
             }
         })();
 
-        // 全件markerを削除
-        $scope.deleteAllMarkers = function(){
-            MapHandler.deleteMarkers();
+        /* ---------- Local Functions ---------- */
+        // card 又は markerのclick時動作を1本化
+        var selectItem = function(index){
+            $scope.selected_item = $scope.items[index];
+            // サムネイルの1件目を選択
+            $scope.selectThumbnailImg(0);
         };
 
-        // 全件markerを追加
-        $scope.addAllMarkers = function(){
-            $scope.items.forEach(function(item, i){
-                $scope.addMarker(i);
-            });
-        };
 
-        // markerをセット
-        $scope.addMarker = function(index){
-            // indexをクロージャする...
-            var ClickItem = function(){
-                // ここは苦しい...クロージャでいいらしいけど...メモリリークが気になる
-                // 変更を反映させる
-                $scope.$apply(function(){
-                    $scope.selected_item = $scope.items[index];
-                });
-            };
 
-            // Markerを追加
-            MapHandler.addMarker($scope.items[index], {index: index}, ClickItem);
-        };
-
-        $scope.selectCard = function(index){
-            var item = $scope.items[index];
-            // 選択明細カードを更新
-            $scope.selected_item = item;
-
-            // card選択でdetail部分に移動
-            jQuery("body").animate({
-                scrollTop: jQuery("#detail").offset().top - 8,
-
-            }, 200);
-        };
-
-        // thumbnail 選択時
-        $scope.selectThumbnailImg = function(index, event){
-            var thumb_item = $scope.selected_item.images[index];
-            $scope.selected_item.image_url = thumb_item;
-        };
-
+        /* ---------- Angular scope Functions ---------- */
         // Start 押下時
         $scope.pushStart = function(){
             // ヘッダをしまってMapを再描画(表示されないんで)
@@ -106,6 +78,72 @@
 
             // point dataを問合せ
             $scope.updateMapPoints();
+        };
+
+        // favに入っているかをチェック
+        $scope.isAlreadyFav = function(item){
+            return !!StorageManager_Fav.get(item.id);
+        };
+
+        // 全件markerを削除
+        $scope.deleteAllMarkers = function(){
+            MapHandler.deleteMarkers();
+        };
+
+        // 全件markerを追加
+        $scope.addAllMarkers = function(){
+            $scope.items.forEach(function(item, i){
+                $scope.addMarker(i);
+            });
+        };
+
+        // markerをセット
+        $scope.addMarker = function(index){
+            // indexをクロージャする...
+            var ClickItem = function(){
+                // ここは苦しい...クロージャでいいらしいけど...メモリリークが気になる
+                // 変更を反映させる
+                $scope.$apply(function(){
+                    //$scope.selected_item = $scope.items[index];
+                    selectItem(index);
+                });
+            };
+
+            // Markerを追加
+            MapHandler.addMarker($scope.items[index], {index: index}, ClickItem);
+        };
+
+        $scope.selectCard = function(index){
+            // 選択明細カードを更新
+            //var item = $scope.items[index];
+            //$scope.selected_item = item;
+
+            selectItem(index);
+
+            // card選択でdetail部分に移動
+            jQuery("body").animate({
+                scrollTop: jQuery("#detail").offset().top - 8,
+            }, 200);
+        };
+
+        $scope.add2Favorite = function(index){
+            var item = $scope.items[index];
+
+            if(item && item.id){
+                window.StorageManager_Fav.set(item.id, {
+                    id: item.id,
+                    name: item.name,
+                    datetime: CommonFunctions.formatDate(new Date())
+                });
+            }
+        };
+
+        // thumbnail 選択時
+        $scope.selectThumbnailImg = function(index){
+            if(index <  $scope.selected_item.images.length){
+                var thumb_item = $scope.selected_item.images[index];
+                $scope.selected_item.image_url = thumb_item;
+            }
         };
 
         // 現在のpointitemsから全件描画する

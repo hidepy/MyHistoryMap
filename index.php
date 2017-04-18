@@ -236,10 +236,11 @@ else{
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/storageManager.js"></script>
 
   <style>
   body{
-    opacity: 0.2;
+    opacity: 0.9;
   }
   </style>
 
@@ -303,7 +304,7 @@ else{
             </div> 
             
             <ul class="thumb_group">
-              <li class="thumb_img" ng-repeat="item_img in selected_item.images_thumb" ng-click="selectThumbnailImg($index, $event)">
+              <li class="thumb_img" ng-repeat="item_img in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
                 <div ng-style="{'background-image': 'url('+ item_img +')'}"></div>
               </li>            
             </ul>             
@@ -390,8 +391,12 @@ else{
       <!-- ↑ここまでadsense↑-->
 
       <div id="cards_wrapper" class="row">
-        <div class="col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
+        <div class="card_wrapper col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
+
+            <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
+
             <div class="panel" ng-click="selectCard(card_idx)">
+              
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
                 <div class="ravel">
@@ -412,7 +417,6 @@ else{
 <script src="lib/lightbox/js/lightbox.js"></script>
 
 <script src="lib/angular/angular.js"></script>
-<script src="lib/angular/checklist-model.js"></script>
 <script src="js/app.js"></script>
 
 </body>

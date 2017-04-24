@@ -13,6 +13,8 @@
                 return ("" + date.getFullYear() + ("00" + (date.getMonth() + 1)).slice(-2) + ("00" + date.getDate()).slice(-2) + ("00" + date.getHours()).slice(-2) + ("00" + date.getMinutes()).slice(-2) + ("00" + date.getSeconds()).slice(-2) );
             }
         };
+
+        document.getElementById("history_map").style.height = window.innerHeight * (45.0 / 100.0);
     });
 
 
@@ -148,6 +150,8 @@
 
         // 現在のpointitemsから全件描画する
         $scope.updateMapPoints = function(){
+            // 選択中を削除
+            $scope.selected_item = {};
             // 一旦削除
             $scope.deleteAllMarkers();
             // 検索&描画
@@ -159,6 +163,7 @@
 
         // point dataを検索する
         $scope.searchPoint = function(callback){
+
             var param = {};
 
             // where句のprefに関する絞込条件を設定
@@ -190,6 +195,7 @@
         // クロージャされる
         var map = {};
         var markers = [];
+        var DISP_INFOWINDOW = false;
 
         var infowindow = new mp.InfoWindow({
             content: "",
@@ -203,7 +209,7 @@
         this.loadMap = function(el_map){
             map = new mp.Map(el_map, {
                   center: (new mp.LatLng(35.792621, 138.506513)),
-                  zoom: 9
+                  zoom: 8
                 }
             );
         };
@@ -221,18 +227,22 @@
             // marker click時の色管理
             mp.event.addListener(mkr, "click", function(){
 
-                // 表示メッセージを変更
-                infowindow.setContent(
-                    INFO_TEMPLATE
-                        .replace("%TITLE%", mkr.title)
-                        .replace("%COMMENT%", (item.caption || ""))
-                        .replace("%OPEN_GOOGLEMAP%", "http://maps.apple.com/?q=" + item.lat + "," + item.lng)
-                        .replace("%SEARCH_WITH_GOOGLE%", "https://www.google.co.jp/search?q=" + mkr.title)
-                );
-                
-                // popup open
-                infowindow.open(map, this);
-                
+                // マーカタップ時にinfowindowを表示するか
+                if(DISP_INFOWINDOW){
+                    // 表示メッセージを変更
+                    infowindow.setContent(
+                        INFO_TEMPLATE
+                            .replace("%TITLE%", mkr.title)
+                            .replace("%COMMENT%", (item.caption || ""))
+                            .replace("%OPEN_GOOGLEMAP%", "http://maps.apple.com/?q=" + item.lat + "," + item.lng)
+                            .replace("%SEARCH_WITH_GOOGLE%", "https://www.google.co.jp/search?q=" + mkr.title)
+                    );
+                    
+                    // popup open
+                    infowindow.open(map, this);
+                }
+
+                // 選択マーカが変わった場合
                 if(!!options && (options.index >= 0)){
                     if(current_select_marker != options.index){
                     }

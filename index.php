@@ -228,6 +228,9 @@ else{
 
   <meta charset="utf-8">
     
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+
   <title>my history map</title>
 
   <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
@@ -239,8 +242,9 @@ else{
   <script type="text/javascript" src="js/storageManager.js"></script>
 
   <style>
+
   body{
-    opacity: 0.9;
+    opacity: 0.05;
   }
   </style>
 
@@ -248,6 +252,7 @@ else{
 
 <body ng-controller="AppController">
 
+  <!--
   <nav id="top_navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
@@ -269,16 +274,16 @@ else{
           </div>
           <button type="submit" class="btn btn-success">Sign in</button>
         </form>
-      </div><!--/.navbar-collapse -->
+      </div>
     </div>
   </nav>
+  -->
 
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div id="header" class="jumbotron">
     <div class="container">
       <h1>My History Map</h1>
-      <p>色々な所を旅してきましたね。<br>でも、なかなかパッと何処にいったか思い出せません。<br>
-      そこで！このツールに保存しておきましょう</p>
+      <p>わたしたちの思い出の記録</p>
       <button class="btn" ng-click="pushStart()">Start</button>
     </div>
   </div>
@@ -288,13 +293,6 @@ else{
       <div class="row" id="map_detailarea_wrapper">
         <div class="col-md-5 col-xs-12">
           <div id="history_map"></div>
-
-          <!--
-          <div>
-            <button ng-click="addAllMarkers()">add all markers</button>
-            <button ng-click="deleteAllMarkers()">delete all markers</button>
-          </div>
-          -->
         </div>
 
         <div id="detail" class="col-md-7 col-xs-12">
@@ -360,7 +358,7 @@ else{
           </select>
         </div>
         <div class="col-md-4 col-xs-2">
-          <button class="btn" ng-click="searchPoint()">Search</button>
+          <button class="btn" ng-click="updateMapPoints()">Search</button>
         </div>
       </div>
       <!-- ↑ここまで検索条件指定↑ -->

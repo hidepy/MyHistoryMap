@@ -246,6 +246,9 @@ else{
   body{
     opacity: 0.05;
   }
+  #thumbnail-carousel{
+    height: 256px;
+  }
   </style>
 
 </head> 
@@ -296,6 +299,7 @@ else{
         </div>
 
         <div id="detail" class="col-md-7 col-xs-12">
+          <!--
           <div class="img_box clearfix">
             <div class="main_img">
               <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
@@ -307,6 +311,30 @@ else{
               </li>            
             </ul>             
           </div>
+          -->
+
+
+          <div id="thumbnail-carousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner" role="listbox">
+              <div class="carousel-item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
+                
+                <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ item_img +')'}">
+                  <img class="d-block img-fluid" src="{{item_img}}" />
+                </a>
+                
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#thumbnail-carousel" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#thumbnail-carousel" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+
+
 
           <div class="card">
             <div class="card_heading">

@@ -143,8 +143,11 @@
         // thumbnail 選択時
         $scope.selectThumbnailImg = function(index){
             if(index <  $scope.selected_item.images.length){
-                var thumb_item = $scope.selected_item.images[index];
-                $scope.selected_item.image_url = thumb_item;
+                //var thumb_item = $scope.selected_item.images[index];
+                //$scope.selected_item.image_url = thumb_item; ←old
+
+                console.log("img select event driven!!" + index);
+
             }
         };
 

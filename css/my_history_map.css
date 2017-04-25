@@ -112,7 +112,6 @@ body
 
 #top_navigation
 {
-    display: none;
     height: 32px;
 }
 #infoWindowButton
@@ -132,11 +131,11 @@ body
 }
 #search_condition_wrapper
 {
-    display: none;
+    /*display: none;*/
 }
 #map_detailarea_wrapper
 {
-    display: none;
+    /*display: none;*/
 }
 #adsense_wrapper
 {
@@ -279,7 +278,7 @@ body
     background: #fdff8c;
 }
 
-.main_img
+/*.main_img
 {
     float: left;
     overflow: hidden;
@@ -324,7 +323,29 @@ ul.thumb_group li
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
+}*/
+@media (min-width: 768px) and (max-width: 991px) {
+      #myCarousel .carousel-inner .item .item-item:last-child {
+        display: none;
+      }
+   }
+@media (max-width: 768px) {
+     #mymyCarousel .carousel-inner {
+      height: 320px;
+    }
+ }
+.carousel-inner {
+  overflow-y: hidden;
 }
+.carousel-inner .active.left { left: -25%; }
+.carousel-inner .next        { left:  25%; }
+.carousel-inner .prev    { left: -25%; }
+.carousel-control        { width:  4%; }
+.carousel-control.left,.carousel-control.right {margin-left:15px;background-image:none;}
+.carousel-inner .item-item {
+  padding:0!important;
+}
+
 
 .card_wrapper
 {
@@ -341,7 +362,7 @@ ul.thumb_group li
 
 #cards_wrapper
 {
-    display: none;
+    /* display: none; */
 
     margin-top: 15px;
 }

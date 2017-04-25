@@ -10,12 +10,12 @@ if(!configs){
 } 
 
 // Adminユーザか確認
-$is_admin_user = ($_SESSION["imtasokori"] == true);
+$is_admin_user = ($_SESSION["imtasokori"] == true) && isset($_GET["adminkey"]);
 
 // callbackパラメータを取得
 $callback = $_GET["callback"];
 
-if(isset($callback)){
+if(isset($callback)) {
 
   // PDOに変更
   $dbh = null;// ブロックスコープなしなんで、ここで宣言する必要はないのだけれど...
@@ -26,6 +26,12 @@ if(isset($callback)){
   catch(PDOException $e){
     die("db connect error..." . $e->getMessage());
   }
+
+  // 共通戻りI/Fオブジェクト
+  $if_return = array("return_cd"=> 0, "msg"=> "", "item"=> "");
+
+
+$if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
 
   // --------SQLのWhere句を設定 ここから--------
   // レコード取得件数を絞り込み
@@ -174,7 +180,7 @@ if(isset($callback)){
   ;
 
   // privateレコードの取得制限
-  $query .= $cond_s_private_m2;
+  $query_detail .= $cond_s_private_m2;
 
   if($query_condition != ""){
     $select_res_detail = $dbh->query($query_detail);
@@ -204,10 +210,12 @@ if(isset($callback)){
     }
   }
   
+  $if_return["msg"] .= "sql-head=".$query.", sql-body=".$query_detail;
+
   header( 'Content-Type: text/javascript; charset=utf-8' );
 
   // jsonpとしてcallback実行させる
-  echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . "})";
+  echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . ", if_return: ". json_encode($if_return) ."})";
   
   // 解放
   $dbh = null;
@@ -218,6 +226,8 @@ else{
   // admin判定
   if(isset($_GET["adminkey"])){
     $is_admin_user = (md5($_GET["adminkey"]) == $configs["common"]["adminkey"]);
+    // admin判定用プロパティをたてる
+    $_SESSION["imtasokori"] = $is_admin_user;
   }
 }
 
@@ -231,7 +241,7 @@ else{
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
 
-  <title>my history map</title>
+  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zekkei-map") ?></title>
 
   <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
@@ -244,18 +254,14 @@ else{
   <style>
 
   body{
-    opacity: 0.05;
-  }
-  #thumbnail-carousel{
-    height: 256px;
+    opacity: 0.1;
   }
   </style>
 
 </head> 
 
-<body ng-controller="AppController">
+<body ng-controller="AppController" data-ng-init="init()">
 
-  <!--
   <nav id="top_navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
@@ -265,7 +271,7 @@ else{
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">mhm</a>
+        <a class="navbar-brand" href="#"><?php echo ($is_admin_user ? "MyHistoryMap" : "{{search_group}} no zekkei" ) ?></a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <form class="navbar-form navbar-right">
@@ -280,16 +286,17 @@ else{
       </div>
     </div>
   </nav>
-  -->
 
   <!-- Main jumbotron for a primary marketing message or call to action -->
+  <!--
   <div id="header" class="jumbotron">
     <div class="container">
       <h1>My History Map</h1>
-      <p>わたしたちの思い出の記録</p>
+      <p>our memory...</p>
       <button class="btn" ng-click="pushStart()">Start</button>
     </div>
   </div>
+  -->
 
   <div id="contents">
     <div class="container">
@@ -299,29 +306,14 @@ else{
         </div>
 
         <div id="detail" class="col-md-7 col-xs-12">
-          <!--
-          <div class="img_box clearfix">
-            <div class="main_img">
-              <a href="{{selected_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ selected_item.image_url +')'}"></a>
-            </div> 
-            
-            <ul class="thumb_group">
-              <li class="thumb_img" ng-repeat="item_img in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
-                <div ng-style="{'background-image': 'url('+ item_img +')'}"></div>
-              </li>            
-            </ul>             
-          </div>
-          -->
-
-
           <div id="thumbnail-carousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner" role="listbox">
-              <div class="carousel-item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
-                
-                <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}" ng-style="{'background-image': 'url('+ item_img +')'}">
-                  <img class="d-block img-fluid" src="{{item_img}}" />
-                </a>
-                
+              <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
+                <div class="item-item col-md-3 col-sm-4">
+                  <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
+                    <img class="d-block img-fluid" ng-src="{{item_img}}" />
+                  </a>
+                </div>
               </div>
             </div>
             <a class="carousel-control-prev" href="#thumbnail-carousel" role="button" data-slide="prev">
@@ -333,8 +325,6 @@ else{
               <span class="sr-only">Next</span>
             </a>
           </div>
-
-
 
           <div class="card">
             <div class="card_heading">
@@ -379,6 +369,7 @@ else{
           <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
             <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
           </select>
+          {{selected_pref}}
         </div>
         <div class="col-md-4 col-xs-5">
           <select id="select_list_order" size="8" ng-model="selected_order">
@@ -409,10 +400,6 @@ else{
   </div>
 </div>';
       }
-      else{
-        // admin判定用プロパティをたてる
-        $_SESSION["imtasokori"] = true;
-      }
       ?>
       <!-- ↑ここまでadsense↑-->
 
@@ -441,7 +428,7 @@ else{
   </div> <!-- /#contents -->
 
 <script src="lib/lightbox/js/lightbox.js"></script>
-
+<script src="js/jquery.touchSwipe.min.js"></script>    
 <script src="lib/angular/angular.js"></script>
 <script src="js/app.js"></script>
 

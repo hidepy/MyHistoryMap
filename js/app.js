@@ -15,6 +15,15 @@
         };
 
         document.getElementById("history_map").style.height = window.innerHeight * (45.0 / 100.0);
+
+        $(".carousel-inner").swipe( {
+            swipeLeft:function(event, direction, distance, duration, fingerCount) {
+                $(this).parent().carousel('next'); 
+            },
+            swipeRight:function(event, direction, distance, duration, fingerCount) {
+                $(this).parent().carousel('prev'); 
+            }
+        });
     });
 
 
@@ -22,6 +31,10 @@
 
     module.controller('AppController', function($scope, MapPointDataAdapter, MapHandler) {
 
+        // map初期化
+        MapHandler.loadMap(document.getElementById("history_map"));
+
+        $scope.search_group = "zenkoku";
         $scope.selected_item = {};
         $scope.items = [];
         $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
@@ -38,18 +51,6 @@
         ];
         $scope.selected_order = "";
 
-        // admin権限と判断するキーをURLから取得
-        var tasokoriadmin_key = (function(){
-            var target = location.search.substring(1).split('&').filter(function(v){
-                var splitted_v = v.split("=");
-                return splitted_v[0] == "imtasokoriadmin";
-            });
-            if(target.length == 1){
-                var splitted_str = target[0].split("=");
-                return splitted_str.length == 2 ? splitted_str[1] : "";
-            }
-        })();
-
         /* ---------- Local Functions ---------- */
         // card 又は markerのclick時動作を1本化
         var selectItem = function(index){
@@ -59,24 +60,19 @@
         };
 
 
-
         /* ---------- Angular scope Functions ---------- */
-        // Start 押下時
-        $scope.pushStart = function(){
-            // ヘッダをしまってMapを再描画(表示されないんで)
-            jQuery("#header > .container").hide(300 , function(){
-                jQuery("#header").remove();
 
-                MapHandler.update();
-            });
-
-            // 各要素を表示状態に
-            ["#top_navigation", "#search_condition_wrapper", "#map_detailarea_wrapper", "#cards_wrapper"].forEach(function(v){
-                jQuery(v).show(100);
-            });
-
-            // 初期化
-            MapHandler.loadMap(document.getElementById("history_map"));
+        $scope.init = function(){
+            // selected_prefの初期値を、urlのprefパラメータから求める
+            $scope.selected_pref = location.search.substring(1).split("&")
+                .map(v=>{
+                    return v.split("=");
+                })
+                .filter(v=>{
+                    v[1] = decodeURI(v[1]);// ここほんとさいあく。
+                    return (v[0] == "pref") && ($scope.pref_list.filter(p=>{ return (p==v[1])}).length > 0)
+                })
+                .map(v=>v[1]);
 
             // point dataを問合せ
             $scope.updateMapPoints();
@@ -143,11 +139,7 @@
         // thumbnail 選択時
         $scope.selectThumbnailImg = function(index){
             if(index <  $scope.selected_item.images.length){
-                //var thumb_item = $scope.selected_item.images[index];
-                //$scope.selected_item.image_url = thumb_item; ←old
-
-                console.log("img select event driven!!" + index);
-
+                // 現在は, aタグでポップアップコースになったので不要か...?
             }
         };
 
@@ -177,11 +169,6 @@
             // order by句のパラメータを設定
             if(!!$scope.selected_order){
                 param["order"] = $scope.selected_order;
-            }
-
-            // adminキーをセット
-            if(!!tasokoriadmin_key){
-                param["adminkey"] = tasokoriadmin_key;
             }
 
             // レコード取得
@@ -288,11 +275,6 @@
                             var detail_images = [];
                             var detail_images_thumb = [];
                             if(detail_image_info){
-                                /*
-                                detail_images = detail_image_info.reduce(function(p, c){
-                                    return p.push(c);//Array.isArray(p) ? p.push(c.image_url) : [p.image_url, c.image_url];
-                                }, []);
-                                */
                                 detail_images = detail_image_info.map(function(v){
                                     return v.image_url;
                                 });

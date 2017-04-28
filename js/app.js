@@ -16,12 +16,19 @@
 
         document.getElementById("history_map").style.height = window.innerHeight * (45.0 / 100.0);
 
-        $(".carousel-inner").swipe( {
+        //$(".carousel-inner").swipe( {
+        $("#thumbnail-carousel").swipe( {
             swipeLeft:function(event, direction, distance, duration, fingerCount) {
-                $(this).parent().carousel('next'); 
+                console.log(this);
+                console.log($(this));
+                //$(this).parent().carousel('next'); 
+                $(this).carousel('next'); 
             },
             swipeRight:function(event, direction, distance, duration, fingerCount) {
-                $(this).parent().carousel('prev'); 
+                console.log(this);
+                console.log($(this));
+                //$(this).parent().carousel('prev'); 
+                $(this).carousel('prev'); 
             }
         });
     });

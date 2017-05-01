@@ -151,7 +151,18 @@ body
     background: #fff;
 }
 
+#carousel-wrapper{
+    min-height: 240px;
+}
 
+#thumbnail-carousel{
+    height: 240px;
+}
+
+.container{
+    margin: 4px;
+    width: 100%;
+}
 
 .card_heading h2
 {
@@ -350,6 +361,7 @@ ul.thumb_group li
 .card_wrapper
 {
     position: relative;
+    padding: 1px;
 }
 .card_wrapper .fav-button{
     position: absolute;
@@ -358,6 +370,11 @@ ul.thumb_group li
     left: 0;
     width: 24%;
     height: 12%;
+}
+.card_wrapper .panel-body{
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
 }
 
 #cards_wrapper
@@ -380,6 +397,7 @@ ul.thumb_group li
 #cards_wrapper .panel
 {
     border: none;
+    margin: 1px;
 }
 
 #cards_wrapper .panel-heading

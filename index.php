@@ -263,7 +263,7 @@ else{
   <style>
 
   body{
-    opacity: 0.07;
+    opacity: 0.97;
   }
   #top_navigation{
     display: none;
@@ -339,7 +339,7 @@ else{
         <div class="tab-pane" role="tabpanel" id="tab-card">
 
           <div id="cards_wrapper" class="row">
-            <div class="card_wrapper col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
+            <div class="card_wrapper col-md-3 col-xs-4" ng-repeat="(card_idx, item) in items" >
                 <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
                 <div class="panel" ng-click="selectCard(card_idx)">
                   <div class="panel-heading">
@@ -383,15 +383,17 @@ else{
       <div class="row" id="map_detailarea_wrapper">
         <div id="detail" class="col-md-12 col-xs-12">
 
-          {{thumbLoaded}}
-
-          <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
-            <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
-              <div class="item-item col-md-3 col-sm-4">
-                <img class="d-block img-fluid" ng-src="{{item_img}}" />
+          <div id="carousel-wrapper">
+            <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
+              <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
+                <div class="item-item col-md-3 col-sm-4">
+                  <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
+                    <img class="d-block img-fluid" ng-src="{{item_img}}" />
+                  </a>
+                </div>
               </div>
-            </div>
-          </slick>
+            </slick>
+          </div>
 
           <div class="card">
             <div class="card_heading">
@@ -432,18 +434,18 @@ else{
 
       <!-- ↓ここから検索条件指定↓ -->
       <div class="row" id="search_condition_wrapper">
-        <div class="col-md-4 col-xs-5">
+        <div class="col-md-4 col-xs-4">
           <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
             <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
           </select>
           {{selected_pref}}
         </div>
-        <div class="col-md-4 col-xs-5">
+        <div class="col-md-4 col-xs-4">
           <select id="select_list_order" size="8" ng-model="selected_order">
             <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
           </select>
         </div>
-        <div class="col-md-4 col-xs-2">
+        <div class="col-md-4 col-xs-4">
           <button class="btn" ng-click="updateMapPoints()">Search</button>
         </div>
       </div>

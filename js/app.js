@@ -15,46 +15,10 @@
         };
 
         document.getElementById("history_map").style.height = window.innerHeight * (45.0 / 100.0);
-
-        //$(".carousel-inner").swipe( {
-        /*
-        $("#thumbnail-carousel").swipe( {
-            swipeLeft:function(event, direction, distance, duration, fingerCount) {
-                //$(this).parent().carousel('next'); 
-                $(this).carousel('next'); 
-            },
-            swipeRight:function(event, direction, distance, duration, fingerCount) {
-                //$(this).parent().carousel('prev'); 
-                $(this).carousel('prev'); 
-            }
-        });
-        */
-
-        /*
-        $('#thumbnail-carousel').slick({
-          draggable: false,
-          responsive:  [{
-              breakpoint: 1024,
-              settings: {
-                slidesToShow: 3,
-                infinite: true
-              }
-            }, {
-              breakpoint: 600,
-              settings: {
-                slidesToShow: 2,
-                dots: true
-              }
-            }, {
-              breakpoint: 300,
-              settings: "unslick" // destroys slick
-            }]
-        });
-        */
     });
 
 
-    var module = angular.module('app', ['slick']);
+    var module = angular.module('app', ['slickCarousel']);
 
     module.controller('AppController', function($scope, MapPointDataAdapter, MapHandler) {
 
@@ -80,10 +44,17 @@
 
         /* ---------- Local Functions ---------- */
         // card 又は markerのclick時動作を1本化
-        var selectItem = function(index){
+        $scope.selectItem = function(index){
+
+            $scope.thumbLoaded = false;
+
             $scope.selected_item = $scope.items[index];
             // サムネイルの1件目を選択
             $scope.selectThumbnailImg(0);
+
+
+            $scope.thumbLoaded = true;
+
         };
 
 
@@ -130,7 +101,7 @@
                 // 変更を反映させる
                 $scope.$apply(function(){
                     //$scope.selected_item = $scope.items[index];
-                    selectItem(index);
+                    $scope.selectItem(index);
                 });
             };
 
@@ -143,7 +114,7 @@
             //var item = $scope.items[index];
             //$scope.selected_item = item;
 
-            selectItem(index);
+            $scope.selectItem(index);
 
             // card選択でdetail部分に移動
             jQuery("body").animate({
@@ -205,6 +176,25 @@
                     if(!!callback) callback($scope.items);
                 });
         };
+
+
+        $scope.thumbLoaded = false;
+        // slick(carouselのやつ)の設定
+        $scope.slickConfig = {
+            enabled: true,
+            autoplay: true,
+            draggable: true,
+            autoplaySpeed: 3000,
+            method: {}/*,
+            event: {
+                beforeChange: function (event, slick, currentSlide, nextSlide) {
+                },
+                afterChange: function (event, slick, currentSlide, nextSlide) {
+                }
+            }
+            */
+        };
+
     });
 
     // map本体のオペを司るservice

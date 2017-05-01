@@ -247,8 +247,8 @@ else{
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
 
-  <link rel="stylesheet" type="text/css" href="js/slick/slick.css"/>
-  <link rel="stylesheet" type="text/css" href="js/slick/slick-theme.css"/>
+    <link rel="stylesheet" href="lib/slick/slick.css">
+    <link rel="stylesheet" href="lib/slick/slick-theme.css">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   
@@ -267,6 +267,10 @@ else{
   }
   #top_navigation{
     display: none;
+  }
+  .img-fluid{
+    max-width: 320px;
+    max-height: 240px;
   }
   </style>
 
@@ -323,13 +327,18 @@ else{
       </ul>
 
       <div class="tab-content">
+
         <div class="tab-pane active" role="tabpanel" id="tab-map">
+
           <div class="col-md-12 col-xs-12">
             <div id="history_map"></div>
           </div>
+
         </div>
+
         <div class="tab-pane" role="tabpanel" id="tab-card">
-          <slick id="cards_wrapper" class="row">
+
+          <div id="cards_wrapper" class="row">
             <div class="card_wrapper col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
                 <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
                 <div class="panel" ng-click="selectCard(card_idx)">
@@ -345,7 +354,7 @@ else{
                   </div>
                 </div>
             </div>
-          </slick><!-- /#cards_wrapper -->
+          </div><!-- /#cards_wrapper -->
 
         </div>
       </div>
@@ -373,34 +382,16 @@ else{
 
       <div class="row" id="map_detailarea_wrapper">
         <div id="detail" class="col-md-12 col-xs-12">
-          <!--<div id="thumbnail-carousel" class="carousel slide" data-ride="carousel">-->
-          <div id="thumbnail-carousel">
-            <!--
-            <div class="carousel-inner" role="listbox">
-            -->
 
-              <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
-                <div class="item-item col-md-3 col-sm-4">
-                  <!--
-                  <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
-                  -->
+          {{thumbLoaded}}
 
-                    <img class="d-block img-fluid" ng-src="{{item_img}}" />
-                  <!--
-                  </a>
-                  -->
-                </div>
+          <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
+            <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
+              <div class="item-item col-md-3 col-sm-4">
+                <img class="d-block img-fluid" ng-src="{{item_img}}" />
               </div>
-
-            <a class="carousel-control-prev" href="#thumbnail-carousel" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="false"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#thumbnail-carousel" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="false"></span>
-              <span class="sr-only">Next</span>
-            </a>
-          </div>
+            </div>
+          </slick>
 
           <div class="card">
             <div class="card_heading">
@@ -462,10 +453,9 @@ else{
   </div> <!-- /#contents -->
 
 <script src="lib/lightbox/js/lightbox.js"></script>
-<script src="js/jquery.touchSwipe.min.js"></script>
 <script src="lib/angular/angular.js"></script>
-<script type="text/javascript" src="js/slick/slick.min.js"></script> 
-<script type="text/javascript" src="lib/angular/slick.js"></script>
+<script src="lib/slick/slick.js"></script>
+<script src="lib/slick/angular-slick.js"></script>
 <script src="js/app.js"></script>
 
 </body>

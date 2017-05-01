@@ -247,12 +247,11 @@ else{
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
 
+  <link rel="stylesheet" type="text/css" href="js/slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="js/slick/slick-theme.css"/>
+
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   
-  <!--
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-  -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
@@ -264,7 +263,10 @@ else{
   <style>
 
   body{
-    opacity: 0.1;
+    opacity: 0.07;
+  }
+  #top_navigation{
+    display: none;
   }
   </style>
 
@@ -310,28 +312,92 @@ else{
 
   <div id="contents">
     <div class="container">
-      <div class="row" id="map_detailarea_wrapper">
-        <div class="col-md-5 col-xs-12">
-          <div id="history_map"></div>
-        </div>
 
-        <div id="detail" class="col-md-7 col-xs-12">
-          <div id="thumbnail-carousel" class="carousel slide" data-ride="carousel">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" href="#tab-map" role="tab">M</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#tab-card" role="tab">C</a>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane active" role="tabpanel" id="tab-map">
+          <div class="col-md-12 col-xs-12">
+            <div id="history_map"></div>
+          </div>
+        </div>
+        <div class="tab-pane" role="tabpanel" id="tab-card">
+          <slick id="cards_wrapper" class="row">
+            <div class="card_wrapper col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
+                <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
+                <div class="panel" ng-click="selectCard(card_idx)">
+                  <div class="panel-heading">
+                    <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
+                    <div class="ravel">
+                      <span class="season">{{item.season}}</span>
+                      <span class="prefecture">{{item.prefecture}}</span>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    {{item.name}}
+                  </div>
+                </div>
+            </div>
+          </slick><!-- /#cards_wrapper -->
+
+        </div>
+      </div>
+
+      <!-- ↓ここからadsense↓ -->
+      <?php
+      if(!$is_admin_user){
+        echo '
+<div class="row" id="adsense_wrapper">
+  <div class="col-md-12">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- MyHistoryMap用横長広告 -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:728px;height:90px"
+       data-ad-client="ca-pub-2131186805773040"
+       data-ad-slot="1600252016"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+  </div>
+</div>';
+      }
+      ?>
+      <!-- ↑ここまでadsense↑-->
+
+      <div class="row" id="map_detailarea_wrapper">
+        <div id="detail" class="col-md-12 col-xs-12">
+          <!--<div id="thumbnail-carousel" class="carousel slide" data-ride="carousel">-->
+          <div id="thumbnail-carousel">
+            <!--
             <div class="carousel-inner" role="listbox">
+            -->
+
               <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
                 <div class="item-item col-md-3 col-sm-4">
+                  <!--
                   <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
+                  -->
+
                     <img class="d-block img-fluid" ng-src="{{item_img}}" />
+                  <!--
                   </a>
+                  -->
                 </div>
               </div>
-            </div>
+
             <a class="carousel-control-prev" href="#thumbnail-carousel" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="carousel-control-prev-icon" aria-hidden="false"></span>
               <span class="sr-only">Previous</span>
             </a>
             <a class="carousel-control-next" href="#thumbnail-carousel" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="carousel-control-next-icon" aria-hidden="false"></span>
               <span class="sr-only">Next</span>
             </a>
           </div>
@@ -392,54 +458,14 @@ else{
       </div>
       <!-- ↑ここまで検索条件指定↑ -->
 
-      <!-- ↓ここからadsense↓ -->
-      <?php
-      if(!$is_admin_user){
-        echo '
-<div class="row" id="adsense_wrapper">
-  <div class="col-md-12">
-  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <!-- MyHistoryMap用横長広告 -->
-  <ins class="adsbygoogle"
-       style="display:inline-block;width:728px;height:90px"
-       data-ad-client="ca-pub-2131186805773040"
-       data-ad-slot="1600252016"></ins>
-  <script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
-  </div>
-</div>';
-      }
-      ?>
-      <!-- ↑ここまでadsense↑-->
-
-      <div id="cards_wrapper" class="row">
-        <div class="card_wrapper col-md-3 col-xs-6" ng-repeat="(card_idx, item) in items" >
-
-            <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
-
-            <div class="panel" ng-click="selectCard(card_idx)">
-              
-              <div class="panel-heading">
-                <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
-                <div class="ravel">
-                  <span class="season">{{item.season}}</span>
-                  <span class="prefecture">{{item.prefecture}}</span>
-                </div>
-              </div>
-              <div class="panel-body">
-                {{item.name}}
-              </div>
-            </div>
-        </div>
-      </div><!-- /#cards_wrapper -->
-
     </div> <!-- /.container -->
   </div> <!-- /#contents -->
 
 <script src="lib/lightbox/js/lightbox.js"></script>
-<script src="js/jquery.touchSwipe.min.js"></script>    
+<script src="js/jquery.touchSwipe.min.js"></script>
 <script src="lib/angular/angular.js"></script>
+<script type="text/javascript" src="js/slick/slick.min.js"></script> 
+<script type="text/javascript" src="lib/angular/slick.js"></script>
 <script src="js/app.js"></script>
 
 </body>

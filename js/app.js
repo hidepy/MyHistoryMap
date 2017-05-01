@@ -17,24 +17,44 @@
         document.getElementById("history_map").style.height = window.innerHeight * (45.0 / 100.0);
 
         //$(".carousel-inner").swipe( {
+        /*
         $("#thumbnail-carousel").swipe( {
             swipeLeft:function(event, direction, distance, duration, fingerCount) {
-                console.log(this);
-                console.log($(this));
                 //$(this).parent().carousel('next'); 
                 $(this).carousel('next'); 
             },
             swipeRight:function(event, direction, distance, duration, fingerCount) {
-                console.log(this);
-                console.log($(this));
                 //$(this).parent().carousel('prev'); 
                 $(this).carousel('prev'); 
             }
         });
+        */
+
+        /*
+        $('#thumbnail-carousel').slick({
+          draggable: false,
+          responsive:  [{
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 3,
+                infinite: true
+              }
+            }, {
+              breakpoint: 600,
+              settings: {
+                slidesToShow: 2,
+                dots: true
+              }
+            }, {
+              breakpoint: 300,
+              settings: "unslick" // destroys slick
+            }]
+        });
+        */
     });
 
 
-    var module = angular.module('app', []);
+    var module = angular.module('app', ['slick']);
 
     module.controller('AppController', function($scope, MapPointDataAdapter, MapHandler) {
 

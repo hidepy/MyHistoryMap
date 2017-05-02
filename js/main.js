@@ -29,18 +29,9 @@
                     templateUrl: "js/view/main.html",
                     controller: "HeaderController"
                 })
-                .when("/:pref", {
-                    templateUrl: "js/view/main.html",
-                    controller: "HeaderController"
-                })
                 .when("/detail/", {
                     templateUrl: "js/view/detail.html",
-                    controller: "DetailController",
-                    resolve: {
-                        GetDetailData: function(CurrentSelectData){
-                            return CurrentSelectData.data;
-                        }
-                    }
+                    controller: "DetailController"
                 })
                 .otherwise({
                     redirectTo: "/"
@@ -72,8 +63,9 @@
 
             /* ---------- Angular scope Functions ---------- */
             $scope.init = function(){
-
+console.log("in init");
                 // selected_prefの初期値を、urlのprefパラメータから求める
+                /*
                 $scope.selected_pref = location.search.substring(1).split("&")
                     .map(v=>{
                         return v.split("=");
@@ -83,6 +75,7 @@
                         return (v[0] == "pref") && ($scope.pref_list.filter(p=>{ return (p==v[1])}).length > 0)
                     })
                     .map(v=>v[1]);
+                */
 
                 // point dataを問合せ
                 $scope.updateMapPoints();
@@ -215,8 +208,13 @@
                 */
             };
         })
-        .controller('DetailController', function($scope, CurrentSelectData) {
-            $scope.selectedItem = CurrentSelectData.data;
+        .controller('DetailController', function($scope, $timeout, CurrentSelectData) {
+            $scope.thumbLoaded = false;
+
+            $timeout(function(){
+                $scope.selected_item = CurrentSelectData.data;
+                $scope.thumbLoaded = true;
+            }, 1);
         })
         .service("CurrentSelectData", function(){
             this.data = {};

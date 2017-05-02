@@ -1,6 +1,5 @@
 <div class="row" id="map_detailarea_wrapper">
   <div id="detail" class="col-md-12 col-12">
-
     <div id="carousel-wrapper">
       <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
         <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">

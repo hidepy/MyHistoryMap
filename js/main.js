@@ -12,28 +12,29 @@
                 return ("" + date.getFullYear() + ("00" + (date.getMonth() + 1)).slice(-2) + ("00" + date.getDate()).slice(-2) + ("00" + date.getHours()).slice(-2) + ("00" + date.getMinutes()).slice(-2) + ("00" + date.getSeconds()).slice(-2) );
             }
         };
-
+        /*
         var TABCONTENT_HEIGHT = window.innerHeight * (45.0 / 100.0);
         document.getElementById("history_map").style.height   = TABCONTENT_HEIGHT;
         document.getElementById("cards_wrapper").style.height = TABCONTENT_HEIGHT;
         document.getElementById("cards_wrapper").style.maxHeight = TABCONTENT_HEIGHT;
         document.getElementById("cards_wrapper").style.overflow = "scroll";
+        */
     });
 
     // angular module setup
-    angular.module('MHM-APP', ['slickCarousel', 'ngRoute', 'MapHandlerService'])
+    angular.module('MHM-APP', ['ngRoute', 'slickCarousel', 'MapHandlerService'])
         .config(function($routeProvider){
             $routeProvider
                 .when("/", {
-                    templateUrl: "view/main.html",
+                    templateUrl: "js/view/main.html",
                     controller: "HeaderController"
                 })
                 .when("/:pref", {
-                    templateUrl: "view/main.html",
+                    templateUrl: "js/view/main.html",
                     controller: "HeaderController"
                 })
-                .when("/detail/:logical_name", {
-                    templateUrl: "view/detail.html",
+                .when("/detail/", {
+                    templateUrl: "js/view/detail.html",
                     controller: "DetailController",
                     resolve: {
                         GetDetailData: function(CurrentSelectData){
@@ -71,6 +72,7 @@
 
             /* ---------- Angular scope Functions ---------- */
             $scope.init = function(){
+
                 // selected_prefの初期値を、urlのprefパラメータから求める
                 $scope.selected_pref = location.search.substring(1).split("&")
                     .map(v=>{
@@ -97,25 +99,10 @@
 
             // card 又は markerのclick時動作を1本化
             $scope.selectItem = function(index){
-
-                /*
-                $scope.thumbLoaded = false;
-
-                // どうにも carouselの動的変更がうまくいかないので遅延実行...
-                $timeout(function(){
-                    $scope.selected_item = $scope.items[index];
-                    // サムネイルの1件目を選択
-                    $scope.selectThumbnailImg(0);
-
-                    $scope.thumbLoaded = true;
-                }, 0);
-                */
-
                 CurrentSelectData.data = $scope.items[index];
 
-                $location.path("/detail/" + "MYTEST");
+                $location.path("/detail/");
             };
-
 
             // favに入っているかをチェック
             $scope.isAlreadyFav = function(item){
@@ -151,16 +138,7 @@
             };
 
             $scope.selectCard = function(index){
-                // 選択明細カードを更新
-                //var item = $scope.items[index];
-                //$scope.selected_item = item;
-
                 $scope.selectItem(index);
-
-                // card選択でdetail部分に移動
-                jQuery("body").animate({
-                    scrollTop: jQuery("#detail").offset().top - 8,
-                }, 200);
             };
 
             $scope.add2Favorite = function(index){
@@ -245,11 +223,12 @@
         })
         .service("MapPointDataAdapter", function($http){
             this.getData = function(param){
-                var query_string = "&needonlydata=true";
+                var query_string = "needonlydata=true";
                 for(var p in param){
                     query_string += "&" + p + "=" + param[p];
                 }
-                return $http.jsonp("index.php" + "?" + "callback=JSON_CALLBACK" + query_string)
+                //return $http.jsonp("index.php" + "?" + "callback=JSON_CALLBACK" + query_string)
+                return $http.jsonp("index.php" + "?" + query_string, {jsonpCallbackParam: 'callback'})
                     // 戻りはpromiseオブジェクトなんで
                     .then(function(response_wrapper){
                         var response = response_wrapper.data;

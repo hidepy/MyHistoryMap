@@ -265,7 +265,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <style>
 
   body{
-    opacity: 0.12;
+    opacity: 0.92;
   }
   #top_navigation{
     display: none;
@@ -279,31 +279,10 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 </head> 
 
 <body>
-  <div id="contents" ng-controller="HeaderController" data-ng-init="init()">
+  <div id="contents">
     <div class="container">
-
+      <div  ng-view></div>
     </div> <!-- /.container -->
-
-    <!-- ↓ここからadsense↓ -->
-    <?php
-    if(!$is_admin_user){
-      echo '
-<div class="row" id="adsense_wrapper">
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- MyHistoryMap下部広告 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-2131186805773040"
-     data-ad-slot="5808074819"
-     data-ad-format="auto"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-</div>';
-    }
-    ?>
-    <!-- ↑ここまでadsense↑-->
-
   </div> <!-- /#contents -->
 
 
@@ -312,11 +291,16 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 
   <!-- Angular core -->
   <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular/angular-route.js"></script>
   <!-- Angular libs-->
   <script src="lib/slick/slick.js"></script>
   <script src="lib/slick/angular-slick.js"></script>
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
+  <!-- Directives -->
+  <!--
+  <script src="js/directive/adsense.js"></script>
+  -->
   <!-- Init js -->
   <script src="js/main.js"></script>
 

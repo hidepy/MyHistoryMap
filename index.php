@@ -235,6 +235,10 @@ else{
 
 <html ng-app="MHM-APP">
 <head>
+<!--
+値受け渡しで結構いけてる感じらしい
+http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovider/
+-->
 
   <meta charset="utf-8">
     

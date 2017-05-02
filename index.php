@@ -255,8 +255,6 @@ else{
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-  
-
 
   <script type="text/javascript" src="js/storageManager.js"></script>
 
@@ -279,118 +277,6 @@ else{
 <body>
   <div id="contents" ng-controller="HeaderController" data-ng-init="init()">
     <div class="container">
-
-      <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" ng-click="selectTab('M')" data-toggle="tab" href="#tab-map" role="tab">M</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" ng-click="selectTab('C')" data-toggle="tab" href="#tab-card" role="tab">C</a>
-        </li>
-      </ul>
-
-      <div class="tab-content">
-
-        <div class="tab-pane active" role="tabpanel" id="tab-map">
-
-          <div class="col-md-12 col-12">
-            <div id="history_map"></div>
-          </div>
-
-        </div>
-
-        <div class="tab-pane" role="tabpanel" id="tab-card">
-
-          <div id="cards_wrapper" class="row">
-            <div class="card_wrapper col-md-3 col-4" ng-repeat="(card_idx, item) in items" >
-                <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
-                <div class="panel" ng-click="selectCard(card_idx)">
-                  <div class="panel-heading">
-                    <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
-                    <div class="ravel">
-                      <span class="season">{{item.season}}</span>
-                      <span class="prefecture">{{item.prefecture}}</span>
-                    </div>
-                  </div>
-                  <div class="panel-body">
-                    {{item.name}}
-                  </div>
-                </div>
-            </div>
-          </div><!-- /#cards_wrapper -->
-
-        </div>
-      </div>
-
-      <div class="row" id="map_detailarea_wrapper">
-        <div id="detail" class="col-md-12 col-12">
-
-          <div id="carousel-wrapper">
-            <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
-              <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
-                <div class="item-item col-md-3 col-sm-4">
-                  <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
-                    <img class="d-block img-fluid" ng-src="{{item_img}}" />
-                  </a>
-                </div>
-              </div>
-            </slick>
-          </div>
-
-          <div class="card">
-            <div class="card_heading">
-              <h2>{{selected_item.name}}</h2>
-            </div>
-
-            <div class="card_body clearfix">
-              <div class="left_area">
-                <span class="item_name">place</span>
-                <p>{{selected_item.zip_no}}<br>
-                {{selected_item.address}}</p>
-
-                <span class="item_name">visit</span>
-                <p>{{selected_item.visit_date}}</p>
-            
-                <span class="item_name">comment</span>
-                <p>{{selected_item.caption}}</p>
-              </div>
-              <!--
-              <div>{{selected_item.prefecture}}</div>
-              -->
-              <div class="right_area">
-                <ul>
-                  <li class="box"><span class="item_name">season</span>
-                  <p>{{selected_item.season}}</p></li>
-                  <li class="box"><span class="item_name">migoro</span>
-                  <p>{{selected_item.season_monthly}}</p></li>
-                  <li class="box"><span class="item_name">accessibility</span>
-                  <p>{{selected_item.accessibility}}</p></li>
-                  <li class="box"><span class="item_name">crowdness</span>
-                  <p>{{selected_item.crowdness}}</p></li>
-                </ul>
-              </div>
-            </div>
-          </div><!-- /.card -->
-        </div><!-- /#detail -->
-      </div><!-- /.row -->
-
-      <!-- ↓ここから検索条件指定↓ -->
-      <div class="row" id="search_condition_wrapper">
-        <div class="col-md-4 col-4">
-          <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
-            <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
-          </select>
-        </div>
-        <div class="col-md-4 col-4">
-          <select id="select_list_order" size="8" ng-model="selected_order">
-            <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
-          </select>
-        </div>
-        <div class="col-md-4 col-4">
-          <button class="btn" ng-click="updateMapPoints()">Search</button>
-        </div>
-      </div>
-      <!-- ↑ここまで検索条件指定↑ -->
 
     </div> <!-- /.container -->
 
@@ -416,18 +302,19 @@ else{
 
   </div> <!-- /#contents -->
 
-<!-- normal js liblalies -->
-<script src="lib/lightbox/js/lightbox.js"></script>
 
-<!-- Angular core -->
-<script src="lib/angular/angular.js"></script>
-<!-- Angular libs-->
-<script src="lib/slick/slick.js"></script>
-<script src="lib/slick/angular-slick.js"></script>
-<!-- Services -->
-<script src="js/service/MapHandlerService.js"></script>
-<!-- Init js -->
-<script src="js/main.js"></script>
+  <!-- normal js liblalies -->
+  <script src="lib/lightbox/js/lightbox.js"></script>
+
+  <!-- Angular core -->
+  <script src="lib/angular/angular.js"></script>
+  <!-- Angular libs-->
+  <script src="lib/slick/slick.js"></script>
+  <script src="lib/slick/angular-slick.js"></script>
+  <!-- Services -->
+  <script src="js/service/MapHandlerService.js"></script>
+  <!-- Init js -->
+  <script src="js/main.js"></script>
 
 </body>
 </html>

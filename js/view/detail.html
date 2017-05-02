@@ -1,0 +1,51 @@
+<div class="row" id="map_detailarea_wrapper">
+  <div id="detail" class="col-md-12 col-12">
+
+    <div id="carousel-wrapper">
+      <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
+        <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
+          <div class="item-item col-md-3 col-sm-4">
+            <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
+              <img class="d-block img-fluid" ng-src="{{item_img}}" />
+            </a>
+          </div>
+        </div>
+      </slick>
+    </div>
+
+    <div class="card">
+      <div class="card_heading">
+        <h2>{{selected_item.name}}</h2>
+      </div>
+
+      <div class="card_body clearfix">
+        <div class="left_area">
+          <span class="item_name">place</span>
+          <p>{{selected_item.zip_no}}<br>
+          {{selected_item.address}}</p>
+
+          <span class="item_name">visit</span>
+          <p>{{selected_item.visit_date}}</p>
+      
+          <span class="item_name">comment</span>
+          <p>{{selected_item.caption}}</p>
+        </div>
+        <!--
+        <div>{{selected_item.prefecture}}</div>
+        -->
+        <div class="right_area">
+          <ul>
+            <li class="box"><span class="item_name">season</span>
+            <p>{{selected_item.season}}</p></li>
+            <li class="box"><span class="item_name">migoro</span>
+            <p>{{selected_item.season_monthly}}</p></li>
+            <li class="box"><span class="item_name">accessibility</span>
+            <p>{{selected_item.accessibility}}</p></li>
+            <li class="box"><span class="item_name">crowdness</span>
+            <p>{{selected_item.crowdness}}</p></li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- /.card -->
+  </div><!-- /#detail -->
+</div><!-- /.row -->

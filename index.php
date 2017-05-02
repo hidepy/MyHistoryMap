@@ -243,12 +243,11 @@ else{
 
   <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zekkei-map") ?></title>
 
-  <link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
 
-    <link rel="stylesheet" href="lib/slick/slick.css">
-    <link rel="stylesheet" href="lib/slick/slick-theme.css">
+  <link rel="stylesheet" href="lib/slick/slick.css">
+  <link rel="stylesheet" href="lib/slick/slick-theme.css">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   
@@ -263,7 +262,7 @@ else{
   <style>
 
   body{
-    opacity: 0.97;
+    opacity: 0.12;
   }
   #top_navigation{
     display: none;
@@ -319,10 +318,10 @@ else{
 
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#tab-map" role="tab">M</a>
+          <a class="nav-link active" ng-click="selectTab('M')" data-toggle="tab" href="#tab-map" role="tab">M</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#tab-card" role="tab">C</a>
+          <a class="nav-link" ng-click="selectTab('C')" data-toggle="tab" href="#tab-card" role="tab">C</a>
         </li>
       </ul>
 
@@ -358,27 +357,6 @@ else{
 
         </div>
       </div>
-
-      <!-- ↓ここからadsense↓ -->
-      <?php
-      if(!$is_admin_user){
-        echo '
-<div class="row" id="adsense_wrapper">
-  <div class="col-md-12">
-  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <!-- MyHistoryMap用横長広告 -->
-  <ins class="adsbygoogle"
-       style="display:inline-block;width:728px;height:90px"
-       data-ad-client="ca-pub-2131186805773040"
-       data-ad-slot="1600252016"></ins>
-  <script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
-  </div>
-</div>';
-      }
-      ?>
-      <!-- ↑ここまでadsense↑-->
 
       <div class="row" id="map_detailarea_wrapper">
         <div id="detail" class="col-md-12 col-xs-12">
@@ -438,7 +416,6 @@ else{
           <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
             <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
           </select>
-          {{selected_pref}}
         </div>
         <div class="col-md-4 col-xs-4">
           <select id="select_list_order" size="8" ng-model="selected_order">
@@ -452,6 +429,27 @@ else{
       <!-- ↑ここまで検索条件指定↑ -->
 
     </div> <!-- /.container -->
+
+    <!-- ↓ここからadsense↓ -->
+    <?php
+    if(!$is_admin_user){
+      echo '
+<div class="row" id="adsense_wrapper">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- MyHistoryMap下部広告 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-2131186805773040"
+     data-ad-slot="5808074819"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>';
+    }
+    ?>
+    <!-- ↑ここまでadsense↑-->
+
   </div> <!-- /#contents -->
 
 <script src="lib/lightbox/js/lightbox.js"></script>

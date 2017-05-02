@@ -1,7 +1,6 @@
 (function(){
     'use strict';
 
-    var mp = google.maps;
 
     // load event
     document.addEventListener("DOMContentLoaded", function(){
@@ -14,7 +13,11 @@
             }
         };
 
-        document.getElementById("history_map").style.height = window.innerHeight * (45.0 / 100.0);
+        var TABCONTENT_HEIGHT = window.innerHeight * (45.0 / 100.0);
+        document.getElementById("history_map").style.height   = TABCONTENT_HEIGHT;
+        document.getElementById("cards_wrapper").style.height = TABCONTENT_HEIGHT;
+        document.getElementById("cards_wrapper").style.maxHeight = TABCONTENT_HEIGHT;
+        document.getElementById("cards_wrapper").style.overflow = "scroll";
     });
 
 
@@ -44,25 +47,7 @@
         ];
         $scope.selected_order = "";
 
-        /* ---------- Local Functions ---------- */
-        // card 又は markerのclick時動作を1本化
-        $scope.selectItem = function(index){
-
-            $scope.thumbLoaded = false;
-
-            // どうにも carouselの動的変更がうまくいかないので遅延実行...
-            $timeout(function(){
-                $scope.selected_item = $scope.items[index];
-                // サムネイルの1件目を選択
-                $scope.selectThumbnailImg(0);
-
-                $scope.thumbLoaded = true;
-            }, 100);
-        };
-
-
         /* ---------- Angular scope Functions ---------- */
-
         $scope.init = function(){
             // selected_prefの初期値を、urlのprefパラメータから求める
             $scope.selected_pref = location.search.substring(1).split("&")
@@ -78,6 +63,31 @@
             // point dataを問合せ
             $scope.updateMapPoints();
         };
+
+        $scope.selectTab = function(tabname){
+            if(tabname == "M"){
+                MapHandler.update();
+            }
+            else if(tabname == "C"){
+                // nothing to do
+            }
+        };
+
+        // card 又は markerのclick時動作を1本化
+        $scope.selectItem = function(index){
+
+            $scope.thumbLoaded = false;
+
+            // どうにも carouselの動的変更がうまくいかないので遅延実行...
+            $timeout(function(){
+                $scope.selected_item = $scope.items[index];
+                // サムネイルの1件目を選択
+                $scope.selectThumbnailImg(0);
+
+                $scope.thumbLoaded = true;
+            }, 0);
+        };
+
 
         // favに入っているかをチェック
         $scope.isAlreadyFav = function(item){
@@ -208,6 +218,8 @@
         var map = {};
         var markers = [];
         var DISP_INFOWINDOW = false;
+
+        var mp = google.maps;
 
         var infowindow = new mp.InfoWindow({
             content: "",

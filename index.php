@@ -233,13 +233,12 @@ else{
 
 ?>
 
-<html ng-app="app">
+<html ng-app="MHM-APP">
 <head>
 
   <meta charset="utf-8">
     
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
 
   <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zekkei-map") ?></title>
 
@@ -248,6 +247,8 @@ else{
 
   <link rel="stylesheet" href="lib/slick/slick.css">
   <link rel="stylesheet" href="lib/slick/slick-theme.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
   
@@ -275,45 +276,8 @@ else{
 
 </head> 
 
-<body ng-controller="AppController" data-ng-init="init()">
-
-  <nav id="top_navigation" class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#"><?php echo ($is_admin_user ? "MyHistoryMap" : "{{search_group}} no zekkei" ) ?></a>
-      </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <form class="navbar-form navbar-right">
-          <div class="form-group">
-            <input type="text" placeholder="Email" class="form-control">
-          </div>
-          <div class="form-group">
-            <input type="password" placeholder="Password" class="form-control">
-          </div>
-          <button type="submit" class="btn btn-success">Sign in</button>
-        </form>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main jumbotron for a primary marketing message or call to action -->
-  <!--
-  <div id="header" class="jumbotron">
-    <div class="container">
-      <h1>My History Map</h1>
-      <p>our memory...</p>
-      <button class="btn" ng-click="pushStart()">Start</button>
-    </div>
-  </div>
-  -->
-
-  <div id="contents">
+<body>
+  <div id="contents" ng-controller="HeaderController" data-ng-init="init()">
     <div class="container">
 
       <ul class="nav nav-tabs" role="tablist">
@@ -329,7 +293,7 @@ else{
 
         <div class="tab-pane active" role="tabpanel" id="tab-map">
 
-          <div class="col-md-12 col-xs-12">
+          <div class="col-md-12 col-12">
             <div id="history_map"></div>
           </div>
 
@@ -338,7 +302,7 @@ else{
         <div class="tab-pane" role="tabpanel" id="tab-card">
 
           <div id="cards_wrapper" class="row">
-            <div class="card_wrapper col-md-3 col-xs-4" ng-repeat="(card_idx, item) in items" >
+            <div class="card_wrapper col-md-3 col-4" ng-repeat="(card_idx, item) in items" >
                 <button class="fav-button" ng-click="add2Favorite(card_idx)"><i class="glyphicon glyphicon-star-empty" ng-class="{'glyphicon-star': isAlreadyFav(item)}"></i></button>
                 <div class="panel" ng-click="selectCard(card_idx)">
                   <div class="panel-heading">
@@ -359,7 +323,7 @@ else{
       </div>
 
       <div class="row" id="map_detailarea_wrapper">
-        <div id="detail" class="col-md-12 col-xs-12">
+        <div id="detail" class="col-md-12 col-12">
 
           <div id="carousel-wrapper">
             <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
@@ -412,17 +376,17 @@ else{
 
       <!-- ↓ここから検索条件指定↓ -->
       <div class="row" id="search_condition_wrapper">
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-4 col-4">
           <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
             <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
           </select>
         </div>
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-4 col-4">
           <select id="select_list_order" size="8" ng-model="selected_order">
             <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
           </select>
         </div>
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-4 col-4">
           <button class="btn" ng-click="updateMapPoints()">Search</button>
         </div>
       </div>
@@ -452,11 +416,18 @@ else{
 
   </div> <!-- /#contents -->
 
+<!-- normal js liblalies -->
 <script src="lib/lightbox/js/lightbox.js"></script>
+
+<!-- Angular core -->
 <script src="lib/angular/angular.js"></script>
+<!-- Angular libs-->
 <script src="lib/slick/slick.js"></script>
 <script src="lib/slick/angular-slick.js"></script>
-<script src="js/app.js"></script>
+<!-- Services -->
+<script src="js/service/MapHandlerService.js"></script>
+<!-- Init js -->
+<script src="js/main.js"></script>
 
 </body>
 </html>

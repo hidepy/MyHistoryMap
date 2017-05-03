@@ -278,7 +278,35 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 
 </head> 
 
-<body>
+<body ng-controller="RootController">
+
+  <div>
+    <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+      <button class="navbar-toggler navbar-toggler-right hidden-lg-up" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="true" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <a class="navbar-brand" href="#">{{title}}</a>
+
+      <div class="navbar-collapse collapse" id="navbarsExampleDefault" aria-expanded="false">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Settings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Help</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
   <div id="contents">
     <div class="container">
       <div  ng-view></div>
@@ -298,9 +326,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
   <!-- Directives -->
-  <!--
   <script src="js/directive/adsense.js"></script>
-  -->
   <!-- Init js -->
   <script src="js/main.js"></script>
 

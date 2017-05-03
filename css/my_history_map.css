@@ -13,10 +13,6 @@ body
     line-height: 1.5;
 
     letter-spacing: .08em;
-
-    background: url(../images/bi-nasu.jpg) no-repeat top center / cover;
-    background-attachment: fixed;
-    background-position-y: -320px;
 }
 
 #header
@@ -124,10 +120,16 @@ body
     width: 100%;
     height: 80%;
 }
-
+nav{
+    height: 3rem;
+}
+nav > .navbar-toggler-right{
+    right: 0;
+}
 #contents
 {
     background: #eee;
+    margin-top: 3rem;
 }
 #search_condition_wrapper
 {
@@ -147,8 +149,8 @@ body
 #detail
 {
     padding: 15px;
-
     background: #fff;
+    height: 100%;
 }
 
 #carousel-wrapper{
@@ -160,8 +162,15 @@ body
 }
 
 .container{
-    margin: 4px;
     width: 100%;
+}
+
+.card{
+    height: 100%;
+}
+
+.card_heading{
+    margin: 8px 0;
 }
 
 .card_heading h2

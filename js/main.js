@@ -23,7 +23,7 @@
 
     // angular module setup
     angular.module('MHM-APP', ['ngRoute', 'slickCarousel', 'MapHandlerService'])
-        .config(function($routeProvider){
+        .config(function($routeProvider, $locationProvider){
             $routeProvider
                 .when("/", {
                     templateUrl: "js/view/main.html",
@@ -36,8 +36,15 @@
                 .otherwise({
                     redirectTo: "/"
                 });
+            $locationProvider.hashPrefix('');
         })
-        .controller('HeaderController', function($scope, $timeout, $location, MapPointDataAdapter, MapHandler, CurrentSelectData) {
+        .controller('RootController', function($scope, $location){
+            $scope.title = "絶景マップ";
+            $scope.move = function(path){
+                $location.path(path);
+            };
+        })
+        .controller('HeaderController', function($scope, MapPointDataAdapter, MapHandler, CurrentState) {
 
             // map初期化
             MapHandler.loadMap(document.getElementById("history_map"));
@@ -63,7 +70,7 @@
 
             /* ---------- Angular scope Functions ---------- */
             $scope.init = function(){
-console.log("in init");
+
                 // selected_prefの初期値を、urlのprefパラメータから求める
                 /*
                 $scope.selected_pref = location.search.substring(1).split("&")
@@ -77,24 +84,39 @@ console.log("in init");
                     .map(v=>v[1]);
                 */
 
-                // point dataを問合せ
-                $scope.updateMapPoints();
+                if(CurrentState.searchedItems && (CurrentState.searchedItems.length > 0)){
+                    $scope.deleteAllMarkers();
+
+                    $scope.items = CurrentState.searchedItems;
+
+                    $scope.addAllMarkers();
+                }
+                else{
+                    // point dataを問合せ
+                    $scope.updateMapPoints();
+                }
             };
 
             $scope.selectTab = function(tabname){
                 if(tabname == "M"){
+                    jQuery("#tab-map").tab("show");
+                    jQuery("#tab-card").removeClass("active");
+
                     MapHandler.update();
                 }
                 else if(tabname == "C"){
-                    // nothing to do
+                    jQuery("#tab-card").tab("show");
+                    jQuery("#tab-map").removeClass("active");
                 }
             };
 
             // card 又は markerのclick時動作を1本化
             $scope.selectItem = function(index){
-                CurrentSelectData.data = $scope.items[index];
+                CurrentState.searchedItems = $scope.items;
+                CurrentState.index = index;
+                CurrentState.mode = "M";
 
-                $location.path("/detail/");
+                $scope.move("/detail/");
             };
 
             // favに入っているかをチェック
@@ -155,6 +177,9 @@ console.log("in init");
 
             // 現在のpointitemsから全件描画する
             $scope.updateMapPoints = function(){
+
+console.log("update map points");
+
                 // 選択中を削除
                 $scope.selected_item = {};
                 // 一旦削除
@@ -208,16 +233,18 @@ console.log("in init");
                 */
             };
         })
-        .controller('DetailController', function($scope, $timeout, CurrentSelectData) {
+        .controller('DetailController', function($scope, $timeout, CurrentState) {
             $scope.thumbLoaded = false;
 
             $timeout(function(){
-                $scope.selected_item = CurrentSelectData.data;
+                $scope.selected_item = CurrentState.searchedItems[CurrentState.index];
                 $scope.thumbLoaded = true;
             }, 1);
         })
-        .service("CurrentSelectData", function(){
-            this.data = {};
+        // Header-Detail画面で値のやり取りに使用. 既に検索しているheader情報や選択しているindexの値を保持する
+        .service("CurrentState", function(){
+            this.searchedItems = [];
+            this.index = -1;
         })
         .service("MapPointDataAdapter", function($http){
             this.getData = function(param){

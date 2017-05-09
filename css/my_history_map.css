@@ -129,7 +129,6 @@ nav > .navbar-toggler-right{
 #contents
 {
     background: #eee;
-    /*margin-top: 3rem;*/
 }
 #search_condition_wrapper
 {
@@ -159,10 +158,6 @@ nav > .navbar-toggler-right{
 
 #thumbnail-carousel{
     height: 240px;
-}
-
-.container{
-    width: 100%;
 }
 
 .card{
@@ -456,4 +451,11 @@ ul.thumb_group li
 #select_list_order
 {
     width: 100%;
+}
+
+#maplist_wrapper{
+    width: 100%;
+}
+#maplist_wrapper > li > p{
+    overflow: hidden;
 }

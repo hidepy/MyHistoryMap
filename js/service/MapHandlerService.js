@@ -7,33 +7,69 @@
             // クロージャされる
             var map = {};
             var markers = [];
-            var DISP_INFOWINDOW = false;
             var mp = google.maps;
             
             var infowindow = new mp.InfoWindow({
                 content: "",
                 maxWidth: 128
             });
-            var INFO_TEMPLATE = "<div><h3>%TITLE%</h3><p>%COMMENT%</p><p><a href='%OPEN_GOOGLEMAP%' target='_blank'>GoogleMapで開く</a></p><p><a href='%SEARCH_WITH_GOOGLE%' target='_blank'>この場所について検索する</a></p></div>";
 
             // 選択中マーカ
             var current_select_marker = -1;
 
-            this.loadMap = function(el_map){
+            // constants
+            var INFO_TEMPLATE = "<div><h3>%TITLE%</h3><p>%COMMENT%</p><p><a href='%OPEN_GOOGLEMAP%' target='_blank'>GoogleMapで開く</a></p><p><a href='%SEARCH_WITH_GOOGLE%' target='_blank'>この場所について検索する</a></p></div>";
+            var DISP_INFOWINDOW = false;
+            var DISP_MARKER_NUMBER = true;
+            var DISP_MARKER_TITLE = true;
+
+            function pinSymbol(color) {
+                return {
+                    path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: '#000',
+                    strokeWeight: 2,
+                    scale: 1,
+                    labelOrigin: new google.maps.Point(3, 0)
+               };
+            }
+
+            this.loadMap = function(el_map, lat, lng){
+                var latlng = new mp.LatLng(!!lat ? lat : 35.8, !!lng ? lng : 138.5);
                 map = new mp.Map(el_map, {
-                      center: (new mp.LatLng(35.792621, 138.506513)),
+                      center: latlng,
                       zoom: 8
                     }
                 );
             };
-            this.update = function(){
+            this.update = function(lat, lng){
                 mp.event.trigger(map, "resize");
+                if(!!lat && !!lng){
+                    map.setCenter(new mp.LatLng(lat, lng));
+                }
             };
             this.addMarker = function(item, options, callback){
-                var mkr = new mp.Marker({
+
+                // optionsがなければ作っておく
+                options = options || {};
+
+                var prefix = "" + options.index + ".";
+                var score = (options.score && !isNaN(options.score)) ? options.score : 0.0;
+                var color = options.marker_color || "#FFFFFF";
+                var marker_option = {
                     position: new mp.LatLng(item.lat, item.lng),
-                    title: item.name
-                });
+                    title: item.name,
+                    icon: pinSymbol(color)
+                };
+                // markerのlabelオプションが何れかtrueなら
+                if(DISP_MARKER_TITLE || DISP_MARKER_NUMBER){
+                    marker_option["label"] = {
+                        text: (DISP_MARKER_NUMBER ? prefix : "") + (DISP_MARKER_TITLE ? item.name.slice(0, 4) : ""),
+                        fontSize: "80%"
+                    };
+                }
+                var mkr = new mp.Marker(marker_option);
 
                 mkr.setMap(map);
 

@@ -1,4 +1,6 @@
 
+<nav-search do-search="updateMapPoints"></nav-search>
+
 <div id="header-page-wrapper" ng-init="init()">
 
   <ul class="nav nav-tabs" role="tablist">
@@ -17,6 +19,13 @@
       <div class="col-md-12 col-12">
         <div id="history_map"></div>
       </div>
+
+      <ul id="maplist_wrapper">
+        <li ng-repeat="(list_idx, item) in items">
+          <p>{{list_idx}}.{{item.name}}</p>
+          <p>{{item.caption}}</p>
+        </li>
+      </ul>
 
     </div>
 

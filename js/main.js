@@ -41,22 +41,12 @@
                 });
             $locationProvider.hashPrefix('');
         })
-        .controller('RootController', function($scope, $location){
-            $scope.title = "絶景マップ";
-            $scope.move = function(path){
-                $location.path(path);
-            };
-        })
-        .controller('HeaderController', function($scope, MapPointDataAdapter, MapHandler, CurrentState) {
+        .controller('RootController', function($scope, $location, MapPointDataAdapter){
 
-            // map初期化
-            MapHandler.loadMap(document.getElementById("history_map"));
-
+            // ---------- properties ----------
+            $scope.title = "zekkei map";
             $scope.search_group = "zenkoku";
-            $scope.selected_item = {
-                images_thumb: []
-            };
-            $scope.items = [];
+
             $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
             $scope.selected_pref = [];
             $scope.order_list = [
@@ -70,6 +60,42 @@
                 {id: "o_acc-a", name: "accessibility-asc"}
             ];
             $scope.selected_order = "";
+
+
+            // ---------- methods ----------
+            $scope.move = function(path){
+                $location.path(path);
+            };
+
+            // point dataを検索する
+            $scope.searchPoint = function(callback){
+                var param = {};
+
+                // where句のprefに関する絞込条件を設定
+                if($scope.selected_pref && ($scope.selected_pref.length > 0)){
+                    param["w_pref"] = $scope.selected_pref.join("_");
+                }
+
+                // order by句のパラメータを設定
+                if(!!$scope.selected_order){
+                    param["order"] = $scope.selected_order;
+                }
+
+                // レコード取得
+                MapPointDataAdapter.getData(param)
+                    .then(function(items){
+                        if(!!callback) callback(items);
+                    });
+            };
+        })
+        .controller('HeaderController', function($scope, MapHandler, CurrentState) {
+            // map初期化
+            MapHandler.loadMap(document.getElementById("history_map"));
+
+            $scope.selected_item = {
+                images_thumb: []
+            };
+            $scope.items = [];
 
             /* ---------- Angular scope Functions ---------- */
             $scope.init = function(){
@@ -86,15 +112,12 @@
                     $scope.updateMapPoints();
                 }
 
-
                 // デフォルトタブを決定
                 if(window.CommonFunctions.isEmpty(CurrentState.selectTab)){
                     CurrentState.selectTab = "M";
                 }
 
                 $scope.selectTab(CurrentState.selectTab);
-
-
             };
 
             $scope.selectTab = function(tabname){
@@ -147,13 +170,26 @@
                     // ここは苦しい...クロージャでいいらしいけど...メモリリークが気になる
                     // 変更を反映させる
                     $scope.$apply(function(){
-                        //$scope.selected_item = $scope.items[index];
                         $scope.selectItem(index);
                     });
                 };
 
                 // Markerを追加
                 MapHandler.addMarker($scope.items[index], {index: index}, ClickItem);
+            };
+
+            // 現在のpointitemsから全件描画する
+            $scope.updateMapPoints = function(){
+console.log("in updateMapPoints");
+                // 選択中を削除
+                $scope.selected_item = {};
+                // 一旦削除
+                $scope.deleteAllMarkers();
+                // 検索&描画
+                $scope.searchPoint(function(items){
+                    $scope.items = items;
+                    $scope.addAllMarkers();
+                });
             };
 
             $scope.selectCard = function(index){
@@ -171,46 +207,18 @@
                     });
                 }
             };
-
-            // 現在のpointitemsから全件描画する
-            $scope.updateMapPoints = function(){
-
-console.log("update map points");
-
-                // 選択中を削除
-                $scope.selected_item = {};
-                // 一旦削除
-                $scope.deleteAllMarkers();
-                // 検索&描画
-                $scope.searchPoint(function(){
-                    // callbackのは受け取らないで$scopeからitemsを拾う
-                    $scope.addAllMarkers();
-                });
-            };
-
-            // point dataを検索する
-            $scope.searchPoint = function(callback){
-
-                var param = {};
-
-                // where句のprefに関する絞込条件を設定
-                if($scope.selected_pref && ($scope.selected_pref.length > 0)){
-                    param["w_pref"] = $scope.selected_pref.join("_");
+        })
+        .directive("navSearch", function(){
+            return {
+                templateUrl: "js/view/nav-search.html",
+                scope: {
+                    doSearch: "="
                 }
-
-                // order by句のパラメータを設定
-                if(!!$scope.selected_order){
-                    param["order"] = $scope.selected_order;
-                }
-
-                // レコード取得
-                MapPointDataAdapter.getData(param)
-                    .then(function(items){
-                        $scope.items = items;
-                        if(!!callback) callback($scope.items);
-                    });
             };
+        })
+        .controller('DetailController', function($scope, $timeout, CurrentState) {
 
+            // carousel 有効/無効制御
             $scope.thumbLoaded = false;
             // slick(carouselのやつ)の設定
             $scope.slickConfig = {
@@ -229,9 +237,6 @@ console.log("update map points");
                 }
                 */
             };
-        })
-        .controller('DetailController', function($scope, $timeout, CurrentState) {
-            $scope.thumbLoaded = false;
 
             $timeout(function(){
                 $scope.selected_item = CurrentState.searchedItems[CurrentState.index];
@@ -289,14 +294,10 @@ console.log("update map points");
                                 });
                             }
                         }
+console.log("in MapPointDataAdapter getData success");
                         return res_items;
                     }
                 );
             }
-        })
-        .directive("navSearch", function(){
-            return{
-                template: '<div class="col-md-4 col-4"> <select id="select_list_pref" size="4" multiple ng-model="selected_pref">   <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option> </select> </div> <div class="col-md-4 col-4"> <select id="select_list_order" size="4" ng-model="selected_order">   <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option> </select> </div> <div class="col-md-4 col-4"> <button class="btn" ng-click="updateMapPoints()">Search</button> </div> '
-            };
         });
 })();

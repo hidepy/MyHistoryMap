@@ -266,7 +266,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <style>
 
   body{
-    opacity: 0.92;
+    opacity: 0.12;
   }
   #top_navigation{
     display: none;
@@ -281,15 +281,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 
 <body ng-controller="RootController">
 
-  <div nav-search>
-  </div>
-
-  <div id="contents">
-    <div class="container">
-      <div  ng-view></div>
-    </div> <!-- /.container -->
-  </div> <!-- /#contents -->
-
+  <div id="contents" ng-view></div>
 
   <!-- normal js liblalies -->
   <script src="lib/lightbox/js/lightbox.js"></script>

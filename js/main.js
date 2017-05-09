@@ -10,6 +10,9 @@
         window.CommonFunctions = {
             formatDate: function(date){
                 return ("" + date.getFullYear() + ("00" + (date.getMonth() + 1)).slice(-2) + ("00" + date.getDate()).slice(-2) + ("00" + date.getHours()).slice(-2) + ("00" + date.getMinutes()).slice(-2) + ("00" + date.getSeconds()).slice(-2) );
+            },
+            isEmpty: function(s){
+                return (s == null) || (s == undefined) || (s == "");
             }
         };
         /*
@@ -70,20 +73,7 @@
 
             /* ---------- Angular scope Functions ---------- */
             $scope.init = function(){
-
-                // selected_prefの初期値を、urlのprefパラメータから求める
-                /*
-                $scope.selected_pref = location.search.substring(1).split("&")
-                    .map(v=>{
-                        return v.split("=");
-                    })
-                    .filter(v=>{
-                        v[1] = decodeURI(v[1]);// ここほんとさいあく。
-                        return (v[0] == "pref") && ($scope.pref_list.filter(p=>{ return (p==v[1])}).length > 0)
-                    })
-                    .map(v=>v[1]);
-                */
-
+                // 位置情報リストが既にあれば描画, なければ取得
                 if(CurrentState.searchedItems && (CurrentState.searchedItems.length > 0)){
                     $scope.deleteAllMarkers();
 
@@ -95,26 +85,40 @@
                     // point dataを問合せ
                     $scope.updateMapPoints();
                 }
+
+
+                // デフォルトタブを決定
+                if(window.CommonFunctions.isEmpty(CurrentState.selectTab)){
+                    CurrentState.selectTab = "M";
+                }
+
+                $scope.selectTab(CurrentState.selectTab);
+
+
             };
 
             $scope.selectTab = function(tabname){
                 if(tabname == "M"){
                     jQuery("#tab-map").tab("show");
+                    jQuery("#tab-map").addClass("active");
                     jQuery("#tab-card").removeClass("active");
 
                     MapHandler.update();
                 }
                 else if(tabname == "C"){
                     jQuery("#tab-card").tab("show");
+                    jQuery("#tab-card").addClass("active");
                     jQuery("#tab-map").removeClass("active");
                 }
+
+                CurrentState.selectTab = tabname;
             };
 
             // card 又は markerのclick時動作を1本化
             $scope.selectItem = function(index){
                 CurrentState.searchedItems = $scope.items;
                 CurrentState.index = index;
-                CurrentState.mode = "M";
+                CurrentState.selectedTab = "M";
 
                 $scope.move("/detail/");
             };
@@ -165,13 +169,6 @@
                         name: item.name,
                         datetime: CommonFunctions.formatDate(new Date())
                     });
-                }
-            };
-
-            // thumbnail 選択時
-            $scope.selectThumbnailImg = function(index){
-                if(index <  $scope.selected_item.images.length){
-                    // 現在は, aタグでポップアップコースになったので不要か...?
                 }
             };
 
@@ -245,6 +242,7 @@ console.log("update map points");
         .service("CurrentState", function(){
             this.searchedItems = [];
             this.index = -1;
+            this.selectedTab = "M";
         })
         .service("MapPointDataAdapter", function($http){
             this.getData = function(param){
@@ -295,5 +293,10 @@ console.log("update map points");
                     }
                 );
             }
+        })
+        .directive("navSearch", function(){
+            return{
+                template: '<div class="col-md-4 col-4"> <select id="select_list_pref" size="4" multiple ng-model="selected_pref">   <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option> </select> </div> <div class="col-md-4 col-4"> <select id="select_list_order" size="4" ng-model="selected_order">   <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option> </select> </div> <div class="col-md-4 col-4"> <button class="btn" ng-click="updateMapPoints()">Search</button> </div> '
+            };
         });
 })();

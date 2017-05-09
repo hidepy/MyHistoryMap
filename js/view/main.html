@@ -1,3 +1,4 @@
+
 <div id="header-page-wrapper" ng-init="init()">
 
   <ul class="nav nav-tabs" role="tablist">
@@ -45,23 +46,5 @@
   <div adsense>
     here may insert adsense...
   </div>
-
-    <!-- ↓ここから検索条件指定↓ -->
-  <div class="row" id="search_condition_wrapper">
-    <div class="col-md-4 col-4">
-      <select id="select_list_pref" size="8" multiple ng-model="selected_pref">
-        <option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
-      </select>
-    </div>
-    <div class="col-md-4 col-4">
-      <select id="select_list_order" size="8" ng-model="selected_order">
-        <option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
-      </select>
-    </div>
-    <div class="col-md-4 col-4">
-      <button class="btn" ng-click="updateMapPoints()">Search</button>
-    </div>
-  </div>
-  <!-- ↑ここまで検索条件指定↑ -->
 
 </div>

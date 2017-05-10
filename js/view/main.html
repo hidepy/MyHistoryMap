@@ -1,5 +1,5 @@
 
-<nav-search do-search="updateMapPoints"></nav-search>
+<nav-search do-search="updateMapPoints" toggle-state="search_toggle_state"></nav-search>
 
 <div id="header-page-wrapper" ng-init="init()">
 
@@ -20,13 +20,14 @@
         <div id="history_map"></div>
       </div>
 
+<!--
       <ul id="maplist_wrapper">
         <li ng-repeat="(list_idx, item) in items">
           <p>{{list_idx}}.{{item.name}}</p>
           <p>{{item.caption}}</p>
         </li>
       </ul>
-
+-->
     </div>
 
     <div class="tab-pane" role="tabpanel" id="tab-card">
@@ -50,10 +51,6 @@
       </div><!-- /#cards_wrapper -->
 
     </div>
-  </div>
-
-  <div adsense>
-    here may insert adsense...
   </div>
 
 </div>

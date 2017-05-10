@@ -103,6 +103,7 @@ $if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
     ,m1.zip_no
     ,m1.address
     ,m1.caption
+    ,m1.favorite
     ,m1.accessibility
     ,m1.crowdness_ave
     ,m1.place_type
@@ -152,6 +153,7 @@ $if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
       "accessibility"=>$r["accessibility"],
       "crowdness"=>$r["crowdness_ave"],
       "place_type"=>$r["place_type"],
+      "favorite"=>$r["favorite"],
       "image_url"=>$r["image_url_top"]
     );
 
@@ -277,11 +279,26 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   }
   </style>
 
+  <base href="/webapps/zekkei-map/">
+
 </head> 
 
 <body ng-controller="RootController">
 
+  <nav class="navbar navbar-light bg-faded">
+    <button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">Navbar</a>
+  </nav>
+
   <div id="contents" ng-view></div>
+
+  <?php
+    if(!$is_admin_user){
+      echo "<adsense></adsense>";
+    }
+  ?>
 
   <!-- normal js liblalies -->
   <script src="lib/lightbox/js/lightbox.js"></script>
@@ -294,8 +311,6 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <script src="lib/slick/angular-slick.js"></script>
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
-  <!-- Directives -->
-  <script src="js/directive/adsense.js"></script>
   <!-- Init js -->
   <script src="js/main.js"></script>
 

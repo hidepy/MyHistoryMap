@@ -31,7 +31,7 @@
                     strokeColor: '#000',
                     strokeWeight: 2,
                     scale: 1,
-                    labelOrigin: new google.maps.Point(3, 0)
+                    labelOrigin: new google.maps.Point(2, 9)
                };
             }
 
@@ -65,8 +65,8 @@
                 // markerのlabelオプションが何れかtrueなら
                 if(DISP_MARKER_TITLE || DISP_MARKER_NUMBER){
                     marker_option["label"] = {
-                        text: (DISP_MARKER_NUMBER ? prefix : "") + (DISP_MARKER_TITLE ? item.name.slice(0, 4) : ""),
-                        fontSize: "80%"
+                        text: (DISP_MARKER_NUMBER ? prefix : "") + (DISP_MARKER_TITLE ? item.name.slice(0, 5) : ""),
+                        fontSize: "90%"
                     };
                 }
                 var mkr = new mp.Marker(marker_option);

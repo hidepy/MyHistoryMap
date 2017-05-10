@@ -15,6 +15,10 @@ body
     letter-spacing: .08em;
 }
 
+adsense{
+    width: 100%;
+}
+
 #header
 {
     margin: 0;

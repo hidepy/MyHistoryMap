@@ -1,14 +1,15 @@
-<div class="col-md-4 col-4">
-	<select id="select_list_pref" size="4" multiple ng-model="selected_pref">
-	<option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
-	</select>
+<div ng-show="search_toggle_state" class="row">
+	<div class="col-md-4 col-4">
+		<select id="select_list_pref" size="4" multiple ng-model="selected_pref">
+		<option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
+		</select>
+	</div>
+	<div class="col-md-4 col-4">
+		<select id="select_list_order" size="4" ng-model="selected_order">
+			<option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
+		</select>
+	</div>
+	<div class="col-md-4 col-4">
+		<button class="btn" ng-click="doSearch()">Search</button>
+	</div>
 </div>
-<div class="col-md-4 col-4">
-	<select id="select_list_order" size="4" ng-model="selected_order">
-		<option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
-	</select>
-</div>
-<div class="col-md-4 col-4">
-	<button class="btn" ng-click="doSearch()">Search</button>
-</div>
- 

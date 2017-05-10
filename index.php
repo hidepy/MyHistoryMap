@@ -45,7 +45,7 @@ $if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
   {
     // 取得prefを設定
     if(isset($_GET["w_pref"])){
-      $splitted_pref_arr = explode("_", $_GET["w_pref"], 48);
+      $splitted_pref_arr = explode("-", $_GET["w_pref"], 48);
       $pref_strings = "";
       for($i = 0; $i < count($splitted_pref_arr); $i++){
         $splitted_pref_arr[$i] = $dbh->quote($splitted_pref_arr[$i]);
@@ -268,7 +268,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <style>
 
   body{
-    opacity: 0.12;
+    opacity: 0.92;
   }
   #top_navigation{
     display: none;
@@ -289,8 +289,10 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
     <button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">MyHistoryMap</a>
   </nav>
+
+  <nav-search toggle-state="search_toggle_state"></nav-search>
 
   <div id="contents" ng-view></div>
 

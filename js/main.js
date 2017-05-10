@@ -24,6 +24,13 @@
         */
     });
 
+// Given:
+// URL: http://server.com/index.html#/Chapter/1/Section/2?search=moby
+// Route: /Chapter/:chapterId/Section/:sectionId
+//
+// Then
+//$routeParams ==> {chapterId:'1', sectionId:'2', search:'moby'}
+
     // angular module setup
     angular.module('MHM-APP', ['ngRoute', 'slickCarousel', 'MapHandlerService'])
         .config(function($routeProvider, $locationProvider){
@@ -48,40 +55,23 @@
             $scope.title = "zekkei map";
             $scope.search_toggle_state = false;
             $scope.PLACE_COLOR_MAP = {
-                "N": "#a0c0b0",
-                "B": "#a07060",
-                "P": "#dddd60",
-                "H": "#d0d0d0"
+                "N": "#80d080",
+                "B": "#d08070",
+                "P": "#eeee60",
+                "H": "#606060"
             };
 
             // ---------- methods ----------
-            $scope.move = function(path){
-                $location.path(path);
+            $scope.move = function(path, param){
+                $location.path(path).search(param || {});
             };
             $scope.toggleSearchMenu = function(){
                 $scope.search_toggle_state = !$scope.search_toggle_state;
             }
-
         })
-        .controller('HeaderController', function($scope, MapHandler, MapPointDataAdapter, CurrentState) {
+        .controller('HeaderController', function($scope, $routeParams, MapHandler, MapPointDataAdapter, CurrentState) {
             // map初期化
             MapHandler.loadMap(document.getElementById("history_map"));
-
-            // ----------- Search Params ----------
-            $scope.search_group = "zenkoku";
-            $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
-            $scope.selected_pref = [];
-            $scope.order_list = [
-                {id: "", name: "default"},
-                {id: "o_rec-d", name: "recommend"},
-                {id: "o_new-d", name: "newer-desc"},
-                {id: "o_new-a", name: "newer-asc"},
-                {id: "o_cro-d", name: "crowdness-desc"},
-                {id: "o_cro-a", name: "crowdness-asc"},
-                {id: "o_acc-d", name: "accessibility-desc"},
-                {id: "o_acc-a", name: "accessibility-asc"}
-            ];
-            $scope.selected_order = "";
 
             // ---------- Display Items ----------
             $scope.items = [];
@@ -89,22 +79,9 @@
                 images_thumb: []
             };
             
-
             // ---------- Local Functions ----------
             // point dataを検索する
-            var searchPoint = function(callback){
-                var param = {};
-
-                // where句のprefに関する絞込条件を設定
-                if($scope.selected_pref && ($scope.selected_pref.length > 0)){
-                    param["w_pref"] = $scope.selected_pref.join("-");
-                }
-
-                // order by句のパラメータを設定
-                if(!!$scope.selected_order){
-                    param["order"] = $scope.selected_order;
-                }
-
+            var searchPoint = function(param, callback){
                 // 検索条件を更新
                 CurrentState.searchCondition = param;
 
@@ -159,19 +136,39 @@
             /* ---------- Angular scope Functions ---------- */
             // ---------- Init ----------
             $scope.init = function(){
-                // 検索条件が以前と変わっていれば再検索
-                if(){
 
+                console.log("HeaderController -> init");
+
+                CurrentState.searchCondition = CurrentState.searchCondition || {};
+
+                // 変更点があるか                    
+                if(["w_pref", "w_ptype", "w_name", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
+
+console.log("forceSearch");
+
+                    $scope.updateMapPoints({
+                        w_pref : $routeParams.w_pref  || "",
+                        w_ptype: $routeParams.w_ptype || "",
+                        w_name : $routeParams.w_name  || "",
+                        order  : $routeParams.order   || ""
+                    });
                 }
-                // 位置情報リストが既にあれば描画, なければ取得
+                // 位置情報リストが既にあれば単純描画
                 else if(CurrentState.searchedItems && (CurrentState.searchedItems.length > 0)){
+                    
+console.log("no retrieve");
+
                     deleteAllMarkers();
 
                     $scope.items = CurrentState.searchedItems;
 
                     addAllMarkers();
                 }
+                // 全てのルートに当てはまらない⇒ページ初回ロード時↓
                 else{
+
+console.log("else... maybe first load");
+
                     // point dataを問合せ
                     $scope.updateMapPoints();
                 }
@@ -200,14 +197,14 @@
                 CurrentState.selectTab = tabname;
             };
             // 現在のpointitemsから全件描画する
-            $scope.updateMapPoints = function(){
+            $scope.updateMapPoints = function(params){
                 // 選択中を削除
                 $scope.selected_item = {};
                 // 一旦削除
                 deleteAllMarkers();
                 // 検索&描画
                 //$scope.searchPoint(function(items){
-                searchPoint(function(items){
+                searchPoint(params, function(items){
                     $scope.items = items;
                     addAllMarkers();
                 });
@@ -261,13 +258,40 @@
         .directive("navSearch", function(){
             return {
                 templateUrl: "js/view/nav-search.html",
-                scope: true/*{
-                    doSearch: "=",
-                    toggleState: "="
-                },
+                scope: true,
                 controller: function($scope){
+                    // ----------- Search Params ----------
+                    $scope.search_group = "zenkoku";
+                    $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
+                    $scope.selected_pref = [];
+                    $scope.order_list = [
+                        {id: "", name: "default"},
+                        {id: "o_rec-d", name: "recommend"},
+                        {id: "o_new-d", name: "newer-desc"},
+                        {id: "o_new-a", name: "newer-asc"},
+                        {id: "o_cro-d", name: "crowdness-desc"},
+                        {id: "o_cro-a", name: "crowdness-asc"},
+                        {id: "o_acc-d", name: "accessibility-desc"},
+                        {id: "o_acc-a", name: "accessibility-asc"}
+                    ];
+                    $scope.selected_order = "";
 
-                }*/
+                    $scope.doSearch = function(){
+                        var param = {};
+
+                        // where句のprefに関する絞込条件を設定
+                        if($scope.selected_pref && ($scope.selected_pref.length > 0)){
+                            param["w_pref"] = $scope.selected_pref.join("-");
+                        }
+
+                        // order by句のパラメータを設定
+                        if(!!$scope.selected_order){
+                            param["order"] = $scope.selected_order;
+                        }
+
+                        $scope.move("/", param);
+                    };
+                }
             };
         })
         .directive("adsense", function(){
@@ -292,7 +316,6 @@
                 for(var p in param){
                     query_string += "&" + p + "=" + param[p];
                 }
-                //return $http.jsonp("index.php" + "?" + "callback=JSON_CALLBACK" + query_string)
                 return $http.jsonp("index.php" + "?" + query_string, {jsonpCallbackParam: 'callback'})
                     // 戻りはpromiseオブジェクトなんで
                     .then(function(response_wrapper){

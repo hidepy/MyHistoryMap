@@ -30,27 +30,43 @@ if(isset($callback)) {
   // 共通戻りI/Fオブジェクト
   $if_return = array("return_cd"=> 0, "msg"=> "", "item"=> "");
 
-
-$if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
-
   // --------SQLのWhere句を設定 ここから--------
   // レコード取得件数を絞り込み
-  $cond_v_limit = 20;
+  $cond_v_limit = 48;
   // privateレコード取得の制限
   $cond_s_private = " AND m1.is_private <> 1";
   $cond_s_private_m2 = " AND m2.is_private <> 1";
 
   // area設定
   $cond_s_area = "";
+  $cond_s_ptype = "";
+  $cond_s_score = "";
   {
     // 取得prefを設定
     if(isset($_GET["w_pref"])){
       $splitted_pref_arr = explode("-", $_GET["w_pref"], 48);
-      $pref_strings = "";
-      for($i = 0; $i < count($splitted_pref_arr); $i++){
-        $splitted_pref_arr[$i] = $dbh->quote($splitted_pref_arr[$i]);
+      if(count($splitted_pref_arr) > 0){
+        for($i = 0; $i < count($splitted_pref_arr); $i++){
+          $splitted_pref_arr[$i] = $dbh->quote($splitted_pref_arr[$i]);
+        }
+        $cond_s_area .= " AND m1.prefecture IN (".join(",", $splitted_pref_arr).")";
       }
-      $cond_s_area .= " AND m1.prefecture IN (".join(",", $splitted_pref_arr).")";
+    }
+
+    // 取得タイプを設定
+    if(isset($_GET["w_ptype"])){
+      $splitted_ptype_arr = explode("-", $_GET["w_ptype"], 5);
+      if(count($splitted_ptype_arr)){
+        for($i = 0; $i < count($splitted_ptype_arr); $i++){
+          $splitted_ptype_arr[$i] = $dbh->quote($splitted_ptype_arr[$i]);
+        }
+        $cond_s_ptype .= " AND m1.place_type IN (".join(",", $splitted_ptype_arr).")";
+      }
+    }
+
+    // 対象をscoreで絞り込み
+    if(isset($_GET["w_score"]) && ctype_digit($_GET["w_score"]) ){
+      $cond_s_ptype .= " AND m1.favorite >= " . $dbh->quote($_GET["w_score"]);
     }
   }
 
@@ -59,7 +75,7 @@ $if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
   // Adminユーザの場合
   if($is_admin_user){
     // 200件取得
-    $cond_v_limit = 200;
+    $cond_v_limit = 240;
     // privateのものも取得対象にする
     $cond_s_private = "";
     $cond_s_private_m2 = "";
@@ -118,6 +134,8 @@ $if_return["msg"] .= "imtasokori=".$_SESSION["imtasokori"]."(END)";
   $query .= $cond_s_private;
   // areaレコードの条件
   $query .= $cond_s_area;
+  // ptypeの条件
+  $query .= $cond_s_ptype;
 
   // ソート指定
   $query .= $orderby_s;
@@ -231,6 +249,11 @@ else{
     // admin判定用プロパティをたてる
     $_SESSION["imtasokori"] = $is_admin_user;
   }
+
+  if (!isset($_COOKIE["isnot-first-visit"])){
+      $is_first_visit = true;
+      setcookie("isnot-first-visit", $is_first_visit);
+  }
 }
 
 ?>
@@ -274,8 +297,8 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
     display: none;
   }
   .img-fluid{
-    max-width: 320px;
-    max-height: 240px;
+    max-width: 196px;
+    max-height: 144px;
   }
   </style>
 
@@ -285,19 +308,18 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 
 <body ng-controller="RootController">
 
-  <nav class="navbar navbar-light bg-faded">
-    <button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="#">MyHistoryMap</a>
-  </nav>
+  <?php
+  if($is_first_visit){
+    echo "<p> is first visit</p>";
+  }
+  ?>
 
-  <nav-search toggle-state="search_toggle_state"></nav-search>
+  <nav-header></nav-header>
 
   <div id="contents" ng-view></div>
 
   <?php
-    if(!$is_admin_user){
+    if(!$is_admin_user && false){
       echo "<adsense></adsense>";
     }
   ?>

@@ -365,19 +365,20 @@ ul.thumb_group li
   padding:0!important;
 }
 
+#nav-top{
+    height: 54px;
+}
 
 .card_wrapper
 {
     position: relative;
-    padding: 1px;
+    padding: 0 !important;
 }
 .card_wrapper .fav-button{
     position: absolute;
     z-index: 2;
     top: 0;
     left: 0;
-    width: 24%;
-    height: 12%;
 }
 .card_wrapper .panel-body{
     position: absolute;
@@ -418,7 +419,7 @@ ul.thumb_group li
 #cards_wrapper .panel-heading .panel_img
 {
     width: 100%;
-    height: 200px;
+    height: 144px;
 
     background-repeat: no-repeat;
     background-position: center center;
@@ -428,13 +429,13 @@ ul.thumb_group li
 #cards_wrapper .panel-heading .ravel
 {
     position: absolute;
-    top: -5px;
-    right: 5px;
+    top: -2px;
+    right: 2px;
 
     display: block;
 
-    width: 80px;
-    padding: 10px;
+    width: 48px;
+    padding: 4px;
 
     text-align: center;
 
@@ -448,6 +449,11 @@ ul.thumb_group li
 }
 
 #select_list_pref
+{
+    width: 100%;
+}
+
+#select_list_type
 {
     width: 100%;
 }

@@ -52,22 +52,29 @@
         .controller('RootController', function($scope, $location){
 
             // ---------- properties ----------
-            $scope.title = "zekkei map";
-            $scope.search_toggle_state = false;
             $scope.PLACE_COLOR_MAP = {
-                "N": "#80d080",
-                "B": "#d08070",
-                "P": "#eeee60",
-                "H": "#606060"
+                "N": {
+                    body: "#80d080",
+                    line: "#50a050"
+                },
+                "B": {
+                    body: "#d08070",
+                    line: "#a05040"
+                },
+                "P": {
+                    body: "#eeee60",
+                    line: "#bebe30"
+                },
+                "H": {
+                    body: "#606060",
+                    line: "#303030"
+                }
             };
 
             // ---------- methods ----------
             $scope.move = function(path, param){
                 $location.path(path).search(param || {});
             };
-            $scope.toggleSearchMenu = function(){
-                $scope.search_toggle_state = !$scope.search_toggle_state;
-            }
         })
         .controller('HeaderController', function($scope, $routeParams, MapHandler, MapPointDataAdapter, CurrentState) {
             // map初期化
@@ -113,7 +120,6 @@
             var addMarker = function(index){
                 // indexをクロージャする...
                 var ClickItem = function(){
-                    // ここは苦しい...クロージャでいいらしいけど...メモリリークが気になる
                     // 変更を反映させる
                     $scope.$apply(function(){
                         //$scope.selectItem(index);
@@ -121,13 +127,23 @@
                     });
                 };
 
+                var marker_color_def = $scope.PLACE_COLOR_MAP[$scope.items[index].place_type];
+
                 // Markerを追加
                 MapHandler.addMarker(
                     $scope.items[index],
                     {
                         index: index,
-                        marker_color: $scope.PLACE_COLOR_MAP[$scope.items[index].place_type],
-                        score: $scope.items[index].favorite
+                        marker_color: marker_color_def ? marker_color_def.body : "",
+                        marker_line_color: marker_color_def ? marker_color_def.line : "",
+                        marker_opacity: (score=>{ // opacityを求める. 評価が高い程鮮明に表示する
+                            var opacity = 0.4;
+                            if(!isNaN(score) && (score != null)){
+                                // scoreは0-9の想定
+                                opacity += (Number(score) + 1) / (10.0 * (1.0 / (1.0 - opacity)));
+                            }
+                            return opacity;
+                        })($scope.items[index].favorite)
                     },
                     ClickItem);
             };
@@ -142,13 +158,14 @@
                 CurrentState.searchCondition = CurrentState.searchCondition || {};
 
                 // 変更点があるか                    
-                if(["w_pref", "w_ptype", "w_name", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
+                if(["w_pref", "w_ptype", "w_score", "w_name", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
 
 console.log("forceSearch");
 
                     $scope.updateMapPoints({
                         w_pref : $routeParams.w_pref  || "",
                         w_ptype: $routeParams.w_ptype || "",
+                        w_score: $routeParams.w_score || "",
                         w_name : $routeParams.w_name  || "",
                         order  : $routeParams.order   || ""
                     });
@@ -255,15 +272,34 @@ console.log("else... maybe first load");
                 $scope.thumbLoaded = true;
             }, 1);
         })
-        .directive("navSearch", function(){
+        .directive("navHeader", function(){
             return {
                 templateUrl: "js/view/nav-search.html",
                 scope: true,
                 controller: function($scope){
                     // ----------- Search Params ----------
+                    $scope.title = "zekkei map";
                     $scope.search_group = "zenkoku";
+
                     $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
                     $scope.selected_pref = [];
+
+                    $scope.type_list = [
+                        {id: "", name: "(no)"},
+                        {id: "N", name: "Nat"},
+                        {id: "B", name: "Bui"},
+                        {id: "P", name: "Pla"},
+                        {id: "H", name: "Hot"},
+                    ];
+                    $scope.selected_type = [];
+
+                    $scope.score_list = [
+                        {id: "8", name: "SPLENDID!!"},
+                        {id: "5", name: "GOOD!"},
+                        {id: "", name: "ALL"}
+                    ];
+                    $scope.selected_score = "";
+
                     $scope.order_list = [
                         {id: "", name: "default"},
                         {id: "o_rec-d", name: "recommend"},
@@ -276,14 +312,36 @@ console.log("else... maybe first load");
                     ];
                     $scope.selected_order = "";
 
+                    $scope.keyword = "";
+
+                    $scope.search_toggle_state = false;
+
+// ここ相当微妙...
+//document.getElementById("contents").style.height = window.innerHeight - document.getElementById("nav-top").clientHeight;
+
+                    $scope.toggleSearchMenu = function(){
+                        $scope.search_toggle_state = !$scope.search_toggle_state;
+                    }
+
                     $scope.doSearch = function(){
+                        // close search area
+                        $scope.search_toggle_state = false;
+
                         var param = {};
 
                         // where句のprefに関する絞込条件を設定
                         if($scope.selected_pref && ($scope.selected_pref.length > 0)){
                             param["w_pref"] = $scope.selected_pref.join("-");
                         }
-
+                        if($scope.selected_type && ($scope.selected_type.length > 0)){
+                            param["w_ptype"] = $scope.selected_type.join("-");
+                        }
+                        if($scope.selected_score){
+                            param["w_score"] = $scope.selected_score;
+                        }
+                        if($scope.keyword){
+                            param["w_name"] = $scope.keyword;
+                        }
                         // order by句のパラメータを設定
                         if(!!$scope.selected_order){
                             param["order"] = $scope.selected_order;
@@ -348,6 +406,7 @@ console.log("else... maybe first load");
                                     accessibility: item.accessibility,
                                     crowdness: item.crowdness,
                                     place_type: item.place_type,
+                                    favorite: item.favorite,
                                     image_url: item.image_url,
                                     images: detail_images,
                                     images_thumb: detail_images_thumb,

@@ -1,15 +1,37 @@
-<div ng-show="search_toggle_state" class="row">
-	<div class="col-md-4 col-4">
-		<select id="select_list_pref" size="4" multiple ng-model="selected_pref">
-		<option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
-		</select>
+<nav class="navbar navbar-light bg-faded" id="nav-top">
+	<button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">{{title}}</a>
+</nav>
+
+<div ng-show="search_toggle_state">
+	<div class="row">
+		<div class="col-md-3 col-4">
+			<select id="select_list_pref" size="4" multiple ng-model="selected_pref">
+				<option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
+			</select>
+		</div>
+		<div class="col-md-3 col-4">
+			<select id="select_list_score" size="4" ng-model="selected_score">
+				<option ng-repeat="option in score_list" value="{{option.id}}">{{option.name}}</option>
+			</select>
+		</div>
+		<div class="col-md-3 col-4">
+			<select id="select_list_type" size="4" multiple ng-model="selected_type">
+				<option ng-repeat="option in type_list" value="{{option.id}}">{{option.name}}</option>
+			</select>
+		</div>
+		<div class="col-md-3 col-4">
+			<select id="select_list_order" size="4" ng-model="selected_order">
+				<option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
+			</select>
+		</div>
+		<div class="col-md-3 col-4">
+			<input id="input_text_keyword" ng-model="keyword" />
+		</div>
 	</div>
-	<div class="col-md-4 col-4">
-		<select id="select_list_order" size="4" ng-model="selected_order">
-			<option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
-		</select>
-	</div>
-	<div class="col-md-4 col-4">
+	<div class="row">
 		<button class="btn" ng-click="doSearch()">Search</button>
 	</div>
 </div>

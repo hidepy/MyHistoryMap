@@ -23,12 +23,12 @@
             var DISP_MARKER_NUMBER = true;
             var DISP_MARKER_TITLE = true;
 
-            function pinSymbol(color) {
+            function pinSymbol(color, line_color) {
                 return {
                     path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
                     fillColor: color,
                     fillOpacity: 1,
-                    strokeColor: '#000',
+                    strokeColor: line_color,
                     strokeWeight: 2,
                     scale: 1,
                     labelOrigin: new google.maps.Point(2, 9)
@@ -55,21 +55,23 @@
                 options = options || {};
 
                 var prefix = "" + options.index + ".";
-                var score = (options.score && !isNaN(options.score)) ? options.score : 0.0;
                 var color = options.marker_color || "#FFFFFF";
+                var line_color = options.marker_line_color || "#777777";
                 var marker_option = {
                     position: new mp.LatLng(item.lat, item.lng),
                     title: item.name,
-                    icon: pinSymbol(color)
+                    icon: pinSymbol(color, line_color),
+                    opacity: (options.marker_opacity || 0.5)
                 };
                 // markerのlabelオプションが何れかtrueなら
                 if(DISP_MARKER_TITLE || DISP_MARKER_NUMBER){
                     marker_option["label"] = {
                         text: (DISP_MARKER_NUMBER ? prefix : "") + (DISP_MARKER_TITLE ? item.name.slice(0, 5) : ""),
-                        fontSize: "90%"
+                        fontSize: "100%"
                     };
                 }
                 var mkr = new mp.Marker(marker_option);
+                //mkr.setOpacity(0.7);
 
                 mkr.setMap(map);
 

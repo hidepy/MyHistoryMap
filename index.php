@@ -41,9 +41,15 @@ if(isset($callback)) {
   $cond_s_area = "";
   $cond_s_ptype = "";
   $cond_s_score = "";
+
+
+$if_return["msg"] .= $_GET["w_pref"]."(END)";
+$if_return["msg"] .= $_GET["w_ptype"]."(END)";
+$if_return["msg"] .= $_GET["w_score"]."(END)";
+
   {
     // 取得prefを設定
-    if(isset($_GET["w_pref"])){
+    if(isset($_GET["w_pref"]) && !empty($_GET["w_pref"])){
       $splitted_pref_arr = explode("-", $_GET["w_pref"], 48);
       if(count($splitted_pref_arr) > 0){
         for($i = 0; $i < count($splitted_pref_arr); $i++){
@@ -54,7 +60,7 @@ if(isset($callback)) {
     }
 
     // 取得タイプを設定
-    if(isset($_GET["w_ptype"])){
+    if(isset($_GET["w_ptype"]) && !empty($_GET["w_ptype"])){
       $splitted_ptype_arr = explode("-", $_GET["w_ptype"], 5);
       if(count($splitted_ptype_arr)){
         for($i = 0; $i < count($splitted_ptype_arr); $i++){
@@ -66,7 +72,7 @@ if(isset($callback)) {
 
     // 対象をscoreで絞り込み
     if(isset($_GET["w_score"]) && ctype_digit($_GET["w_score"]) ){
-      $cond_s_ptype .= " AND m1.favorite >= " . $dbh->quote($_GET["w_score"]);
+      $cond_s_score .= " AND m1.favorite >= " . $dbh->quote($_GET["w_score"]);
     }
   }
 
@@ -136,6 +142,8 @@ if(isset($callback)) {
   $query .= $cond_s_area;
   // ptypeの条件
   $query .= $cond_s_ptype;
+  // scoreの条件
+  $query .= $cond_s_score;
 
   // ソート指定
   $query .= $orderby_s;

@@ -293,13 +293,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   body{
     opacity: 0.92;
   }
-  #top_navigation{
-    display: none;
-  }
-  .img-fluid{
-    max-width: 196px;
-    max-height: 144px;
-  }
+
   </style>
 
   <base href="/webapps/zekkei-map/">

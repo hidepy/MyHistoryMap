@@ -18,23 +18,47 @@
         </slick>
       </div>
 
-      <div class="card_body clearfix">
-        <div class="left_area">
-          <span class="item_name">place</span>
-          <p>{{selected_item.zip_no}}<br>
-          {{selected_item.address}}</p>
+      <div class="card_body row">
+        <div class="col-sm-9">
+          <div class="table-responsive">
+            <table class="table table-condensed">
+              <tr>
+                <td class="item_name">住所</td>
+                <td class="item_detail">
+                  <span class="item_zip">{{selected_item.zip_no}}</span>
+                  <p>{{selected_item.address}}</p>
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">訪問日</td>
+                <td class="item_detail">
+                  {{selected_item.visit_date}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">コメント</td>
+                <td class="item_detail">
+                  {{selected_item.caption}}
+                </td>
+              </tr>
+            </table>
 
-          <span class="item_name">visit</span>
-          <p>{{selected_item.visit_date}}</p>
-      
-          <span class="item_name">comment</span>
-          <p>{{selected_item.caption}}</p>
+            <!-- <span class="item_name">place</span>
+            <p>{{selected_item.zip_no}}<br>
+            {{selected_item.address}}</p>
+
+            <span class="item_name">visit</span>
+            <p>{{selected_item.visit_date}}</p>
+        
+            <span class="item_name">comment</span>
+            <p>{{selected_item.caption}}</p> -->
+          </div>
         </div>
         <!--
         <div>{{selected_item.prefecture}}</div>
         -->
-        <div class="right_area">
-          <ul>
+        <div class="col-sm-3">
+          <ul class="item_rate_list">
             <li class="box"><span class="item_name">season</span>
             <p>{{selected_item.season}}</p></li>
             <li class="box"><span class="item_name">migoro</span>

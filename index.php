@@ -41,9 +41,10 @@ if(isset($callback)) {
   $cond_s_area = "";
   $cond_s_ptype = "";
   $cond_s_score = "";
+
   {
     // 取得prefを設定
-    if(isset($_GET["w_pref"])){
+    if(isset($_GET["w_pref"]) && !empty($_GET["w_pref"])){
       $splitted_pref_arr = explode("-", $_GET["w_pref"], 48);
       if(count($splitted_pref_arr) > 0){
         for($i = 0; $i < count($splitted_pref_arr); $i++){
@@ -54,7 +55,7 @@ if(isset($callback)) {
     }
 
     // 取得タイプを設定
-    if(isset($_GET["w_ptype"])){
+    if(isset($_GET["w_ptype"]) && !empty($_GET["w_ptype"])){
       $splitted_ptype_arr = explode("-", $_GET["w_ptype"], 5);
       if(count($splitted_ptype_arr)){
         for($i = 0; $i < count($splitted_ptype_arr); $i++){
@@ -66,7 +67,7 @@ if(isset($callback)) {
 
     // 対象をscoreで絞り込み
     if(isset($_GET["w_score"]) && ctype_digit($_GET["w_score"]) ){
-      $cond_s_ptype .= " AND m1.favorite >= " . $dbh->quote($_GET["w_score"]);
+      $cond_s_score .= " AND m1.favorite >= " . $dbh->quote($_GET["w_score"]);
     }
   }
 
@@ -136,12 +137,14 @@ if(isset($callback)) {
   $query .= $cond_s_area;
   // ptypeの条件
   $query .= $cond_s_ptype;
+  // scoreの条件
+  $query .= $cond_s_score;
 
   // ソート指定
   $query .= $orderby_s;
 
   // 制限を付与
-  $query .= " LIMIT :limit";
+  $query .= " LIMIT ".$cond_v_limit;
   //$query .= " LIMIT 40";
 
   $res = array();
@@ -152,7 +155,7 @@ if(isset($callback)) {
   // パラメータセット
   {
     // 取得件数のバインド
-    $stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
+    //$stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
   }
   $stmt->execute();
 
@@ -293,7 +296,6 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   body{
     opacity: 0.92;
   }
-
   </style>
 
   <base href="/webapps/zekkei-map/">

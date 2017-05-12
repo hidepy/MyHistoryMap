@@ -156,6 +156,8 @@
                 console.log("HeaderController -> init");
 
                 CurrentState.searchCondition = CurrentState.searchCondition || {};
+                var lat = null;
+                var lng = null;
 
                 // 変更点があるか                    
                 if(["w_pref", "w_ptype", "w_score", "w_name", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
@@ -170,7 +172,7 @@ console.log("forceSearch");
                         order  : $routeParams.order   || ""
                     });
                 }
-                // 位置情報リストが既にあれば単純描画
+                // 位置情報リストが既にあれば単純描画(detailから戻った場合)
                 else if(CurrentState.searchedItems && (CurrentState.searchedItems.length > 0)){
                     
 console.log("no retrieve");
@@ -180,6 +182,13 @@ console.log("no retrieve");
                     $scope.items = CurrentState.searchedItems;
 
                     addAllMarkers();
+
+                    // 検索済レコードからlatlngを取得する
+                    var current_item = CurrentState.searchedItems && (CurrentState.index >= 0) && (CurrentState.index < CurrentState.searchedItems.length)
+                        ? CurrentState.searchedItems[CurrentState.index] : {lat: null, lng: null};
+
+                    lat = current_item.lat;
+                    lng = current_item.lng;
                 }
                 // 全てのルートに当てはまらない⇒ページ初回ロード時↓
                 else{
@@ -195,15 +204,15 @@ console.log("else... maybe first load");
                     CurrentState.selectTab = "M";
                 }
 
-                $scope.selectTab(CurrentState.selectTab);
+                $scope.selectTab(CurrentState.selectTab, lat, lng);
             };
-            $scope.selectTab = function(tabname){
+            $scope.selectTab = function(tabname, lat, lng){
                 if(tabname == "M"){
                     jQuery("#tab-map").tab("show");
                     jQuery("#tab-map").addClass("active");
                     jQuery("#tab-card").removeClass("active");
 
-                    MapHandler.update();
+                    MapHandler.update(lat, lng);
                 }
                 else if(tabname == "C"){
                     jQuery("#tab-card").tab("show");
@@ -220,7 +229,6 @@ console.log("else... maybe first load");
                 // 一旦削除
                 deleteAllMarkers();
                 // 検索&描画
-                //$scope.searchPoint(function(items){
                 searchPoint(params, function(items){
                     $scope.items = items;
                     addAllMarkers();
@@ -247,30 +255,80 @@ console.log("else... maybe first load");
         })
         .controller('DetailController', function($scope, $timeout, CurrentState) {
 
+            // 前画面で選択された場所情報を格納する
+            $scope.selected_item = {};
+            // thumbnail選択された詳細情報を格納する
+            $scope.selected_item_detail = {};
+
+            // first select img index
+            $scope.selected_img_index = 0;
+
             // carousel 有効/無効制御
             $scope.thumbLoaded = false;
+
             // slick(carouselのやつ)の設定
             $scope.slickConfig = {
                 enabled: true,
-                autoplay: false,
-                draggable: true,
-                centerMode: true,
-                fade: true,
-                mobileFirst: true,
-                method: {}/*,
-                event: {
-                    beforeChange: function (event, slick, currentSlide, nextSlide) {
+                dots: true,
+                infinite: false,
+                speed: 300,
+                slidesToShow: 4,
+                slidesToScroll: 4,
+                responsive: [
+                    {
+                      breakpoint: 1024,
+                      settings: {
+                        slidesToShow: 4,
+                        slidesToScroll: 4,
+                        infinite: true,
+                        dots: true
+                      }
                     },
+                    {
+                      breakpoint: 600,
+                      settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3,
+                        infinite: true
+                      }
+                    },
+                    {
+                      breakpoint: 480,
+                      settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2,
+                        infinite: true
+                      }
+                    }
+                  ],
+                method: {},
+                event: {
                     afterChange: function (event, slick, currentSlide, nextSlide) {
+                        $scope.selected_img_index = currentSlide;
+                        $scope.selected_item_detail = $scope.selected_item.detail_info[currentSlide];
                     }
                 }
-                */
             };
 
-            $timeout(function(){
-                $scope.selected_item = CurrentState.searchedItems[CurrentState.index];
-                $scope.thumbLoaded = true;
-            }, 1);
+            // initialize
+            $scope.init = function(){
+                // carousel setup
+                $timeout(function(){
+                    $scope.selected_img_index = 0;
+                    $scope.selected_item = CurrentState.searchedItems[CurrentState.index];
+                    $scope.selected_item_detail = $scope.selected_item.detail_info[$scope.selected_img_index];
+                    $scope.thumbLoaded = true;
+                }, 1);
+            };
+
+            // event when location change
+            //   to close lightbox
+            $scope.$on('$locationChangeStart', function(event, next, current){
+                // Here you can take the control and call your own functions:
+                //alert('Sorry ! Back Button is disabled');
+                // Prevent the browser default action (Going back):
+                //event.preventDefault();            
+            });
         })
         .directive("navHeader", function(){
             return {
@@ -285,7 +343,7 @@ console.log("else... maybe first load");
                     $scope.selected_pref = [];
 
                     $scope.type_list = [
-                        {id: "", name: "(no)"},
+                        {id: "",  name: "(no)"},
                         {id: "N", name: "Nat"},
                         {id: "B", name: "Bui"},
                         {id: "P", name: "Pla"},
@@ -296,7 +354,7 @@ console.log("else... maybe first load");
                     $scope.score_list = [
                         {id: "8", name: "SPLENDID!!"},
                         {id: "5", name: "GOOD!"},
-                        {id: "", name: "ALL"}
+                        {id: "",  name: "ALL"}
                     ];
                     $scope.selected_score = "";
 
@@ -315,9 +373,6 @@ console.log("else... maybe first load");
                     $scope.keyword = "";
 
                     $scope.search_toggle_state = false;
-
-// ここ相当微妙...
-//document.getElementById("contents").style.height = window.innerHeight - document.getElementById("nav-top").clientHeight;
 
                     $scope.toggleSearchMenu = function(){
                         $scope.search_toggle_state = !$scope.search_toggle_state;
@@ -369,6 +424,13 @@ console.log("else... maybe first load");
             this.searchCondition = {};
         })
         .service("MapPointDataAdapter", function($http){
+            // monthからseasonを返す
+            var month_season_map = {
+                "3": "SPRI", "4": "SPRI", "5": "SPRI",
+                "6": "SUMM", "7": "SUMM", "8": "SUMM",
+                "9": "AUTU", "10":"AUTU", "11":"AUTU",
+                "12":"WINT", "1": "WINT", "2": "WINT"
+            };
             this.getData = function(param){
                 var query_string = "needonlydata=true";
                 for(var p in param){
@@ -398,19 +460,18 @@ console.log("else... maybe first load");
                                     name: item.name,
                                     lat: item.lat,
                                     lng: item.lng,
+                                    prefecture: item.pref,
                                     zip_no: item.zip_no,
                                     address: item.address,
                                     caption: item.caption,
-                                    prefecture: item.pref,
-                                    season: item.season,
+                                    favorite: item.favorite,
                                     accessibility: item.accessibility,
                                     crowdness: item.crowdness,
                                     place_type: item.place_type,
-                                    favorite: item.favorite,
                                     image_url: item.image_url,
+                                    detail_info: response.detail_info[item.id],
                                     images: detail_images,
-                                    images_thumb: detail_images_thumb,
-                                    visit_date: item.visit_date
+                                    images_thumb: detail_images_thumb
                                 });
                             }
                         }

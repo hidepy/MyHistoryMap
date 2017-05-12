@@ -45,22 +45,73 @@
                 </td>
               </tr>
               <tr>
-                <td class="item_name">caption</td>
+                <td class="item_name">favorite(=score(0-9))</td>
                 <td class="item_detail">
-                  {{selected_item.caption}}
+                  {{selected_item.favorite}}
                 </td>
               </tr>
+              <tr>
+                <td class="item_name">accessibility(0-9)</td>
+                <td class="item_detail">
+                  {{selected_item.accessibility}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">crowdness(0-9)</td>
+                <td class="item_detail">
+                  {{selected_item.crowdness}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">place_type(N,B,P,H)</td>
+                <td class="item_detail">
+                  {{selected_item.place_type}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">seq</td>
+                <td class="item_detail">
+                  {{selected_item_detail.seq}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">comment</td>
+                <td class="item_detail">
+                  {{selected_item_detail.comment}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">visit_date</td>
+                <td class="item_detail">
+                  {{selected_item_detail.visit_date}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">month(1-12)</td>
+                <td class="item_detail">
+                  {{selected_item_detail.month}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">timing_of_month(1-3)</td>
+                <td class="item_detail">
+                  {{selected_item_detail.timing_of_month}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">author</td>
+                <td class="item_detail">
+                  {{selected_item_detail.author}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">recomend</td>
+                <td class="item_detail">
+                  {{selected_item_detail.recomend}}
+                </td>
+              </tr>
+
             </table>
-
-            <!-- <span class="item_name">place</span>
-            <p>{{selected_item.zip_no}}<br>
-            {{selected_item.address}}</p>
-
-            <span class="item_name">visit</span>
-            <p>{{selected_item.visit_date}}</p>
-        
-            <span class="item_name">comment</span>
-            <p>{{selected_item.caption}}</p> -->
           </div>
         </div>
         <!--
@@ -68,38 +119,17 @@
         -->
         <div class="col-sm-3">
           <ul class="item_rate_list">
-            <li class="box"><span class="item_name">season</span>
-            <p>{{selected_item.season}}</p></li>
-            <li class="box"><span class="item_name">migoro</span>
-            <p>{{selected_item.season_monthly}}</p></li>
+            <li class="box"><span class="item_name">month</span>
+            <p>{{selected_item_detail.month}}</p></li>
+            <li class="box"><span class="item_name">place type</span>
+            <p>{{selected_item.place_type}}</p></li>
             <li class="box"><span class="item_name">accessibility</span>
             <p>{{selected_item.accessibility}}</p></li>
             <li class="box"><span class="item_name">crowdness</span>
             <p>{{selected_item.crowdness}}</p></li>
           </ul>
         </div>
-        <ul>
-            <li>prefecture:{{selected_item.prefecture}}</li>
-            <li>caption:{{selected_item.caption}}</li>
-            <li>favorite(=score(0-9)):{{selected_item.favorite}}</li>
-            <li>accessibility(0-9):{{selected_item.accessibility}}</li>
-            <li>crowdness(0-9):{{selected_item.crowdness}}</li>
-            <li>place_type(N,B,P,H):{{selected_item.place_type}}</li>
-            <li>image_url:{{selected_item.image_url}}</li>
-          </ul>
-        <!-- で、こっちがbody情報(明細な)(あ、つまり、MHM_M_PICTURESテーブルの情報な)(つまり、あのデータ管理シートの2枚目な) -->
-          <ul>
-            <li class="box"><span class="item_name">seq</span>
-            <p>{{selected_item_detail.seq}}</p></li>
 
-            <li>comment: {{selected_item_detail.comment}}</li>
-            <li>visit_date: {{selected_item_detail.visit_date}}</li>
-            <li>month(1-12): {{selected_item_detail.month}}</li>
-            <li>timing_of_month(1-3): {{selected_item_detail.timing_of_month}}</li>
-            <li>author: {{selected_item_detail.author}}</li>
-            <li>recomend(0-9): {{selected_item_detail.recomend}}</li>
-          </ul>
-        
       </div>
     </div><!-- /.card -->
   </div><!-- /#detail -->

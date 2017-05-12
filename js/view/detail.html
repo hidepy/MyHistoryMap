@@ -1,4 +1,4 @@
-<div id="map_detailarea_wrapper">
+<div id="map_detailarea_wrapper" ng-init="init()">
   <div id="detail" class="col-md-12 col-12">
 
     <div class="card">
@@ -6,43 +6,56 @@
         <h2>{{selected_item.name}}</h2>
       </div>
 
+<style>
+.img-fluid{
+  width: 192px;
+  height: 144px;
+  padding: 0 8px;
+}
+#thumbnail-carousel{
+  height: 152px;
+}
+</style>
+
       <div id="carousel-wrapper">
-        <slick id="thumbnail-carousel" ng-if="thumbLoaded" class="slider" settings="slickConfig" dots="true">
-          <div class="item" ng-class="{active: ($index == 0)}" ng-repeat="(thumb_idx, item_img) in selected_item.images_thumb track by $index" ng-click="selectThumbnailImg($index)">
-            <div class="item-item col-md-3 col-sm-4">
-              <a href="{{selected_item.images[thumb_idx]}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
-                <img class="d-block img-fluid" ng-src="{{item_img}}" />
-              </a>
-            </div>
+        <slick id="thumbnail-carousel" ng-if="thumbLoaded" settings="slickConfig">
+          <div class="item" ng-repeat="(detail_idx, detail_item) in selected_item.detail_info" ng-click="selectThumbnailImg($index)">
+            <a href="{{detail_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
+              <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
+            </a>
           </div>
         </slick>
       </div>
 
       <div class="card_body clearfix">
-        <div class="left_area">
+        <div class="left_area"> <!-- 一旦、こっちをhead情報としますね -->
           <span class="item_name">place</span>
           <p>{{selected_item.zip_no}}<br>
           {{selected_item.address}}</p>
-
-          <span class="item_name">visit</span>
-          <p>{{selected_item.visit_date}}</p>
       
-          <span class="item_name">comment</span>
-          <p>{{selected_item.caption}}</p>
-        </div>
-        <!--
-        <div>{{selected_item.prefecture}}</div>
-        -->
-        <div class="right_area">
           <ul>
-            <li class="box"><span class="item_name">season</span>
-            <p>{{selected_item.season}}</p></li>
-            <li class="box"><span class="item_name">migoro</span>
-            <p>{{selected_item.season_monthly}}</p></li>
-            <li class="box"><span class="item_name">accessibility</span>
-            <p>{{selected_item.accessibility}}</p></li>
-            <li class="box"><span class="item_name">crowdness</span>
-            <p>{{selected_item.crowdness}}</p></li>
+            <li>prefecture:{{selected_item.prefecture}}</li>
+            <li>caption:{{selected_item.caption}}</li>
+            <li>favorite(=score(0-9)):{{selected_item.favorite}}</li>
+            <li>accessibility(0-9):{{selected_item.accessibility}}</li>
+            <li>crowdness(0-9):{{selected_item.crowdness}}</li>
+            <li>place_type(N,B,P,H):{{selected_item.place_type}}</li>
+            <li>image_url:{{selected_item.image_url}}</li>
+          </ul>
+
+        </div>
+        
+        <div class="right_area"><!-- で、こっちがbody情報(明細な)(あ、つまり、MHM_M_PICTURESテーブルの情報な)(つまり、あのデータ管理シートの2枚目な) -->
+          <ul>
+            <li class="box"><span class="item_name">seq</span>
+            <p>{{selected_item_detail.seq}}</p></li>
+
+            <li>comment: {{selected_item_detail.comment}}</li>
+            <li>visit_date: {{selected_item_detail.visit_date}}</li>
+            <li>month(1-12): {{selected_item_detail.month}}</li>
+            <li>timing_of_month(1-3): {{selected_item_detail.timing_of_month}}</li>
+            <li>author: {{selected_item_detail.author}}</li>
+            <li>recomend(0-9): {{selected_item_detail.recomend}}</li>
           </ul>
         </div>
       </div>

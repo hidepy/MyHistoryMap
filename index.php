@@ -42,11 +42,6 @@ if(isset($callback)) {
   $cond_s_ptype = "";
   $cond_s_score = "";
 
-
-$if_return["msg"] .= $_GET["w_pref"]."(END)";
-$if_return["msg"] .= $_GET["w_ptype"]."(END)";
-$if_return["msg"] .= $_GET["w_score"]."(END)";
-
   {
     // 取得prefを設定
     if(isset($_GET["w_pref"]) && !empty($_GET["w_pref"])){
@@ -149,7 +144,7 @@ $if_return["msg"] .= $_GET["w_score"]."(END)";
   $query .= $orderby_s;
 
   // 制限を付与
-  $query .= " LIMIT :limit";
+  $query .= " LIMIT ".$cond_v_limit;
   //$query .= " LIMIT 40";
 
   $res = array();
@@ -160,7 +155,7 @@ $if_return["msg"] .= $_GET["w_score"]."(END)";
   // パラメータセット
   {
     // 取得件数のバインド
-    $stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
+    //$stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
   }
   $stmt->execute();
 
@@ -300,13 +295,6 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 
   body{
     opacity: 0.92;
-  }
-  #top_navigation{
-    display: none;
-  }
-  .img-fluid{
-    max-width: 196px;
-    max-height: 144px;
   }
   </style>
 

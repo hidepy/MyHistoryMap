@@ -360,20 +360,35 @@ ul.thumb_group li
 .card_wrapper .fav-button{
     position: absolute;
     z-index: 2;
-    top: 0;
-    left: 0;
+    top: 5px;
+    left: 5px;
+    background: rgba(216, 216, 216, 0.74);
+    border: none;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    line-height: 30px;
+    color: rgb(239, 239, 239);
 }
-.card_wrapper .panel-body{
+.card_wrapper .panel-body {
     position: absolute;
     bottom: 0%;
-    left: 0%;
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.65));
+    color: #fff;
+    width: 100%;
+    padding: 3px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.85rem;
 }
 
 #cards_wrapper
 {
     /* display: none; */
-
-    margin-top: 15px;
+    margin: 0;
 }
 #cards_wrapper .list_panel
 {
@@ -389,7 +404,6 @@ ul.thumb_group li
 #cards_wrapper .panel
 {
     border: none;
-    margin: 1px;
 }
 
 #cards_wrapper .panel-heading
@@ -412,23 +426,15 @@ ul.thumb_group li
 #cards_wrapper .panel-heading .ravel
 {
     position: absolute;
-    top: -2px;
-    right: 2px;
-
+    top: 3px;
+    right: 0;
     display: block;
-
-    width: 48px;
+    width: 60px;
     padding: 4px;
-
     text-align: center;
-
     color: #fff;
-    background: #337ab7;
-}
-
-#cards_wrapper .panel-body
-{
-    text-align: center;
+    background: rgba(0, 86, 160, 0.74);
+    font-size: 0.8rem;
 }
 
 #select_list_pref

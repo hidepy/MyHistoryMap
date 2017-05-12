@@ -21,7 +21,7 @@
     <div class="tab-pane" role="tabpanel" id="tab-card">
       <div id="cards_wrapper" class="row">
         <div class="card_wrapper col-md-3 col-4" ng-repeat="(card_idx, item) in items" >
-            <button class="fav-button" ng-click="add2Favorite(card_idx)">star</button>
+            <button class="fav-button" ng-click="add2Favorite(card_idx)">☆</button>
             <div class="panel" ng-click="selectCard(card_idx)">
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>

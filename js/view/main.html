@@ -13,8 +13,7 @@
     </li>
   </ul>
 
-  <div class="tab-content">
-
+  <div class="tab-content" style="position: relative;">
     <div class="tab-pane" ng-class="" role="tabpanel" id="tab-map">
       <div class="col-md-12 col-12">
         <div id="history_map"></div>
@@ -24,7 +23,9 @@
     <div class="tab-pane" role="tabpanel" id="tab-card">
       <div id="cards_wrapper" class="row no-gutters">
         <div class="card_wrapper col-md-3 col-4" ng-repeat="(card_idx, item) in items" >
+          <!--
             <button class="fav-button" ng-click="add2Favorite(card_idx)">☆</button>
+          -->
             <div class="panel" ng-click="selectCard(card_idx)">
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
@@ -42,7 +43,7 @@
 
     <div class="tab-pane" role="tabpanel" id="tab-list">
       <ul>
-        <li ng-repeat="item in items">
+        <li ng-repeat="item in items" ng-click="selectCard($index)">
 
 <ul>
 <!-- <li>id:{{item.id}}</li> -->
@@ -63,5 +64,12 @@
         </li>
       </ul>
     </div>
+
+
+<div class="alert" ng-show="message_info.show" ng-class="message_info.status" role="alert" data-dismiss="alert" style="position: absolute; top: 0; left: 0; width: 100%">
+  {{message_info.message}}({{message_info.status}})({{message_info.show}})
+</div>
+
+
   </div>
 </div>

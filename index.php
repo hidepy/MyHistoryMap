@@ -339,7 +339,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 <h1>http://kenwheeler.github.io/slick/</h1>
 -->
 
-  <div id="contents" ng-view></div>
+  <div id="contents" ng-view autoscroll="true"></div>
 
   <?php
     if(!$is_admin_user && false){
@@ -350,6 +350,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <!-- normal js liblalies -->
   <script src="lib/lightbox/js/lightbox.js"></script>
 
+  <!-- Angular Cmmmons -->
   <!-- Angular core -->
   <script src="lib/angular/angular.js"></script>
   <script src="lib/angular/angular-route.js"></script>
@@ -359,13 +360,8 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
 
-
-<script>
-(function(){
-    'use strict';
-
-})();
-</script>
+  <!-- APP specific -->
+  <!-- Define MHM-APP module -->
   <script src="js/main.js"></script>
   <!-- Directive -->
   <script src="js/directive/adsense.js"></script>
@@ -373,8 +369,6 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <script src="js/controller/HeaderController.js"></script>
   <script src="js/controller/DetailController.js"></script>
   <script src="js/controller/NavSearch.js"></script>
-  <!-- Init js -->
   
-
 </body>
 </html>

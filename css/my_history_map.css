@@ -385,10 +385,8 @@ ul.thumb_group li
     font-size: 0.85rem;
 }
 
-#cards_wrapper
-{
+#cards_wrapper {
     /* display: none; */
-    margin: 0;
 }
 #cards_wrapper .list_panel
 {
@@ -457,4 +455,25 @@ ul.thumb_group li
 }
 #maplist_wrapper > li > p{
     overflow: hidden;
+}
+.search_wrap {
+    padding: 15px;
+}
+.search_conditions li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+.search_conditions li span {
+    display: block;
+    font-size: 0.8em;
+    color: #999;
+}
+.search_conditions {
+    margin: 15px 0 !important;
+    border-radius: 5px;
+    background: #f5f5f5;
+    padding: 15px 10px;
+}
+.search_submit_btn {
+    margin: 30px 0 0;
 }

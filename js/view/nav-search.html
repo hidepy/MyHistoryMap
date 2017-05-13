@@ -5,51 +5,54 @@
     <a class="navbar-brand" href="#">{{title}}</a>
 </nav>
 
-<div ng-show="search_toggle_state">
-	<div class="row">
-		<div class="col-md-3 col-4">
-			<select id="select_list_pref" size="4" multiple ng-model="selected_pref">
+<div ng-show="search_toggle_state" class="search_wrap">
+	<div class="row form-group">
+		<div class="col-md-3 col-sm-6 col-12 mb-3">
+			<label class="col-form-label-sm" for="select_list_pref">地域（複数指定可）</label>
+			<select id="select_list_pref" class="form-control" multiple ng-model="selected_pref">
 				<option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
 			</select>
 		</div>
-		<div class="col-md-3 col-4">
-			<select id="select_list_score" size="4" ng-model="selected_score">
+		<div class="col-md-3 col-sm-6 col-12 mb-3">
+			<label class="col-form-label-sm" for="select_list_score">評価</label>
+			<select id="select_list_score" class="form-control" ng-model="selected_score">
 				<option ng-repeat="option in score_list" value="{{option.id}}">{{option.name}}</option>
 			</select>
 		</div>
-		<div class="col-md-3 col-4">
-			<select id="select_list_type" size="4" multiple ng-model="selected_type">
+		<div class="col-md-3 col-sm-6 col-12 mb-3">
+			<label class="col-form-label-sm" for="select_list_type">タイプ（複数指定可）</label>
+			<select id="select_list_type" class="form-control" multiple ng-model="selected_type">
 				<option ng-repeat="option in type_list" value="{{option.id}}">{{option.name}}</option>
 			</select>
 		</div>
-		<div class="col-md-3 col-4">
-			<select id="select_list_order" size="4" ng-model="selected_order">
+		<div class="col-md-3 col-sm-6 col-12">
+			<label class="col-form-label-sm" for="select_list_order">表示順</label>
+			<select id="select_list_order" class="form-control" ng-model="selected_order">
 				<option ng-repeat="option in order_list" value="{{option.id}}">{{option.name}}</option>
 			</select>
 		</div>
-		<div class="col-md-3 col-4">
-			<label for="input_noimgdata">画像なしデータも取得</label>
-			<input type="checkbox" id="input_noimgdata" ng-model="get_no_img_data" />
+	</div>
+	<div class="row form-group">
+		<div class="col-md-6 col-12 checkbox">
+			<label class="col-form-label-sm" for="input_noimgdata">画像なしデータも取得</label>
+			<input class="form-check-inline" type="checkbox" id="input_noimgdata" ng-model="get_no_img_data" />
 		</div>
-		<div class="col-md-3 col-4">
-			<input id="input_text_keyword" ng-model="keyword" />
+		<div class="col-md-6 col-12">
+			<label class="col-form-label-sm" for="input_text_keyword">キーワード</label>
+			<input id="input_text_keyword" class="form-control" ng-model="keyword" />
 		</div>
 	</div>
-	<div class="row">
-		<button class="btn" ng-click="doSearch()">Search</button>
+	<div class="row no-gutters">
+		<button class="btn btn-info col-12 col-sm-4 mx-auto search_submit_btn" ng-click="doSearch()">Search</button>
 	</div>
 
-
-    <p>
-    	条件=
-<ul>
-<li>{{selected_pref}}</li>
-<li>{{selected_score}}</li>
-<li>{{selected_type}}</li>
-<li>{{selected_order}}</li>
-<li>{{get_no_img_data}}</li>
-<li>{{keyword}}</li>
-</ul>
-    </p>
+	<ul class="row search_conditions">
+		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">地域</span>{{selected_pref}}</li>
+		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">評価</span>{{selected_score}}</li>
+		<li class="col-sm-4 col-md-3 col-md-3 col-6"><span class="condition_kind">タイプ</span>{{selected_type}}</li>
+		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">表示順</span>{{selected_order}}</li>
+		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">画像の有無</span>{{get_no_img_data}}</li>
+		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">キーワード</span>{{keyword}}</li>
+	</ul>
 	
 </div>

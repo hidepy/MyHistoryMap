@@ -358,8 +358,23 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <script src="lib/slick/angular-slick.js"></script>
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
-  <!-- Init js -->
+
+
+<script>
+(function(){
+    'use strict';
+
+})();
+</script>
   <script src="js/main.js"></script>
+  <!-- Directive -->
+  <script src="js/directive/adsense.js"></script>
+  <!-- Controller -->
+  <script src="js/controller/HeaderController.js"></script>
+  <script src="js/controller/DetailController.js"></script>
+  <script src="js/controller/NavSearch.js"></script>
+  <!-- Init js -->
+  
 
 </body>
 </html>

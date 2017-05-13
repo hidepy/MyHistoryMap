@@ -1,6 +1,14 @@
-angular.module('InsertAdsense', [])
-	.directive("adsense", function(){
-		return{
-			template: '<div class="row" id="adsense_wrapper"><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><!-- MyHistoryMap下部広告 --><ins class="adsbygoogle"     style="display:block"     data-ad-client="ca-pub-2131186805773040"     data-ad-slot="5808074819"     data-ad-format="auto"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>'
-		};
-	});
+(function(){
+    'use strict';
+
+	angular.module('MHM-APP')
+        .directive("adsense", function(){
+            return {
+                restrict: "E",
+                template: '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    <ins class="adsbygoogle"         style="display:block"         data-ad-format="autorelaxed"         data-ad-client="ca-pub-2131186805773040"         data-ad-slot="2021420810"></ins>    <script>         (adsbygoogle = window.adsbygoogle || []).push({});    </script>',
+                compile: function(el, attr){
+                    
+                }
+            }
+        });
+})();

@@ -41,7 +41,8 @@ if(isset($callback)) {
   $cond_s_area = "";
   $cond_s_ptype = "";
   $cond_s_score = "";
-
+  $cond_s_keyword = "";
+  $cond_s_hasimg = " AND ((m1.image_url_top <> '') AND (m1.image_url_top IS NOT NULL))"; // デフォルトは画像を持っているレコードのみが対象
   {
     // 取得prefを設定
     if(isset($_GET["w_pref"]) && !empty($_GET["w_pref"])){
@@ -64,10 +65,28 @@ if(isset($callback)) {
         $cond_s_ptype .= " AND m1.place_type IN (".join(",", $splitted_ptype_arr).")";
       }
     }
+    // 取得タイプの指定がなかった場合、N-B-Pのみ指定
+    else{
+      $cond_s_ptype .= " AND m1.place_type IN ('N', 'B', 'P')";
+    }
 
     // 対象をscoreで絞り込み
     if(isset($_GET["w_score"]) && ctype_digit($_GET["w_score"]) ){
       $cond_s_score .= " AND m1.favorite >= " . $dbh->quote($_GET["w_score"]);
+    }
+    // デフォルト検索対象はGOODを意味する
+    else{
+      $cond_s_score .= " AND m1.favorite >= '5'";
+    }
+
+    // 名称あいまい検索
+    if(isset($_GET["w_name"]) && !empty($_GET["w_name"]) ){
+      $cond_s_keyword .= " AND m1.name LIKE " . $dbh->quote("%".$_GET["w_name"]."%");
+    }
+
+    // 画像を持つレコードのみを対象とする
+    if(isset($_GET["w_hasnoimg"]) && !empty($_GET["w_hasnoimg"]) && ($_GET["w_hasnoimg"] == "1")) {
+      $cond_s_hasimg = "";
     }
   }
 
@@ -76,7 +95,7 @@ if(isset($callback)) {
   // Adminユーザの場合
   if($is_admin_user){
     // 200件取得
-    $cond_v_limit = 240;
+    $cond_v_limit = 192;
     // privateのものも取得対象にする
     $cond_s_private = "";
     $cond_s_private_m2 = "";
@@ -103,7 +122,7 @@ if(isset($callback)) {
   }
   
   // 優先度最後にはidソート
-  $orderby_cols[] = "m1.id";
+  $orderby_cols[] = "m1.id desc";
   
   // 配列をカンマjoinする
   $orderby_s .= join(",", $orderby_cols);
@@ -139,6 +158,10 @@ if(isset($callback)) {
   $query .= $cond_s_ptype;
   // scoreの条件
   $query .= $cond_s_score;
+  // nameの条件
+  $query .= $cond_s_keyword;
+  // has no imgの条件
+  $query .= $cond_s_hasimg;
 
   // ソート指定
   $query .= $orderby_s;
@@ -311,6 +334,10 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   ?>
 
   <nav-header></nav-header>
+
+<!--
+<h1>http://kenwheeler.github.io/slick/</h1>
+-->
 
   <div id="contents" ng-view></div>
 

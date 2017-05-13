@@ -8,6 +8,9 @@
     <li class="nav-item">
       <a class="nav-link" ng-click="selectTab('C')" data-toggle="tab" role="tab">Card</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" ng-click="selectTab('L')" data-toggle="tab" role="tab">List</a>
+    </li>
   </ul>
 
   <div class="tab-content">
@@ -35,8 +38,30 @@
             </div>
         </div>
       </div><!-- /#cards_wrapper -->
+    </div>
 
+    <div class="tab-pane" role="tabpanel" id="tab-list">
+      <ul>
+        <li ng-repeat="item in items">
+
+<ul>
+<li>id:{{item.id}}</li>
+<li>name:{{item.name}}</li>
+<li>lat:{{item.lat}}</li>
+<li>lng:{{item.lng}}</li>
+<li>prefecture:{{item.prefecture}}</li>
+<li>zip_no:{{item.zip_no}}</li>
+<li>address:{{item.address}}</li>
+<li>caption:{{item.caption}}</li>
+<li>favorite:{{item.favorite}}</li>
+<li>accessibility:{{item.accessibility}}</li>
+<li>crowdness:{{item.crowdness}}</li>
+<li>place_type:{{item.place_type}}</li>
+<li>image_url:{{item.image_url}}</li>
+</ul>
+
+        </li>
+      </ul>
     </div>
   </div>
-
 </div>

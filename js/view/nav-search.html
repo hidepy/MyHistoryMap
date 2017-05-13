@@ -28,10 +28,28 @@
 			</select>
 		</div>
 		<div class="col-md-3 col-4">
+			<label for="input_noimgdata">画像なしデータも取得</label>
+			<input type="checkbox" id="input_noimgdata" ng-model="get_no_img_data" />
+		</div>
+		<div class="col-md-3 col-4">
 			<input id="input_text_keyword" ng-model="keyword" />
 		</div>
 	</div>
 	<div class="row">
 		<button class="btn" ng-click="doSearch()">Search</button>
 	</div>
+
+
+    <p>
+    	条件=
+<ul>
+<li>{{selected_pref}}</li>
+<li>{{selected_score}}</li>
+<li>{{selected_type}}</li>
+<li>{{selected_order}}</li>
+<li>{{get_no_img_data}}</li>
+<li>{{keyword}}</li>
+</ul>
+    </p>
+	
 </div>

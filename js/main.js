@@ -15,13 +15,6 @@
                 return (s == null) || (s == undefined) || (s == "");
             }
         };
-        /*
-        var TABCONTENT_HEIGHT = window.innerHeight * (45.0 / 100.0);
-        document.getElementById("history_map").style.height   = TABCONTENT_HEIGHT;
-        document.getElementById("cards_wrapper").style.height = TABCONTENT_HEIGHT;
-        document.getElementById("cards_wrapper").style.maxHeight = TABCONTENT_HEIGHT;
-        document.getElementById("cards_wrapper").style.overflow = "scroll";
-        */
     });
 
 // Given:
@@ -160,7 +153,7 @@
                 var lng = null;
 
                 // 変更点があるか                    
-                if(["w_pref", "w_ptype", "w_score", "w_name", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
+                if(["w_pref", "w_ptype", "w_score", "w_name", "w_hasnoimg", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
 
 console.log("forceSearch");
 
@@ -169,6 +162,7 @@ console.log("forceSearch");
                         w_ptype: $routeParams.w_ptype || "",
                         w_score: $routeParams.w_score || "",
                         w_name : $routeParams.w_name  || "",
+                        w_hasnoimg : $routeParams.w_hasnoimg  || "",
                         order  : $routeParams.order   || ""
                     });
                 }
@@ -210,14 +204,25 @@ console.log("else... maybe first load");
                 if(tabname == "M"){
                     jQuery("#tab-map").tab("show");
                     jQuery("#tab-map").addClass("active");
+                    
                     jQuery("#tab-card").removeClass("active");
+                    jQuery("#tab-list").removeClass("active");
 
                     MapHandler.update(lat, lng);
                 }
                 else if(tabname == "C"){
                     jQuery("#tab-card").tab("show");
                     jQuery("#tab-card").addClass("active");
+
                     jQuery("#tab-map").removeClass("active");
+                    jQuery("#tab-list").removeClass("active");
+                }
+                else if(tabname == "L"){
+                    jQuery("#tab-list").tab("show");
+                    jQuery("#tab-list").addClass("active");
+
+                    jQuery("#tab-map").removeClass("active");
+                    jQuery("#tab-card").removeClass("active");
                 }
 
                 CurrentState.selectTab = tabname;
@@ -228,6 +233,7 @@ console.log("else... maybe first load");
                 $scope.selected_item = {};
                 // 一旦削除
                 deleteAllMarkers();
+
                 // 検索&描画
                 searchPoint(params, function(items){
                     $scope.items = items;
@@ -272,15 +278,15 @@ console.log("else... maybe first load");
                 dots: true,
                 infinite: false,
                 speed: 300,
-                slidesToShow: 4,
-                slidesToScroll: 4,
+                slidesToShow: 5,
+                slidesToScroll: 1,
                 responsive: [
                     {
                       breakpoint: 1024,
                       settings: {
-                        slidesToShow: 4,
-                        slidesToScroll: 4,
-                        infinite: true,
+                        slidesToShow: 5,
+                        slidesToScroll: 1,
+                        //infinite: true,
                         dots: true
                       }
                     },
@@ -288,16 +294,16 @@ console.log("else... maybe first load");
                       breakpoint: 600,
                       settings: {
                         slidesToShow: 3,
-                        slidesToScroll: 3,
-                        infinite: true
+                        slidesToScroll: 1,
+                        //infinite: true
                       }
                     },
                     {
                       breakpoint: 480,
                       settings: {
-                        slidesToShow: 2,
-                        slidesToScroll: 2,
-                        infinite: true
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        //infinite: true
                       }
                     }
                   ],
@@ -336,39 +342,40 @@ console.log("else... maybe first load");
                 scope: true,
                 controller: function($scope){
                     // ----------- Search Params ----------
-                    $scope.title = "zekkei map";
-                    $scope.search_group = "zenkoku";
+                    $scope.title = "絶景マップ";
 
                     $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
                     $scope.selected_pref = [];
 
                     $scope.type_list = [
-                        {id: "",  name: "(no)"},
-                        {id: "N", name: "Nat"},
-                        {id: "B", name: "Bui"},
-                        {id: "P", name: "Pla"},
-                        {id: "H", name: "Hot"},
+                        {id: "",  name: "(指定なし)"},
+                        {id: "N", name: "自然の景色"},
+                        {id: "B", name: "建造物"},
+                        {id: "P", name: "プレイスポット"},
+                        //{id: "H", name: "宿"}
                     ];
                     $scope.selected_type = [];
 
                     $scope.score_list = [
-                        {id: "8", name: "SPLENDID!!"},
-                        {id: "5", name: "GOOD!"},
-                        {id: "",  name: "ALL"}
+                        {id: "8", name: "最高の絶景のみ！"},
+                        {id: "5", name: "良景以上"},
+                        {id: "",  name: "すべて"}
                     ];
                     $scope.selected_score = "";
 
                     $scope.order_list = [
-                        {id: "", name: "default"},
-                        {id: "o_rec-d", name: "recommend"},
-                        {id: "o_new-d", name: "newer-desc"},
-                        {id: "o_new-a", name: "newer-asc"},
-                        {id: "o_cro-d", name: "crowdness-desc"},
-                        {id: "o_cro-a", name: "crowdness-asc"},
-                        {id: "o_acc-d", name: "accessibility-desc"},
-                        {id: "o_acc-a", name: "accessibility-asc"}
+                        {id: "", name: "(ソート指定なし)"},
+                        {id: "o_rec-d", name: "オススメ順"},
+                        {id: "o_new-d", name: "新しい順"},
+                        {id: "o_new-a", name: "古い順"},
+                        {id: "o_cro-a", name: "混雑度高い順"},
+                        {id: "o_cro-d", name: "混雑度高い順"},
+                        {id: "o_acc-d", name: "アクセスし易い順"},
+                        {id: "o_acc-a", name: "アクセスし難い順"}
                     ];
                     $scope.selected_order = "";
+
+                    $scope.get_no_img_data = false;
 
                     $scope.keyword = "";
 
@@ -396,6 +403,9 @@ console.log("else... maybe first load");
                         }
                         if($scope.keyword){
                             param["w_name"] = $scope.keyword;
+                        }
+                        if($scope.get_no_img_data){
+                            param["w_hasnoimg"] = $scope.get_no_img_data ? "1" : "0";
                         }
                         // order by句のパラメータを設定
                         if(!!$scope.selected_order){
@@ -469,9 +479,9 @@ console.log("else... maybe first load");
                                     crowdness: item.crowdness,
                                     place_type: item.place_type,
                                     image_url: item.image_url,
-                                    detail_info: response.detail_info[item.id],
+                                    detail_info: response.detail_info[item.id]/*,
                                     images: detail_images,
-                                    images_thumb: detail_images_thumb
+                                    images_thumb: detail_images_thumb*/
                                 });
                             }
                         }

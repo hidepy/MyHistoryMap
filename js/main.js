@@ -18,6 +18,7 @@
     });
 
     // angular module setup
+    // create MHM-APP 
    angular.module('MHM-APP', ['ngRoute', 'slickCarousel', 'MapHandlerService'])
 
         .config(function($routeProvider, $locationProvider){
@@ -36,7 +37,7 @@
             $locationProvider.hashPrefix('');
             $locationProvider.html5Mode(true);
         })
-        .controller('RootController', function($scope, $location){
+        .controller('RootController', function($scope, $location, $timeout){
 
             // ---------- properties ----------
             $scope.PLACE_COLOR_MAP = {
@@ -58,7 +59,22 @@
                 }
             };
 
+            $scope.message_info = {
+                message: "this is message!!",
+                show: false,
+                status: ""
+            };
+
             // ---------- methods ----------
+            $scope.showMessage = function(message, status){
+                $scope.message_info.message = message;
+                $scope.message_info.status = status || "alert-info";
+                $scope.message_info.show = true;
+                $timeout(function(){
+                    $scope.message_info.show = false;
+                }, 4000);
+
+            };
             $scope.move = function(path, param){
                 $location.path(path).search(param || {});
             };

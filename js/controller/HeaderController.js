@@ -21,6 +21,14 @@
                 // レコード取得
                 MapPointDataAdapter.getData(param)
                     .then(function(items){
+                        // レコードなしの場合
+                        if(!items){
+                            $scope.showMessage("データ取得に失敗しました...", "alert-dangaer");
+                        }
+                        else{
+                            $scope.showMessage("" + items.length + "件ヒットしました", "alert-success");
+                        }
+
                         if(!!callback) callback(items);
                     });
             };

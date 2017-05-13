@@ -61,6 +61,7 @@
 
             // initialize
             $scope.init = function(){
+
                 // carousel setup
                 $timeout(function(){
                     $scope.selected_img_index = 0;

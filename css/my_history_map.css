@@ -157,15 +157,17 @@ nav > .navbar-toggler-right{
 }
 
 #carousel-wrapper{
-    min-height: 240px;
+    
 }
-
+.slick-slide {
+    height: auto !important;
+}
 #thumbnail-carousel{
-    height: 240px;
+   /* height: 240px;*/
 }
 
 .card_heading{
-    margin: 8px 0;
+    margin: 0 0 8px;
 }
 
 .card_heading h2
@@ -184,13 +186,13 @@ nav > .navbar-toggler-right{
 {
     position: relative;
 
-    margin: 0 12px 10px 0;
-    padding: 14px 15px 0 20px;
-
+    /*margin: 0 12px 10px 0;
+    padding: 14px 15px 0 20px;*/
+    padding: 10px;
     background: #93dfb8;
-    box-shadow: 12px 0 0 0 #93dfb8, 0 12px 0 0 #93dfb8, 1px 15px 4px -3px rgba(0,0,0,.2);
+    /*box-shadow: 12px 0 0 0 #93dfb8, 0 12px 0 0 #93dfb8, 1px 15px 4px -3px rgba(0,0,0,.2);*/
 }
-.card_heading h2:before
+/*.card_heading h2:before
 {
     position: absolute;
     top: 100%;
@@ -214,15 +216,6 @@ nav > .navbar-toggler-right{
 
     width: 0;
     height: 0;
-    /*    content: " ";
-    position: absolute;
-    padding: 0 20px;
-    bottom: -4px;
-    left: 38%;
-    width: 25%;
-    height: 10px;
-    border-bottom: 1px solid #fff;
-    background: rgba(62, 167, 85, 0.4); */
 
     content: ' ';
 
@@ -230,7 +223,7 @@ nav > .navbar-toggler-right{
     border-style: solid;
     border-color: transparent;
     border-top-color: #fff;
-}
+}*/
 
 .card_body
 {

@@ -2,7 +2,7 @@
 	<button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="#">{{title}}</a>
+    <a class="navbar-brand" href="#" ng-click="move2Top()">{{title}}</a>
 </nav>
 
 <div ng-show="search_toggle_state" class="search_wrap">
@@ -55,4 +55,11 @@
 		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">キーワード</span>{{keyword}}</li>
 	</ul>
 	
+</div>
+
+<div>
+	<a tabindex="0" class="btn btn-lg btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="{{popover_content}} popover_content">Dismissible popover</a>
+
+
+
 </div>

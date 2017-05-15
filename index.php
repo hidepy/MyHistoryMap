@@ -335,10 +335,6 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
 
   <nav-header></nav-header>
 
-<!--
-<h1>http://kenwheeler.github.io/slick/</h1>
--->
-
   <div id="contents" ng-view autoscroll="true"></div>
 
   <?php

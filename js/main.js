@@ -40,6 +40,7 @@
         .controller('RootController', function($scope, $location, $timeout){
 
             // ---------- properties ----------
+            // Markerの色をplace_typeから決定するためのmap
             $scope.PLACE_COLOR_MAP = {
                 "N": {
                     body: "#80d080",
@@ -58,9 +59,17 @@
                     line: "#303030"
                 }
             };
+            // monthからseasonを返す
+            $scope.MONTH_SEASON_MAP = {
+                "3": "SPRI", "4": "SPRI", "5": "SPRI",
+                "6": "SUMM", "7": "SUMM", "8": "SUMM",
+                "9": "AUTU", "10":"AUTU", "11":"AUTU",
+                "12":"WINT", "1": "WINT", "2": "WINT"
+            };
 
+            // メッセージ表示に関するobject
             $scope.message_info = {
-                message: "this is message!!",
+                message: "",
                 show: false,
                 status: ""
             };
@@ -72,11 +81,17 @@
                 $scope.message_info.show = true;
                 $timeout(function(){
                     $scope.message_info.show = false;
-                }, 4000);
+                }, 3000);
 
             };
             $scope.move = function(path, param){
                 $location.path(path).search(param || {});
+            };
+            $scope.getCurrentPage = function(){
+                return $location.path();
+            };
+            $scope.isDetailPage = function(){
+                return $scope.getCurrentPage() == "/detail/";
             };
         })
         // Header-Detail画面で値のやり取りに使用. 既に検索しているheader情報や選択しているindexの値を保持する
@@ -87,13 +102,6 @@
             this.searchCondition = {};
         })
         .service("MapPointDataAdapter", function($http){
-            // monthからseasonを返す
-            var month_season_map = {
-                "3": "SPRI", "4": "SPRI", "5": "SPRI",
-                "6": "SUMM", "7": "SUMM", "8": "SUMM",
-                "9": "AUTU", "10":"AUTU", "11":"AUTU",
-                "12":"WINT", "1": "WINT", "2": "WINT"
-            };
             this.getData = function(param){
                 var query_string = "needonlydata=true";
                 for(var p in param){
@@ -107,17 +115,6 @@
                         if(response && response.head_info && (response.head_info.length > 0)){
                             for(var i = 0; i < response.head_info.length; i++){
                                 var item = response.head_info[i];
-                                var detail_image_info = response.detail_info[item.id];
-                                var detail_images = [];
-                                var detail_images_thumb = [];
-                                if(detail_image_info){
-                                    detail_images = detail_image_info.map(function(v){
-                                        return v.image_url;
-                                    });
-                                    detail_images_thumb = detail_image_info.map(function(v){
-                                        return v.image_url_thumb;
-                                    });
-                                }
                                 res_items.push({
                                     id: item.id,
                                     name: item.name,

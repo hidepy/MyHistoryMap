@@ -8,7 +8,7 @@
                 scope: true,
                 controller: function($scope){
                     // ----------- Search Params ----------
-                    $scope.title = "絶景マップ";
+                    $scope.title = $scope.isDetailPage() ? "戻る" : "絶景マップ";
 
                     $scope.pref_list = [                                                            "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
                     $scope.selected_pref = [];
@@ -34,7 +34,7 @@
                         {id: "o_rec-d", name: "オススメ順"},
                         {id: "o_new-d", name: "新しい順"},
                         {id: "o_new-a", name: "古い順"},
-                        {id: "o_cro-a", name: "混雑度高い順"},
+                        {id: "o_cro-a", name: "混雑度低い順"},
                         {id: "o_cro-d", name: "混雑度高い順"},
                         {id: "o_acc-d", name: "アクセスし易い順"},
                         {id: "o_acc-a", name: "アクセスし難い順"}
@@ -47,9 +47,25 @@
 
                     $scope.search_toggle_state = false;
 
+                    $scope.popover_content = "myts";
+
                     $scope.toggleSearchMenu = function(){
                         $scope.search_toggle_state = !$scope.search_toggle_state;
-                    }
+                    };
+
+                    $scope.move2Top = function($event){
+                        $event.preventDefault();
+
+console.log("current path=" + $scope.getCurrentPage());
+
+                        // 詳細ページなら前画面に戻る, ヘッダページなら条件クリアで再描画
+                        if($scope.isDetailPage()){
+                            $window.history.back();
+                        }
+                        else{
+                            $scope.move("/");
+                        }
+                    };
 
                     $scope.doSearch = function(){
                         // close search area

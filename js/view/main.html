@@ -13,19 +13,20 @@
     </li>
   </ul>
 
+  
   <div class="tab-content" style="position: relative;">
+  
+    <!-- Map tab -->
     <div class="tab-pane" ng-class="" role="tabpanel" id="tab-map">
       <div class="col-md-12 col-12">
         <div id="history_map"></div>
       </div>
     </div>
 
+    <!-- Card Tab -->
     <div class="tab-pane" role="tabpanel" id="tab-card">
       <div id="cards_wrapper" class="row no-gutters">
         <div class="card_wrapper col-md-3 col-4" ng-repeat="(card_idx, item) in items" >
-          <!--
-            <button class="fav-button" ng-click="add2Favorite(card_idx)">☆</button>
-          -->
             <div class="panel" ng-click="selectCard(card_idx)">
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
@@ -41,10 +42,44 @@
       </div><!-- /#cards_wrapper -->
     </div>
 
+    <!-- List Tab -->
     <div class="tab-pane" role="tabpanel" id="tab-list">
       <ul>
-        <li ng-repeat="item in items" ng-click="selectCard($index)">
+        <li style="position: relative;" ng-repeat="item in items" ng-click="selectCard($index)">
+          
+          <img ng-src="{{item.image_url}}" class="img-square" />
 
+          <div class="row">
+            <div class="col-md-9 col-9">{{item.name}}</div>
+            <div class="col-md-3 col-3">{{item.prefecture}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 col-3">{{item.zip_no}}</div>
+            <div class="col-md-9 col-9">{{item.address}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 col-12">{{item.caption}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 col-3">
+              <p>fav</p>
+              <p>{{item.favorite}}</p>
+            </div>
+            <div class="col-md-3 col-3">
+              <p>acc</p>
+              <p>{{item.accessibility}}</p>
+            </div>
+            <div class="col-md-3 col-3">
+              <p>cro</p>
+              <p>{{item.crowdness}}</p>
+            </div>
+            <div class="col-md-3 col-3">
+              <p>pla</p>
+              <p>{{item.place_type}}</p>
+            </div>
+          </div>
+          
+<!--
 <ul>
 <li>id:{{item.id}}</li>
 <li>name:{{item.name}}</li>
@@ -60,6 +95,7 @@
 <li>place_type:{{item.place_type}}</li>
 <li>image_url:{{item.image_url}}</li>
 </ul>
+-->
 
         </li>
       </ul>

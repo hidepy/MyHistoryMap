@@ -29,12 +29,19 @@
                             $scope.showMessage("" + items.length + "件ヒットしました", "alert-success");
                         }
 
+                        // 取得データを画面描画向けオブジェクトに納める
+                        $scope.items = items;
+                        // 取得データをcurrent stateに納める
+                        CurrentState.searchedItems = $scope.items;
+
+                        // callbackがあれば実行
                         if(!!callback) callback(items);
                     });
             };
             // card 又は markerのclick時動作を1本化
             var selectItem = function(index){
-                CurrentState.searchedItems = $scope.items;
+                // ここじゃなくて、検索直後にitemsを同期することに
+                //CurrentState.searchedItems = $scope.items;
                 CurrentState.index = index;
                 CurrentState.selectedTab = "M";
 
@@ -177,7 +184,6 @@ console.log("else... maybe first load");
 
                 // 検索&描画
                 searchPoint(params, function(items){
-                    $scope.items = items;
                     addAllMarkers();
                 });
             };

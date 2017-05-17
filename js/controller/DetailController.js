@@ -19,10 +19,10 @@
             $scope.slickConfig = {
                 //enabled: true,
                 dots: true,
+                centerMode: true,
                 infinite: false,
-                speed: 300,
+                centerPadding: '60px',
                 slidesToShow: 3,
-                slidesToScroll: 1,
                 responsive: [
                     {
                       breakpoint: 1024,
@@ -36,17 +36,19 @@
                     {
                       breakpoint: 600,
                       settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 1,
-                        //infinite: true
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: '40px',
+                        slidesToShow: 3
                       }
                     },
                     {
                       breakpoint: 480,
                       settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1,
-                        //infinite: true
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: '40px',
+                        slidesToShow: 1
                       }
                     }
                   ],

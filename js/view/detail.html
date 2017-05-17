@@ -1,4 +1,4 @@
-<div id="map_detailarea_wrapper" ng-init="init()">
+  <div id="map_detailarea_wrapper" ng-init="init()">
   <div id="detail" class="col-md-12 col-12">
 
     <div class="card">
@@ -9,8 +9,22 @@
 <style>
 .img-fluid{
   margin: 0 auto;
-  padding: 0 8px;
+  padding: 0 3px;
 }
+.img-fluid {
+    -moz-transform: scale(0.95);
+    -ms-transform: scale(0.95);
+    -o-transform: scale(0.95);
+    -webkit-transform: scale(0.95);
+    opacity: 0.8;
+    transform: scale(0.95);
+    transition: all 300ms ease;
+  }
+.slick-center img{
+transform: scale(1);
+    opacity: 1;
+}
+
 </style>
 
       <div id="carousel-wrapper">

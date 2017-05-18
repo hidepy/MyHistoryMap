@@ -10,7 +10,7 @@ if(!configs){
 } 
 
 // Adminユーザか確認
-$is_admin_user = ($_SESSION["imtasokori"] == true) && isset($_GET["adminkey"]);
+$is_admin_user = ($_SESSION["imtasokori"] == true);
 
 // callbackパラメータを取得
 $callback = $_GET["callback"];
@@ -256,7 +256,8 @@ if(isset($callback)) {
     }
   }
   
-  $if_return["msg"] .= "sql-head=".$query.", sql-body=".$query_detail;
+  //$if_return["msg"] .= '$_SESSION["imtasokori"]='.$_SESSION["imtasokori"].", $is_admin_user=".$is_admin_user;
+  //$if_return["msg"] .= "sql-head=".$query.", sql-body=".$query_detail;
 
   header( 'Content-Type: text/javascript; charset=utf-8' );
 
@@ -286,11 +287,6 @@ else{
 
 <html ng-app="MHM-APP">
 <head>
-<!--
-値受け渡しで結構いけてる感じらしい
-http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovider/
--->
-
   <meta charset="utf-8">
     
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -317,12 +313,11 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <style>
 
   body{
-    opacity: 0.92;
+    opacity: 0.12;
   }
   </style>
 
   <base href="/webapps/zekkei-map/">
-
 </head> 
 
 <body ng-controller="RootController">
@@ -338,7 +333,7 @@ http://twofuckingdevelopers.com/2014/07/angularjs-best-practices-003-routeprovid
   <div id="contents" ng-view autoscroll="true"></div>
 
   <?php
-    if(!$is_admin_user && false){
+    if(!$is_admin_user){
       echo "<adsense></adsense>";
     }
   ?>

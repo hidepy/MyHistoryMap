@@ -6,6 +6,7 @@
     document.addEventListener("DOMContentLoaded", function(){
         // 本来は、angularの世界なんでservice化すべきとも思うが...angular以外でも使い回ししたいんで
         window.StorageManager_Fav = new StorageManager("MHM-Favorite");
+        window.StorageManager_Settings = new StorageManager("MHM-Settings");
 
         window.CommonFunctions = {
             formatDate: function(date){
@@ -98,7 +99,7 @@
         .service("CurrentState", function(){
             this.searchedItems = [];
             this.index = -1;
-            this.selectedTab = "M";
+            this.selectedTab = window.StorageManager_Settings.get("selectedTab") || "M";
             this.searchCondition = {};
         })
         .service("MapPointDataAdapter", function($http){

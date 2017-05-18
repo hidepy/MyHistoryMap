@@ -6,7 +6,7 @@
             return {
                 templateUrl: "js/view/nav-search.html",
                 scope: true,
-                controller: function($scope){
+                controller: function($scope, $window){
                     // ----------- Search Params ----------
                     $scope.title = $scope.isDetailPage() ? "戻る" : "絶景マップ";
 
@@ -47,16 +47,12 @@
 
                     $scope.search_toggle_state = false;
 
-                    $scope.popover_content = "myts";
-
                     $scope.toggleSearchMenu = function(){
                         $scope.search_toggle_state = !$scope.search_toggle_state;
                     };
 
                     $scope.move2Top = function($event){
                         $event.preventDefault();
-
-console.log("current path=" + $scope.getCurrentPage());
 
                         // 詳細ページなら前画面に戻る, ヘッダページなら条件クリアで再描画
                         if($scope.isDetailPage()){

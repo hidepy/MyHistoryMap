@@ -12,6 +12,9 @@
                 images_thumb: []
             };
             
+            // 検索条件ポップアップ表示用
+            $scope.popover_content = "";
+
             // ---------- Local Functions ----------
             // point dataを検索する
             var searchPoint = function(param, callback){
@@ -100,6 +103,12 @@
                 var lat = null;
                 var lng = null;
 
+                // popover initialize
+                jQuery('[data-toggle="popover"]').popover();
+
+$scope.popover_content = JSON.stringify($routeParams);
+
+
                 // 変更点があるか                    
                 if(["w_pref", "w_ptype", "w_score", "w_name", "w_hasnoimg", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
 
@@ -149,16 +158,8 @@ console.log("else... maybe first load");
                 $scope.selectTab(CurrentState.selectTab, lat, lng);
             };
             $scope.selectTab = function(tabname, lat, lng){
-                if(tabname == "M"){
-                    jQuery("#tab-map").tab("show");
-                    jQuery("#tab-map").addClass("active");
 
-                    jQuery("#tab-card").removeClass("active");
-                    jQuery("#tab-list").removeClass("active");
-
-                    MapHandler.update(lat, lng);
-                }
-                else if(tabname == "C"){
+                if(tabname == "C"){
                     jQuery("#tab-card").tab("show");
                     jQuery("#tab-card").addClass("active");
 
@@ -172,8 +173,18 @@ console.log("else... maybe first load");
                     jQuery("#tab-map").removeClass("active");
                     jQuery("#tab-card").removeClass("active");
                 }
+                else{//(tabname == "M"){
+                    jQuery("#tab-map").tab("show");
+                    jQuery("#tab-map").addClass("active");
+
+                    jQuery("#tab-card").removeClass("active");
+                    jQuery("#tab-list").removeClass("active");
+
+                    MapHandler.update(lat, lng);
+                }
 
                 CurrentState.selectTab = tabname;
+                window.StorageManager_Settings.set("selectedTab", tabname);
             };
             // 現在のpointitemsから全件描画する
             $scope.updateMapPoints = function(params){

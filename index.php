@@ -95,7 +95,7 @@ if(isset($callback)) {
   // Adminユーザの場合
   if($is_admin_user){
     // 200件取得
-    $cond_v_limit = 192;
+    $cond_v_limit = 96;
     // privateのものも取得対象にする
     $cond_s_private = "";
     $cond_s_private_m2 = "";
@@ -313,7 +313,7 @@ else{
   <style>
 
   body{
-    opacity: 0.12;
+    opacity: 0.92;
   }
   </style>
 
@@ -332,12 +332,6 @@ else{
 
   <div id="contents" ng-view autoscroll="true"></div>
 
-  <?php
-    if(!$is_admin_user){
-      echo "<adsense></adsense>";
-    }
-  ?>
-
   <!-- normal js liblalies -->
   <script src="lib/lightbox/js/lightbox.js"></script>
 
@@ -355,7 +349,14 @@ else{
   <!-- Define MHM-APP module -->
   <script src="js/main.js"></script>
   <!-- Directive -->
-  <script src="js/directive/adsense.js"></script>
+  <?php
+  if(!$is_admin_user){
+    echo '<script src="js/directive/adsense.js"></script>';
+  }
+  else{
+    echo '<script src="js/directive/no-adsense.js"></script>';
+  }
+  ?>
   <!-- Controller -->
   <script src="js/controller/HeaderController.js"></script>
   <script src="js/controller/DetailController.js"></script>

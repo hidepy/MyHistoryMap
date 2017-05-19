@@ -2,11 +2,16 @@
 <div id="header-page-wrapper" ng-init="init()">
 
   <!-- 検索条件wrapper -->
-  <div>
+  <div ng-show="!!search_condition_text">
+    <!--
     <a tabindex="0" class="btn btn-lg btn-link" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="現在の検索条件： {{popover_content}}">Show Search Condition</a>
+  -->
+
   <!--
     <input type="text" ng-model="popover_content" />
   -->
+
+    検索条件：{{search_condition_text}}
   </div>
 
   <ul class="nav nav-tabs" role="tablist">
@@ -86,32 +91,13 @@
               <p>{{item.place_type}}</p>
             </div>
           </div>
-          
-<!--
-<ul>
-<li>id:{{item.id}}</li>
-<li>name:{{item.name}}</li>
-<li>lat:{{item.lat}}</li>
-<li>lng:{{item.lng}}</li>
-<li>prefecture:{{item.prefecture}}</li>
-<li>zip_no:{{item.zip_no}}</li>
-<li>address:{{item.address}}</li>
-<li>caption:{{item.caption}}</li>
-<li>favorite:{{item.favorite}}</li>
-<li>accessibility:{{item.accessibility}}</li>
-<li>crowdness:{{item.crowdness}}</li>
-<li>place_type:{{item.place_type}}</li>
-<li>image_url:{{item.image_url}}</li>
-</ul>
--->
-
         </li>
       </ul>
     </div>
 
 
 <div class="alert" ng-show="message_info.show" ng-class="message_info.status" role="alert" data-dismiss="alert" style="position: absolute; top: 0; left: 0; width: 100%">
-  {{message_info.message}}({{message_info.status}})({{message_info.show}})
+  {{message_info.message}}
 </div>
 
 

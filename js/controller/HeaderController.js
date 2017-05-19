@@ -6,20 +6,86 @@
             // map初期化
             MapHandler.loadMap(document.getElementById("history_map"));
 
+            // local variables
+            var PREF_LATLNG_MAP = {
+                "北海道": {lat: "43.4350699", lng: "140.5482073"},
+                "青森": {lat: "40.881569", lng: "139.6497326"},
+                "秋田": {lat: "39.6869501", lng: "139.2229414"},
+                "岩手": {lat: "39.5935961", lng: "140.241528"},
+                "宮城": {lat: "38.3870213", lng: "140.4146086"},
+                "山形": {lat: "38.4693908", lng: "138.9618567"},
+                "福島": {lat: "37.3827211", lng: "139.5450099"},
+                "新潟": {lat: "37.8487287", lng: "138.745398"},
+                "茨城": {lat: "36.340776", lng: "139.7080265"},
+                "栃木": {lat: "36.6752035", lng: "139.2490494"},
+                "群馬": {lat: "36.5204079", lng: "138.4728766"},
+                "千葉": {lat: "35.5003229", lng: "139.7498499"},
+                "東京": {lat: "35.6691088", lng: "139.6012945"},
+                "神奈川": {lat: "35.4003679", lng: "139.0956004"},
+                "埼玉": {lat: "36.0172351", lng: "138.7450387"},
+                "山梨": {lat: "35.5688097", lng: "138.0968588"},
+                "長野": {lat: "36.1091974", lng: "136.9108193"},
+                "富山": {lat: "36.6257288", lng: "136.7054459"},
+                "石川": {lat: "36.8362677", lng: "135.6806511"},
+                "福井": {lat: "35.8182596", lng: "135.5804147"},
+                "岐阜": {lat: "35.7982535", lng: "136.404079"},
+                "静岡": {lat: "35.1189809", lng: "137.7647538"},
+                "愛知": {lat: "35.0000451", lng: "136.6946621"},
+                "三重": {lat: "34.4850732", lng: "135.298977"},
+                "滋賀": {lat: "35.2458092", lng: "135.5488915"},
+                "奈良": {lat: "34.6868987", lng: "135.7913404"},
+                "和歌山": {lat: "33.9074646", lng: "134.945812"},
+                "大阪": {lat: "34.678395", lng: "135.4601304"},
+                "京都": {lat: "35.0060799", lng: "135.6909095"},
+                "兵庫": {lat: "34.9100463", lng: "133.7393365"},
+                "岡山": {lat: "34.8243224", lng: "133.2795991"},
+                "広島": {lat: "34.39383", lng: "132.371659"},
+                "鳥取": {lat: "35.3347544", lng: "133.2647666"},
+                "島根": {lat: "34.9521637", lng: "131.9368246"},
+                "山口": {lat: "34.2543485", lng: "131.0729749"},
+                "香川": {lat: "34.2882976", lng: "133.6634605"},
+                "愛媛": {lat: "33.5984744", lng: "132.2922683"},
+                "高知": {lat: "33.5703793", lng: "133.369774"},
+                "徳島": {lat: "33.8946209", lng: "133.6806442"},
+                "福岡": {lat: "33.5987303", lng: "130.317209"},
+                "佐賀": {lat: "33.284401", lng: "129.8607394"},
+                "長崎": {lat: "32.7585991", lng: "129.4931165"},
+                "熊本": {lat: "32.6438624", lng: "130.0855072"},
+                "大分": {lat: "33.2261278", lng: "130.8944303"},
+                "宮崎": {lat: "32.094846", lng: "130.173191"},
+                "鹿児島": {lat: "31.5227198", lng: "130.2756005"},
+                "沖縄": {lat: "26.5838881", lng: "127.1568673"}
+            };
+            var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "order", "w_name", "w_hasnoimg"];
+            var SEARCH_COND_NAME_MAP = {
+                "w_pref": "地域",
+                "w_score": "評価",
+                "w_ptype": "タイプ",
+                "order": "表示順",
+                "w_hasnoimg": "画像なしデータを含む",
+                "w_name": "キーワード"
+            };
+
             // ---------- Display Items ----------
             $scope.items = [];
             $scope.selected_item = {
                 images_thumb: []
             };
             
-            // 検索条件ポップアップ表示用
-            $scope.popover_content = "";
+            // 検索条件表示用
+            $scope.search_condition_text = "";
 
             // ---------- Local Functions ----------
             // point dataを検索する
             var searchPoint = function(param, callback){
                 // 検索条件を更新
                 CurrentState.searchCondition = param;
+                // タイトルを更新
+                $scope.binding.title = !!param && !window.CommonFunctions.isEmpty(param.w_pref) ? param.w_pref : "全国";
+                // 検索条件を更新
+                $scope.search_condition_text = SEARCH_COND_ID.reduce((p, c)=>{
+                    return p + ($routeParams[c] ? SEARCH_COND_NAME_MAP[c] + "=" + $routeParams[c] + ", " : "");
+                }, "");
 
                 // レコード取得
                 MapPointDataAdapter.getData(param)
@@ -100,19 +166,35 @@
                 console.log("HeaderController -> init");
 
                 CurrentState.searchCondition = CurrentState.searchCondition || {};
+
+
+
                 var lat = null;
                 var lng = null;
 
-                // popover initialize
-                jQuery('[data-toggle="popover"]').popover();
-
-$scope.popover_content = JSON.stringify($routeParams);
-
-
                 // 変更点があるか                    
-                if(["w_pref", "w_ptype", "w_score", "w_name", "w_hasnoimg", "order"].filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
+                if(SEARCH_COND_ID.filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
 
 console.log("forceSearch");
+
+                    // 検索条件にprefがあれば、そこからデフォルト緯度経度を求める
+                    var prefs = $routeParams["w_pref"] || "";
+                    if(!window.CommonFunctions.isEmpty(prefs)){
+                        var latlngs_filtered = prefs.split("-")
+                            .map(v=>PREF_LATLNG_MAP[v])
+                            .filter(v=>!!v && !!v.lat && !!v.lng);
+
+                        lat = 0;
+                        lng = 0;
+                        for(var i = 0; i < latlngs_filtered.length; i++){
+                            lat += Number(latlngs_filtered[i].lat);
+                            lng += Number(latlngs_filtered[i].lng);
+                        }
+                        lat /= latlngs_filtered.length;
+                        lng /= latlngs_filtered.length;
+
+                        console.log("calclated latlng=" + lat + "," + lng);
+                    }
 
                     $scope.updateMapPoints({
                         w_pref : $routeParams.w_pref  || "",

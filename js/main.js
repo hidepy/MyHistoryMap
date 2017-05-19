@@ -68,6 +68,31 @@
                 "12":"WINT", "1": "WINT", "2": "WINT"
             };
 
+            // 検索条件のリスト. 文字解釈にも使用する
+            $scope.pref_list = ["北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島", "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川", "新潟", "富山", "石川", "福井", "山梨", "長野", "岐阜", "静岡", "愛知", "三重", "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山", "鳥取", "島根", "岡山", "広島", "山口", "徳島", "香川", "愛媛", "高知", "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄"];
+            $scope.type_list = [
+                {id: "",  name: "(指定なし)"},
+                {id: "N", name: "自然の景色"},
+                {id: "B", name: "建造物"},
+                {id: "P", name: "プレイスポット"},
+                //{id: "H", name: "宿"}
+            ];
+            $scope.score_list = [
+                {id: "8", name: "最高の絶景のみ！"},
+                {id: "5", name: "良景以上"},
+                {id: "",  name: "すべて"}
+            ];
+            $scope.order_list = [
+                {id: "", name: "(ソート指定なし)"},
+                {id: "o_rec-d", name: "オススメ順"},
+                {id: "o_new-d", name: "新しい順"},
+                {id: "o_new-a", name: "古い順"},
+                {id: "o_cro-a", name: "混雑度低い順"},
+                {id: "o_cro-d", name: "混雑度高い順"},
+                {id: "o_acc-d", name: "アクセスし易い順"},
+                {id: "o_acc-a", name: "アクセスし難い順"}
+            ];
+
             // メッセージ表示に関するobject
             $scope.message_info = {
                 message: "",
@@ -75,7 +100,12 @@
                 status: ""
             };
 
-            // ---------- methods ----------
+            // navigationのタイトル
+            $scope.binding = {
+                title : "全国"
+            };
+
+            // ---------- methods -------i---
             $scope.showMessage = function(message, status){
                 $scope.message_info.message = message;
                 $scope.message_info.status = status || "alert-info";
@@ -92,8 +122,19 @@
                 return $location.path();
             };
             $scope.isDetailPage = function(){
+                console.log("current page=" + $scope.getCurrentPage());
                 return $scope.getCurrentPage() == "/detail/";
             };
+        })
+        .filter("getName", function(){
+            return function(s){
+                /*
+                for(var i = 0; i < $scope.type){
+
+                }
+                */
+                return s;
+            }
         })
         // Header-Detail画面で値のやり取りに使用. 既に検索しているheader情報や選択しているindexの値を保持する
         .service("CurrentState", function(){

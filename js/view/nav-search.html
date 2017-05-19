@@ -2,7 +2,7 @@
 	<button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="#" ng-click="move2Top($event)">{{title}}</a>
+    <a class="navbar-brand" href="#" ng-click="move2Top($event)">{{binding.title}}の絶景マップ</a>
 </nav>
 
 <div ng-show="search_toggle_state" class="search_wrap">
@@ -46,6 +46,7 @@
 		<button class="btn btn-info col-12 col-sm-4 mx-auto search_submit_btn" ng-click="doSearch()">Search</button>
 	</div>
 
+<!--
 	<ul class="row search_conditions">
 		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">地域</span>{{selected_pref}}</li>
 		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">評価</span>{{selected_score}}</li>
@@ -54,6 +55,6 @@
 		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">画像の有無</span>{{get_no_img_data}}</li>
 		<li class="col-sm-4 col-md-3 col-6"><span class="condition_kind">キーワード</span>{{keyword}}</li>
 	</ul>
-	
+-->
 </div>
 

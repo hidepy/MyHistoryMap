@@ -57,38 +57,36 @@
 
     <!-- List Tab -->
     <div class="tab-pane" role="tabpanel" id="tab-list">
-      <ul>
-        <li style="position: relative;" ng-repeat="item in items" ng-click="selectCard($index)">
-          
-          <img ng-src="{{item.image_url}}" class="img-square" />
-
-          <div class="row">
-            <div class="col-md-9 col-9">{{item.name}}</div>
-            <div class="col-md-3 col-3">{{item.prefecture}}</div>
+      <ul class="place-list">
+        <li class="row" style="position: relative;" ng-repeat="item in items" ng-click="selectCard($index)">
+          <div class="col-1">
+            <div class="list-thumb" ng-style="{'background-image': 'url({{item.image_url}})'}"></div>
           </div>
-          <div class="row">
-            <div class="col-md-3 col-3">{{item.zip_no}}</div>
-            <div class="col-md-9 col-9">{{item.address}}</div>
-          </div>
-          <div class="row">
-            <div class="col-md-12 col-12">{{item.caption}}</div>
-          </div>
-          <div class="row">
-            <div class="col-md-3 col-3">
-              <p>fav</p>
-              <p>{{item.favorite}}</p>
+          <div class="col-11">
+            <div class="row">
+              <div class="col-md-3 col-3">{{item.name}}</div>
+              <div class="col-md-9 col-9">〒{{item.zip_no}} {{item.address}}</div>
             </div>
-            <div class="col-md-3 col-3">
-              <p>acc</p>
-              <p>{{item.accessibility}}</p>
+            <div class="row">
+              <div class="col-md-3 col-3">
+                <p>お気に入り</p>
+                <p>{{item.favorite}}</p>
+              </div>
+              <div class="col-md-3 col-3">
+                <p>アクセシビリティ</p>
+                <p>{{item.accessibility}}</p>
+              </div>
+              <div class="col-md-3 col-3">
+                <p>混雑度</p>
+                <p>{{item.crowdness}}</p>
+              </div>
+              <div class="col-md-3 col-3">
+                <p>タイプ</p>
+                <p>{{item.place_type}}</p>
+              </div>
             </div>
-            <div class="col-md-3 col-3">
-              <p>cro</p>
-              <p>{{item.crowdness}}</p>
-            </div>
-            <div class="col-md-3 col-3">
-              <p>pla</p>
-              <p>{{item.place_type}}</p>
+            <div class="row">
+              <div class="col-md-12 col-12">{{item.caption}}</div>
             </div>
           </div>
         </li>

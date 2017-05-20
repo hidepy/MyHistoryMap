@@ -122,19 +122,17 @@
                 return $location.path();
             };
             $scope.isDetailPage = function(){
-                console.log("current page=" + $scope.getCurrentPage());
                 return $scope.getCurrentPage() == "/detail/";
             };
-        })
-        .filter("getName", function(){
-            return function(s){
-                /*
-                for(var i = 0; i < $scope.type){
+            $scope.getName = function(s, name){
+                if(!$scope[name]) return s;
 
+                for(var i = 0; i < $scope[name].length; i++){
+                    if(s == $scope[name][i].id) return $scope[name][i].name;
                 }
-                */
+                
                 return s;
-            }
+            };
         })
         // Header-Detail画面で値のやり取りに使用. 既に検索しているheader情報や選択しているindexの値を保持する
         .service("CurrentState", function(){

@@ -46,6 +46,7 @@ transform: scale(1);
                 <td class="item_detail">
                   <span class="item_zip">{{selected_item.zip_no}}</span>
                   <p>{{selected_item.address}}</p>
+                  <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.name}}">GoogleMapで開く</a>
                 </td>
               </tr>
               <tr>
@@ -75,7 +76,7 @@ transform: scale(1);
               <tr>
                 <td class="item_name">タイプ</td>
                 <td class="item_detail">
-                  {{selected_item.place_type}}
+                  {{getName(selected_item.place_type, "type_list")}}
                 </td>
               </tr>
               <tr>
@@ -85,37 +86,37 @@ transform: scale(1);
                 </td>
               </tr>
               <tr>
-                <td class="item_name">comment</td>
+                <td class="item_name">コメント</td>
                 <td class="item_detail">
                   {{selected_item_detail.comment}}
                 </td>
               </tr>
               <tr>
-                <td class="item_name">visit_date</td>
+                <td class="item_name">訪れた日</td>
                 <td class="item_detail">
                   {{selected_item_detail.visit_date}}
                 </td>
               </tr>
               <tr>
-                <td class="item_name">month(1-12)</td>
+                <td class="item_name">訪れた月</td>
                 <td class="item_detail">
                   {{selected_item_detail.month}}
                 </td>
               </tr>
-              <tr>
+              <tr ng-show="false">
                 <td class="item_name">timing_of_month(1-3)</td>
                 <td class="item_detail">
                   {{selected_item_detail.timing_of_month}}
                 </td>
               </tr>
               <tr>
-                <td class="item_name">author</td>
+                <td class="item_name">写真を撮った人</td>
                 <td class="item_detail">
                   {{selected_item_detail.author}}
                 </td>
               </tr>
               <tr>
-                <td class="item_name">recomend</td>
+                <td class="item_name">明細側の評価</td>
                 <td class="item_detail">
                   {{selected_item_detail.recomend}}
                 </td>

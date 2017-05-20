@@ -36,6 +36,11 @@
                         }
                     };
 
+                    $scope.moveBack = function(){
+                        console.log("in moveback");
+                        $window.history.back();
+                    };
+
                     $scope.doSearch = function(){
 
                         // 入力チェック

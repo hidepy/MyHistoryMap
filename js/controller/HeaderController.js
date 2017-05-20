@@ -167,8 +167,6 @@
 
                 CurrentState.searchCondition = CurrentState.searchCondition || {};
 
-
-
                 var lat = null;
                 var lng = null;
 

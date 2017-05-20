@@ -39,7 +39,7 @@
                 var latlng = new mp.LatLng(!!lat ? lat : 35.8, !!lng ? lng : 138.5);
                 map = new mp.Map(el_map, {
                       center: latlng,
-                      zoom: 8
+                      zoom: 7
                     }
                 );
             };

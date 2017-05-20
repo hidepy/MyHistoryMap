@@ -470,3 +470,12 @@ ul.thumb_group li
 .search_submit_btn {
     margin: 30px 0 0;
 }
+
+/* List tab */
+.list-thumb {
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 50%;
+}

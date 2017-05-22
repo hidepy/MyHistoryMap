@@ -2,8 +2,10 @@
 	<button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
     </button>
-    <a ng-hide="isDetailPage()" class="navbar-brand" href="#" ng-click="move2Top($event)">{{binding.title}}の絶景マップ</a>
-    <a ng-show="isDetailPage()" class="navbar-brand" href="#" ng-click="moveBack()">戻る</a>
+    <a class="navbar-brand" href="#" ng-click="moveBack($event)">
+    	<span ng-hide="is_detail_page">{{binding.title}}</span>
+    	<span ng-show="is_detail_page">Back</span>
+    </a>
 </nav>
 
 <div ng-show="search_toggle_state" class="search_wrap">

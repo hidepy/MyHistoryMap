@@ -291,7 +291,7 @@ else{
     
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zekkei-map") ?></title>
+  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zkm") ?></title>
 
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
@@ -315,12 +315,29 @@ else{
   body{
     opacity: 0.92;
   }
+  #search-cond-disp-area{
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .searchcond-showall{
+    overflow: visible;
+  }
+  .searchcond-hide{
+    overflow: hidden;
+    max-height: 1.2em;
+  }
   </style>
 
   <base href="/webapps/zekkei-map/">
 </head> 
 
 <body ng-controller="RootController">
+
+  <?php
+  if($is_admin_user){
+    echo '<admin-memo memo-master-name="MHM-memo" access-key="myts"></admin-memo>';
+  }
+  ?>
 
   <?php
   if($is_first_visit){
@@ -351,10 +368,11 @@ else{
   <!-- Directive -->
   <?php
   if(!$is_admin_user){
-    echo '<script src="js/directive/adsense.js"></script>';
+    echo '<script src="js/directive/no-adsense.js"></script>';
   }
   else{
     echo '<script src="js/directive/no-adsense.js"></script>';
+    echo '<script src="js/directive/_admin-memo.js"></script>';
   }
   ?>
   <!-- Controller -->

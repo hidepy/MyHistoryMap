@@ -58,12 +58,28 @@
             };
             var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "order", "w_name", "w_hasnoimg"];
             var SEARCH_COND_NAME_MAP = {
-                "w_pref": "地域",
-                "w_score": "評価",
-                "w_ptype": "タイプ",
-                "order": "表示順",
-                "w_hasnoimg": "画像なしデータを含む",
-                "w_name": "キーワード"
+                "w_pref": {
+                    name: "地域"
+                },
+                "w_score": {
+                    name: "評価",
+                    convFunc: s=>$scope.getName(s, "score_list")
+                },
+                "w_ptype": {
+                    name: "タイプ",
+                    convFunc: s=>$scope.getName(s, "type_list")
+                },
+                "order": {
+                    name: "表示順",
+                    convFunc: s=>$scope.getName(s, "order_list")
+                },
+                "w_hasnoimg": {
+                    name: "画像なしデータを含むか",
+                    convFunc: s=>s == "1" ? "含む" : "含まない"
+                },
+                "w_name": {
+                    name: "キーワード"
+                }
             };
 
             // ---------- Display Items ----------
@@ -74,6 +90,8 @@
             
             // 検索条件表示用
             $scope.search_condition_text = "";
+            // 検索条件切替用
+            $scope.search_condition_class = "searchcond-hide";
 
             // ---------- Local Functions ----------
             // point dataを検索する
@@ -84,7 +102,9 @@
                 $scope.binding.title = !!param && !window.CommonFunctions.isEmpty(param.w_pref) ? param.w_pref : "全国";
                 // 検索条件を更新
                 $scope.search_condition_text = SEARCH_COND_ID.reduce((p, c)=>{
-                    return p + ($routeParams[c] ? SEARCH_COND_NAME_MAP[c] + "=" + $routeParams[c] + ", " : "");
+                    // 表示時変換関数を通す
+                    var func = SEARCH_COND_NAME_MAP[c].convFunc || function(s){ return s; };
+                    return p + ($routeParams[c] ? SEARCH_COND_NAME_MAP[c].name + "=" + func($routeParams[c]) + ", " : "");
                 }, "");
 
                 // レコード取得
@@ -253,7 +273,7 @@ console.log("else... maybe first load");
                     jQuery("#tab-map").removeClass("active");
                     jQuery("#tab-card").removeClass("active");
                 }
-                else{//(tabname == "M"){
+                else{　//(tabname == "M"){
                     jQuery("#tab-map").tab("show");
                     jQuery("#tab-map").addClass("active");
 
@@ -295,6 +315,10 @@ console.log("else... maybe first load");
             // favに入っているかをチェック
             $scope.isAlreadyFav = function(item){
                 return !!StorageManager_Fav.get(item.id);
+            };
+            // 検索条件の表示状態を切り替え
+            $scope.toggleSearchCondDisp = function(){
+                $scope.search_condition_class = ($scope.search_condition_class == "searchcond-hide") ? "searchcond-showall" : "searchcond-hide";
             };
         })
 })();

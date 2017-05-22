@@ -8,8 +8,6 @@
                 scope: true,
                 controller: function($scope, $window){
                     // ----------- Search Params ----------
-                    console.log("detailpage=" + $scope.isDetailPage());
-
                     // 選択された検索条件
                     $scope.selected_pref = [];
                     $scope.selected_type = [];
@@ -24,23 +22,18 @@
                         $scope.search_toggle_state = !$scope.search_toggle_state;
                     };
 
-                    $scope.move2Top = function($event){
+                    $scope.moveBack = function($event){
                         $event.preventDefault();
 
                         // 詳細ページなら前画面に戻る, ヘッダページなら条件クリアで再描画
-                        if($scope.isDetailPage()){
+                        if($scope.is_detail_page){
                             $window.history.back();
                         }
                         else{
                             $scope.move("/");
                         }
                     };
-
-                    $scope.moveBack = function(){
-                        console.log("in moveback");
-                        $window.history.back();
-                    };
-
+                    
                     $scope.doSearch = function(){
 
                         // 入力チェック

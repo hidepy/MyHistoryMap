@@ -100,10 +100,13 @@
                 status: ""
             };
 
-            // navigationのタイトル
+            // 変更可能なグローバル値
             $scope.binding = {
                 title : "全国"
             };
+
+            // 詳細ページか否か
+            $scope.is_detail_page = false;
 
             // ---------- methods -------i---
             $scope.showMessage = function(message, status){
@@ -121,9 +124,6 @@
             $scope.getCurrentPage = function(){
                 return $location.path();
             };
-            $scope.isDetailPage = function(){
-                return $scope.getCurrentPage() == "/detail/";
-            };
             $scope.getName = function(s, name){
                 if(!$scope[name]) return s;
 
@@ -133,6 +133,10 @@
                 
                 return s;
             };
+            $scope.$on('$routeChangeStart', function(ev, current){
+                // 現在ページ状態を判定
+                $scope.is_detail_page = (current.$$route.originalPath == "/detail/");
+            });
         })
         // Header-Detail画面で値のやり取りに使用. 既に検索しているheader情報や選択しているindexの値を保持する
         .service("CurrentState", function(){

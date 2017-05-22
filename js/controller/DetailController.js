@@ -68,7 +68,20 @@
                 $timeout(function(){
                     $scope.selected_img_index = 0;
                     $scope.selected_item = CurrentState.searchedItems[CurrentState.index];
-                    $scope.selected_item_detail = $scope.selected_item.detail_info[$scope.selected_img_index];
+                    $scope.selected_item_detail = $scope.selected_item.detail_info ? 
+                        $scope.selected_item.detail_info[$scope.selected_img_index]
+                        : {
+                            "id": "",
+                            "seq": "",
+                            "image_url": "",
+                            "image_url_thumb": "",
+                            "comment": "",
+                            "visit_date": "",
+                            "month": "",
+                            "timing_of_month": "",
+                            "author": "",
+                            "recomend": ""
+                        };
                     $scope.thumbLoaded = true;
                 }, 1);
             };

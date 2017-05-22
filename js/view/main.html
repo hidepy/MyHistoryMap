@@ -2,15 +2,7 @@
 <div id="header-page-wrapper" ng-init="init()">
 
   <!-- 検索条件wrapper -->
-  <div ng-show="!!search_condition_text">
-    <!--
-    <a tabindex="0" class="btn btn-lg btn-link" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="現在の検索条件： {{popover_content}}">Show Search Condition</a>
-  -->
-
-  <!--
-    <input type="text" ng-model="popover_content" />
-  -->
-
+  <div id="search-cond-disp-area" ng-show="!!search_condition_text" ng-class="search_condition_class" ng-click="toggleSearchCondDisp()">
     検索条件：{{search_condition_text}}
   </div>
 

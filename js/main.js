@@ -138,6 +138,12 @@
                 $scope.is_detail_page = (current.$$route.originalPath == "/detail/");
             });
         })
+        // 改行をbrに変換する
+        .filter('conv2br', function() {
+            return function(s){
+                return s ? s.replace(/\/br/g, "\n") : s;
+            };
+        })
         // Header-Detail画面で値のやり取りに使用. 既に検索しているheader情報や選択しているindexの値を保持する
         .service("CurrentState", function(){
             this.searchedItems = [];

@@ -294,7 +294,11 @@ else{
   <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zkm") ?></title>
 
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
+  
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
+  <!--
+  <link type="text/css" rel="stylesheet" href="lib/angular/angular-lightbox.css" />
+  -->
 
   <link rel="stylesheet" href="lib/slick/slick.css">
   <link rel="stylesheet" href="lib/slick/slick-theme.css">
@@ -313,7 +317,7 @@ else{
   <style>
 
   body{
-    opacity: 0.92;
+    opacity: 0.1;
   }
   #search-cond-disp-area{
     overflow: hidden;
@@ -351,6 +355,7 @@ else{
 
   <!-- normal js liblalies -->
   <script src="lib/lightbox/js/lightbox.js"></script>
+  
 
   <!-- Angular Cmmmons -->
   <!-- Angular core -->
@@ -359,6 +364,9 @@ else{
   <!-- Angular libs-->
   <script src="lib/slick/slick.js"></script>
   <script src="lib/slick/angular-slick.js"></script>
+  <!--
+  <script src="lib/angular/angular-lightbox.js"></script>
+  -->
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
 
@@ -368,7 +376,7 @@ else{
   <!-- Directive -->
   <?php
   if(!$is_admin_user){
-    echo '<script src="js/directive/no-adsense.js"></script>';
+    echo '<script src="js/directive/adsense.js"></script>';
   }
   else{
     echo '<script src="js/directive/no-adsense.js"></script>';

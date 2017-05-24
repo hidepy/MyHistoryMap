@@ -21,18 +21,33 @@
     transition: all 300ms ease;
   }
 .slick-center img{
-transform: scale(1);
+  transform: scale(1);
     opacity: 1;
 }
 
+.item_detail{
+  white-space: pre-line;
+}
 </style>
+
+<!--
+      <div id="slick-main-wrapper">
+        <slick id="slick-main" ng-if="thumbLoaded" settings="slickMainConfig">
+          <img class="" ng-src="{{selected_item_detail.image_url}}" />
+        </slick>
+      </div>
+-->
 
       <div id="carousel-wrapper">
         <slick id="thumbnail-carousel" ng-if="thumbLoaded" settings="slickConfig">
           <div class="item" ng-repeat="(detail_idx, detail_item) in selected_item.detail_info" ng-click="selectThumbnailImg($index)">
+            
             <a href="{{detail_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
               <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
             </a>
+            <!--
+              <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
+            -->
           </div>
         </slick>
       </div>
@@ -53,6 +68,12 @@ transform: scale(1);
                 <td class="item_name">地域(都道府県)</td>
                 <td class="item_detail">
                   {{selected_item.prefecture}}
+                </td>
+              </tr>
+              <tr>
+                <td class="item_name">場所コメント</td>
+                <td class="item_detail">
+                  {{selected_item.caption|conv2br}}
                 </td>
               </tr>
               <tr>
@@ -86,7 +107,7 @@ transform: scale(1);
                 </td>
               </tr>
               <tr>
-                <td class="item_name">コメント</td>
+                <td class="item_name">画像コメント</td>
                 <td class="item_detail">
                   {{selected_item_detail.comment}}
                 </td>
@@ -143,8 +164,10 @@ transform: scale(1);
 
       </div>
     </div><!-- /.card -->
+
+    <adsense></adsense>
+
   </div><!-- /#detail -->
 </div><!-- /.row -->
 
 
-<adsense></adsense>

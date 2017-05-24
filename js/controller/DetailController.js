@@ -15,6 +15,17 @@
             // carousel 有効/無効制御
             $scope.thumbLoaded = false;
 
+            // slick-mainの設定
+            /*
+            $scope.slickMainConfig = {
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: true,
+                asNavFor: '#thumbnail-carousel'
+            };
+            */
+
             // slick(carouselのやつ)の設定
             $scope.slickConfig = {
                 //enabled: true,
@@ -22,13 +33,15 @@
                 centerMode: true,
                 infinite: false,
                 centerPadding: '60px',
-                slidesToShow: 3,
+                slidesToShow: 1,
+                focusOnSelect: true,
+                //asNavFor: "#slick-main",
                 responsive: [
                     {
                       breakpoint: 1024,
                       settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 1,
+                        slidesToShow: 1,
+                        //slidesToScroll: 1,
                         //infinite: true,
                         dots: true
                       }
@@ -39,7 +52,7 @@
                         arrows: false,
                         centerMode: true,
                         centerPadding: '40px',
-                        slidesToShow: 3
+                        slidesToShow: 1
                       }
                     },
                     {
@@ -84,6 +97,11 @@
                         };
                     $scope.thumbLoaded = true;
                 }, 1);
+            };
+
+            $scope.selectThumbnailImg = function(index){
+                $scope.selected_img_index = index;
+                $scope.selected_item_detail = $scope.selected_item.detail_info[$scope.selected_img_index];
             };
 
             // event when location change

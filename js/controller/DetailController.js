@@ -32,7 +32,7 @@
                 dots: true,
                 centerMode: true,
                 infinite: false,
-                centerPadding: '60px',
+                centerPadding: '30px',
                 slidesToShow: 1,
                 focusOnSelect: true,
                 //asNavFor: "#slick-main",

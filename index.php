@@ -366,6 +366,7 @@ $dbh = null;
   else{
     echo '<script src="js/directive/no-adsense.js"></script>';
     echo '<script src="js/directive/_admin-memo.js"></script>';
+    echo '<script src="js/directive/_regist-comment.js"></script>';
   }
   ?>
   <!-- Controller -->

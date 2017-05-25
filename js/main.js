@@ -28,7 +28,7 @@
                     templateUrl: "js/view/main.html",
                     controller: "HeaderController"
                 })
-                .when("/detail/", {
+                .when("/detail/:name", {
                     templateUrl: "js/view/detail.html",
                     controller: "DetailController"
                 })
@@ -36,7 +36,8 @@
                     redirectTo: "/"
                 });
             $locationProvider.hashPrefix('');
-            $locationProvider.html5Mode(true);
+            //$locationProvider.html5Mode(true);
+            $locationProvider.html5Mode(false);
         })
         .controller('RootController', function($scope, $location, $timeout){
 
@@ -102,11 +103,13 @@
 
             // 変更可能なグローバル値
             $scope.binding = {
-                title : "全国"
+                title : "全国の絶景",
+                is_admin: false,
+                is_detail_page: false
             };
 
             // 詳細ページか否か
-            $scope.is_detail_page = false;
+            //$scope.is_detail_page = false; //bindingに以降
 
             // ---------- methods -------i---
             $scope.showMessage = function(message, status){
@@ -135,7 +138,13 @@
             };
             $scope.$on('$routeChangeStart', function(ev, current){
                 // 現在ページ状態を判定
-                $scope.is_detail_page = (current.$$route.originalPath == "/detail/");
+                $scope.binding.is_detail_page = (current.$$route.originalPath.indexOf("/detail/") >= 0);
+
+                console.log("main-> routeChangeStart");
+                /*
+                console.log(ev);
+                console.log(current);
+                */
             });
         })
         // 改行をbrに変換する

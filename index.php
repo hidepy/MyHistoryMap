@@ -255,9 +255,6 @@ if(isset($callback)) {
       $res_details[$r["id"]] = $current;
     }
   }
-  
-  //$if_return["msg"] .= '$_SESSION["imtasokori"]='.$_SESSION["imtasokori"].", $is_admin_user=".$is_admin_user;
-  //$if_return["msg"] .= "sql-head=".$query.", sql-body=".$query_detail;
 
   header( 'Content-Type: text/javascript; charset=utf-8' );
 
@@ -283,6 +280,9 @@ else{
   }
 }
 
+// 解放
+$dbh = null;
+
 ?>
 
 <html ng-app="MHM-APP">
@@ -294,30 +294,20 @@ else{
   <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zkm") ?></title>
 
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
-  
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
-  <!--
-  <link type="text/css" rel="stylesheet" href="lib/angular/angular-lightbox.css" />
-  -->
-
   <link rel="stylesheet" href="lib/slick/slick.css">
   <link rel="stylesheet" href="lib/slick/slick-theme.css">
-
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M&sensor=false"></script>
-  
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-
   <script type="text/javascript" src="js/storageManager.js"></script>
 
   <style>
-
   body{
-    opacity: 0.1;
+    opacity: 1.0;
   }
   #search-cond-disp-area{
     overflow: hidden;
@@ -349,14 +339,12 @@ else{
   }
   ?>
 
-  <nav-header></nav-header>
+  <nav-header <?php if($is_admin_user){ echo "is-admin";} ?>></nav-header>
 
   <div id="contents" ng-view autoscroll="true"></div>
 
   <!-- normal js liblalies -->
   <script src="lib/lightbox/js/lightbox.js"></script>
-  
-
   <!-- Angular Cmmmons -->
   <!-- Angular core -->
   <script src="lib/angular/angular.js"></script>
@@ -364,16 +352,13 @@ else{
   <!-- Angular libs-->
   <script src="lib/slick/slick.js"></script>
   <script src="lib/slick/angular-slick.js"></script>
-  <!--
-  <script src="lib/angular/angular-lightbox.js"></script>
-  -->
   <!-- Services -->
   <script src="js/service/MapHandlerService.js"></script>
-
   <!-- APP specific -->
   <!-- Define MHM-APP module -->
   <script src="js/main.js"></script>
   <!-- Directive -->
+  <script src="js/directive/navSearch.js"></script>
   <?php
   if(!$is_admin_user){
     echo '<script src="js/directive/adsense.js"></script>';
@@ -386,7 +371,6 @@ else{
   <!-- Controller -->
   <script src="js/controller/HeaderController.js"></script>
   <script src="js/controller/DetailController.js"></script>
-  <script src="js/controller/NavSearch.js"></script>
   
 </body>
 </html>

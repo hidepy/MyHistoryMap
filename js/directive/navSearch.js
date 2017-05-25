@@ -6,6 +6,12 @@
             return {
                 templateUrl: "js/view/nav-search.html",
                 scope: true,
+                link: function(scope, el, attr){
+                    // admin属性があれば...
+                    if(!!attr.$attr["isAdmin"]){
+                        scope.binding.is_admin = true;
+                    }
+                },
                 controller: function($scope, $window){
                     // ----------- Search Params ----------
                     // 選択された検索条件
@@ -26,7 +32,7 @@
                         $event.preventDefault();
 
                         // 詳細ページなら前画面に戻る, ヘッダページなら条件クリアで再描画
-                        if($scope.is_detail_page){
+                        if($scope.binding.is_detail_page){
                             $window.history.back();
                         }
                         else{

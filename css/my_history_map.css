@@ -418,14 +418,27 @@ ul.thumb_group li
 {
     position: absolute;
     top: 3px;
+}
+#cards_wrapper .panel-heading .ravel > .prefecture
+{
     right: 0;
-    display: block;
+    display: inline-block;/* もとはblock */
     width: 60px;
     padding: 4px;
     text-align: center;
     color: #fff;
     background: rgba(0, 86, 160, 0.74);
     font-size: 0.8rem;
+}
+#cards_wrapper .panel-heading .ravel > .card-score
+{
+    left: 0;
+    opacity: 0.74;
+}
+#cards_wrapper .panel-heading .ravel > .card-recommend
+{
+    left: 16px;
+    opacity: 0.74;
 }
 
 #select_list_pref

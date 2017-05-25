@@ -1,11 +1,3 @@
-<div id="map_detailarea_wrapper" ng-init="init()">
-  <div id="detail" class="col-md-12 col-12">
-
-    <div class="card">
-      <div class="card_heading">
-        <h2>{{selected_item.name}}</h2>
-      </div>
-
 <style>
 .img-fluid{
   margin: 0 auto;
@@ -25,33 +17,65 @@
     opacity: 1;
 }
 
-.item_detail{
+.comment-text{
   white-space: pre-line;
+}
+
+.item_rate_list{
+  display: flex;
+}
+.box{
+  width: 25%;
 }
 </style>
 
-<!--
-      <div id="slick-main-wrapper">
-        <slick id="slick-main" ng-if="thumbLoaded" settings="slickMainConfig">
-          <img class="" ng-src="{{selected_item_detail.image_url}}" />
-        </slick>
+<div id="map_detailarea_wrapper" ng-init="init()">
+  <div id="detail" class="col-md-12 col-12">
+
+    <div class="card">
+      <div class="card_heading">
+        <h2>{{selected_item.name}}</h2>
       </div>
--->
 
       <div id="carousel-wrapper">
         <slick id="thumbnail-carousel" ng-if="thumbLoaded" settings="slickConfig">
           <div class="item" ng-repeat="(detail_idx, detail_item) in selected_item.detail_info" ng-click="selectThumbnailImg($index)">
             
-            <a href="{{detail_item.image_url}}" data-lightbox="main_images" data-title="{{selected_item.name}}">
+            <a href="{{detail_item.image_url}}" data-lightbox="main_images" data-title="{{detail_item.comment}}">
               <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
+              <p class="item_detail" style="font-size: 70%;">
+                @{{detail_item.visit_date}}, by {{detail_item.author}}
+              </p>
             </a>
-            <!--
-              <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
-            -->
           </div>
         </slick>
       </div>
 
+      <div class="comment-text">
+        {{selected_item.caption|conv2br}}
+      </div>
+
+      <div class="">
+        <ul class="item_rate_list">
+          <li class="box"><span class="item_name">favorite</span>
+          <p>{{selected_item.favorite}}</p></li>
+          <li class="box"><span class="item_name">place type</span>
+          <p>{{selected_item.place_type}}</p></li>
+          <li class="box"><span class="item_name">accessibility</span>
+          <p>{{selected_item.accessibility}}</p></li>
+          <li class="box"><span class="item_name">crowdness</span>
+          <p>{{selected_item.crowdness}}</p></li>
+        </ul>
+      </div>
+
+      <div class="item_name">住所</div>
+      <div class="item_detail">
+        <span class="item_zip">{{selected_item.zip_no}}</span>
+        <p>{{selected_item.address}}</p>
+        <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.name}}">GoogleMapで開く</a>
+      </div>
+
+      <!--
       <div class="card_body row">
         <div class="col-sm-9">
           <div class="table-responsive">
@@ -72,7 +96,7 @@
               </tr>
               <tr>
                 <td class="item_name">場所コメント</td>
-                <td class="item_detail">
+                <td class="item_detail comment-text">
                   {{selected_item.caption|conv2br}}
                 </td>
               </tr>
@@ -101,7 +125,7 @@
                 </td>
               </tr>
               <tr>
-                <td class="item_name">seq</td>
+                <td class="item_name" ng-show="binding.is_admin">seq</td>
                 <td class="item_detail">
                   {{selected_item_detail.seq}}
                 </td>
@@ -124,6 +148,7 @@
                   {{selected_item_detail.month}}
                 </td>
               </tr>
+
               <tr ng-show="false">
                 <td class="item_name">timing_of_month(1-3)</td>
                 <td class="item_detail">
@@ -131,43 +156,39 @@
                 </td>
               </tr>
               <tr>
-                <td class="item_name">写真を撮った人</td>
+                <td class="item_name" ng-show="binding.is_admin">写真を撮った人</td>
                 <td class="item_detail">
                   {{selected_item_detail.author}}
                 </td>
               </tr>
+              <!--
               <tr>
                 <td class="item_name">明細側の評価</td>
                 <td class="item_detail">
                   {{selected_item_detail.recomend}}
                 </td>
               </tr>
-
+              <tr>
+                <td class="item_name">住所</td>
+                <td class="item_detail">
+                  <span class="item_zip">{{selected_item.zip_no}}</span>
+                  <p>{{selected_item.address}}</p>
+                  <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.name}}">GoogleMapで開く</a>
+                </td>
+              </tr>
             </table>
           </div>
         </div>
-        <!--
         <div>{{selected_item.prefecture}}</div>
-        -->
-        <div class="col-sm-3">
-          <ul class="item_rate_list">
-            <li class="box"><span class="item_name">month</span>
-            <p>{{selected_item_detail.month}}</p></li>
-            <li class="box"><span class="item_name">place type</span>
-            <p>{{selected_item.place_type}}</p></li>
-            <li class="box"><span class="item_name">accessibility</span>
-            <p>{{selected_item.accessibility}}</p></li>
-            <li class="box"><span class="item_name">crowdness</span>
-            <p>{{selected_item.crowdness}}</p></li>
-          </ul>
-        </div>
+
 
       </div>
-    </div><!-- /.card -->
-
-    <adsense></adsense>
+    </div>--> <!-- /.card -->
 
   </div><!-- /#detail -->
+
+  <adsense></adsense>
+
 </div><!-- /.row -->
 
 

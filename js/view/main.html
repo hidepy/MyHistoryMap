@@ -18,7 +18,6 @@
     </li>
   </ul>
 
-  
   <div class="tab-content" style="position: relative;">
   
     <!-- Map tab -->
@@ -36,6 +35,8 @@
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
                 <div class="ravel">
+                  <span class="card-score badge badge-default">{{item.favorite}}</span>
+                  <span ng-show="item.favorite >= 8" class="card-recommend badge badge-danger">オススメ！</span>
                   <span class="prefecture">{{item.prefecture}}</span>
                 </div>
               </div>

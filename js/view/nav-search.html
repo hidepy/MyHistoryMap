@@ -3,8 +3,8 @@
 		<span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" href="#" ng-click="moveBack($event)">
-    	<span ng-hide="is_detail_page">{{binding.title}}</span>
-    	<span ng-show="is_detail_page">Back</span>
+    	<span ng-hide="binding.is_detail_page">{{binding.title}}</span>
+    	<span ng-show="binding.is_detail_page">Back</span>
     </a>
 </nav>
 

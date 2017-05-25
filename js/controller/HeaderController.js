@@ -67,7 +67,12 @@
                 },
                 "w_ptype": {
                     name: "タイプ",
-                    convFunc: s=>$scope.getName(s, "type_list")
+                    convFunc: s=>{
+                        if(!s) return s;
+                        return s.split("-").reduce((p, c)=>{
+                            return p + " " + $scope.getName(c, "type_list")
+                        }, "")
+                    }
                 },
                 "order": {
                     name: "表示順",
@@ -99,7 +104,7 @@
                 // 検索条件を更新
                 CurrentState.searchCondition = param;
                 // タイトルを更新
-                $scope.binding.title = !!param && !window.CommonFunctions.isEmpty(param.w_pref) ? param.w_pref : "全国";
+                $scope.binding.title = (!!param && !window.CommonFunctions.isEmpty(param.w_pref) ? param.w_pref : "全国") + "の絶景";
                 // 検索条件を更新
                 $scope.search_condition_text = SEARCH_COND_ID.reduce((p, c)=>{
                     // 表示時変換関数を通す
@@ -134,7 +139,7 @@
                 CurrentState.index = index;
                 CurrentState.selectedTab = "M";
 
-                $scope.move("/detail/");
+                $scope.move("/detail/" + $scope.items[index].name);
             };
             // 全件markerを削除
             var deleteAllMarkers = function(){
@@ -185,6 +190,10 @@
 
                 console.log("HeaderController -> init");
 
+                // 選択されたindex初期化
+                CurrentState.index = -1;
+
+                // 検索状態がなければ空オブジェクトをセット
                 CurrentState.searchCondition = CurrentState.searchCondition || {};
 
                 var lat = null;

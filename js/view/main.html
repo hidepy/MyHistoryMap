@@ -35,8 +35,7 @@
               <div class="panel-heading">
                 <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
                 <div class="ravel">
-                  <span class="card-score badge badge-default">{{item.favorite}}</span>
-                  <span ng-show="item.favorite >= 8" class="card-recommend badge badge-danger">オススメ！</span>
+                  <span class="card-score badge" ng-class="{'badge-danger': item.favorite >= 8, 'badge-warning': (item.favorite < 8 && item.favorite >= 6), 'badge-default': item.favorite < 6}">{{item.favorite}}</span>
                   <span class="prefecture">{{item.prefecture}}</span>
                 </div>
               </div>

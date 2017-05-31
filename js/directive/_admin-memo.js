@@ -28,7 +28,7 @@
                         $scope.getMemo();
                     };
                     $scope.getMemo = function(){
-                        $http.jsonp("/webapps/utils/choco-memo/index.php?type=" + $scope.memoMasterName, {jsonpCallbackParam: 'callback'})
+                        $http.jsonp("/webapps/components/choco-memo/index.php?type=" + $scope.memoMasterName, {jsonpCallbackParam: 'callback'})
                             .then(function(response_wrapper){
                                 console.log("[adminMemo] getMemo success");
                                 if(response_wrapper.data){

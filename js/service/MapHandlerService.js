@@ -5,9 +5,11 @@
     angular.module('MapHandlerService', [])
         .service("MapHandler", function(){
             // クロージャされる
-            var map = {};
+            var map = null;
             var markers = [];
             var mp = google.maps;
+            var map_element_selector = "";
+            var stored_map_element = null;
             
             var infowindow = new mp.InfoWindow({
                 content: "",
@@ -35,14 +37,30 @@
                };
             }
 
-            this.loadMap = function(el_map, lat, lng){
+            // check is map loaded
+            this.isLoaded = function(){
+                return !!map;
+            };
+            this.loadMap = function(el_map_selector, lat, lng){
                 var latlng = new mp.LatLng(!!lat ? lat : 35.8, !!lng ? lng : 138.5);
-                map = new mp.Map(el_map, {
+                map = new mp.Map(angular.element(el_map_selector)[0], {
                       center: latlng,
                       zoom: 7
                     }
                 );
+                this.map_element_selector = el_map_selector;
             };
+            this.storeElement = function(){
+                console.log("in storeElement. stored element=");
+                this.stored_map_element = angular.element(this.map_element_selector);
+                console.log(this.stored_map_element);
+            };
+            this.restoreElement = function(){
+                console.log("in restoreElement. selector, object=");
+                angular.element(this.map_element_selector).replaceWith(this.stored_map_element);
+                console.log(this.map_element_selector);
+                console.log(this.stored_map_element);
+            }
             this.update = function(lat, lng){
                 mp.event.trigger(map, "resize");
                 if(!!lat && !!lng){
@@ -117,3 +135,13 @@
             };
         });
 })();
+
+
+/*
+Googlemap first load event
+
+google.maps.event.addListenerOnce(map, 'idle', function(){
+    // do something only the first time the map is loaded
+});
+The "idle" event is triggered when the map goes to idle state - everything loaded (or failed to load). I found it to be more reliable then tilesloaded/bounds_changed and using addListenerOnce method the code in the closure is executed the first time "idle" is fired and then the event is detached.
+*/

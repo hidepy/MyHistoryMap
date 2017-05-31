@@ -67,7 +67,7 @@
             $scope.init = function(){
 
                 console.log("DetailController init");
-                console.log($routeParams.name);
+                //console.log($routeParams.name);
 
                 $scope.selected_img_index = 0;
 

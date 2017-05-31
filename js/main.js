@@ -157,7 +157,7 @@
         .service("CurrentState", function(){
             this.searchedItems = [];
             this.index = -1;
-            this.selectedTab = window.StorageManager_Settings.get("selectedTab") || "M";
+            this.selectedTab = window.StorageManager_Settings.get("selectedTab") || "C";
             this.searchCondition = {};
         })
         .service("MapPointDataAdapter", function($http){

@@ -4,7 +4,7 @@
 	angular.module('MHM-APP')
         .controller('HeaderController', function($scope, $routeParams, MapHandler, MapPointDataAdapter, CurrentState) {
             // map初期化
-            MapHandler.loadMap(document.getElementById("history_map"));
+            // initへ-> MapHandler.loadMap(document.getElementById("history_map"));
 
             // local variables
             var PREF_LATLNG_MAP = {
@@ -137,7 +137,9 @@
                 // ここじゃなくて、検索直後にitemsを同期することに
                 //CurrentState.searchedItems = $scope.items;
                 CurrentState.index = index;
-                CurrentState.selectedTab = "M";
+
+                // Map要素の再描画を防ぐため、要素を丸ごと保存しておく
+                MapHandler.storeElement();
 
                 $scope.move("/detail/" + $scope.items[index].name);
             };
@@ -189,6 +191,15 @@
             $scope.init = function(){
 
                 console.log("HeaderController -> init");
+
+                // 何度もMap読み込みされると迷惑なんで、初回ロードのみ問合せ, 以降は描画済elementから値を取得する
+                if(!MapHandler.isLoaded()){
+                    MapHandler.loadMap("#history_map");
+                }
+                else{
+                    // 保存しておいた要素を復元
+                    MapHandler.restoreElement();
+                }
 
                 // 選択されたindex初期化
                 CurrentState.index = -1;
@@ -260,11 +271,11 @@ console.log("else... maybe first load");
                 }
 
                 // デフォルトタブを決定
-                if(window.CommonFunctions.isEmpty(CurrentState.selectTab)){
-                    CurrentState.selectTab = "M";
+                if(window.CommonFunctions.isEmpty(CurrentState.selectedTab)){
+                    CurrentState.selectedTab = "C";
                 }
 
-                $scope.selectTab(CurrentState.selectTab, lat, lng);
+                $scope.selectTab(CurrentState.selectedTab, lat, lng);
             };
             $scope.selectTab = function(tabname, lat, lng){
 
@@ -292,7 +303,7 @@ console.log("else... maybe first load");
                     MapHandler.update(lat, lng);
                 }
 
-                CurrentState.selectTab = tabname;
+                CurrentState.selectedTab = tabname;
                 window.StorageManager_Settings.set("selectedTab", tabname);
             };
             // 現在のpointitemsから全件描画する

@@ -17,6 +17,7 @@
                     // 選択された検索条件
                     $scope.selected_pref = [];
                     $scope.selected_type = [];
+                    $scope.selected_type2 = [];
                     $scope.selected_score = "";
                     $scope.selected_order = "";
                     $scope.get_no_img_data = false;
@@ -60,6 +61,9 @@
                         }
                         if($scope.selected_type && ($scope.selected_type.length > 0)){
                             param["w_ptype"] = $scope.selected_type.join("-");
+                        }
+                        if($scope.selected_type2 && ($scope.selected_type2.length > 0)){
+                            param["w_ptype2"] = $scope.selected_type2.join("-");
                         }
                         if($scope.selected_score){
                             param["w_score"] = $scope.selected_score;

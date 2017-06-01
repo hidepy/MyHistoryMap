@@ -56,7 +56,7 @@
                 "鹿児島": {lat: "31.5227198", lng: "130.2756005"},
                 "沖縄": {lat: "26.5838881", lng: "127.1568673"}
             };
-            var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "order", "w_name", "w_hasnoimg"];
+            var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "w_ptype2", "order", "w_name", "w_hasnoimg"];
             var SEARCH_COND_NAME_MAP = {
                 "w_pref": {
                     name: "地域"
@@ -71,6 +71,15 @@
                         if(!s) return s;
                         return s.split("-").reduce((p, c)=>{
                             return p + " " + $scope.getName(c, "type_list")
+                        }, "")
+                    }
+                },
+                "w_ptype2": {
+                    name: "詳細タイプ",
+                    convFunc: s=>{
+                        if(!s) return s;
+                        return s.split("-").reduce((p, c)=>{
+                            return p + " " + $scope.getName(c, "type2_list")
                         }, "")
                     }
                 },
@@ -237,6 +246,7 @@ console.log("forceSearch");
                     $scope.updateMapPoints({
                         w_pref : $routeParams.w_pref  || "",
                         w_ptype: $routeParams.w_ptype || "",
+                        w_ptype2: $routeParams.w_ptype2 || "",
                         w_score: $routeParams.w_score || "",
                         w_name : $routeParams.w_name  || "",
                         w_hasnoimg : $routeParams.w_hasnoimg  || "",

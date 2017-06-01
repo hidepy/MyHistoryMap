@@ -16,6 +16,8 @@
                 return (s == null) || (s == undefined) || (s == "");
             }
         };
+
+        // このあたりで初回ロードか否かを判定するためのlocalStorageをセットしておく
     });
 
     // angular module setup
@@ -78,13 +80,17 @@
                 {id: "P", name: "プレイスポット"},
                 //{id: "H", name: "宿"}
             ];
+            $scope.type2_list = [
+                {id: "",  name: "(指定なし)"}
+
+            ];
             $scope.score_list = [
                 {id: "8", name: "最高の絶景のみ！"},
                 {id: "5", name: "良景以上"},
                 {id: "",  name: "すべて"}
             ];
             $scope.order_list = [
-                {id: "", name: "(ソート指定なし)"},
+                //{id: "", name: "(ソート指定なし)"},
                 {id: "o_rec-d", name: "オススメ順"},
                 {id: "o_new-d", name: "新しい順"},
                 {id: "o_new-a", name: "古い順"},

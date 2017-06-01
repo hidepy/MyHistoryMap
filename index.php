@@ -37,13 +37,26 @@ if(isset($callback)) {
   $cond_s_private = " AND m1.is_private <> 1";
   $cond_s_private_m2 = " AND m2.is_private <> 1";
 
-  // area設定
+  // Adminユーザの場合
+  if($is_admin_user){
+    // 最大件数
+    $cond_v_limit = 96;
+    // privateのものも取得対象にする
+    $cond_s_private = "";
+    $cond_s_private_m2 = "";
+  }
+
+  // 名称1発指定の条件
+  $cond_s_byname = "";
+
   $cond_s_area = "";
   $cond_s_ptype = "";
   $cond_s_score = "";
   $cond_s_keyword = "";
   $cond_s_hasimg = " AND ((m1.image_url_top <> '') AND (m1.image_url_top IS NOT NULL))"; // デフォルトは画像を持っているレコードのみが対象
-  {
+  
+  // 名称1発指定でなければ通常フロー
+  if(empty($_GET["w_byname"])){
     // 取得prefを設定
     if(isset($_GET["w_pref"]) && !empty($_GET["w_pref"])){
       $splitted_pref_arr = explode("-", $_GET["w_pref"], 48);
@@ -89,17 +102,14 @@ if(isset($callback)) {
       $cond_s_hasimg = "";
     }
   }
+  // 名称1発指定の場合
+  else{
+      $cond_v_limit = 1;
 
-  // Adminユーザか判定する
-
-  // Adminユーザの場合
-  if($is_admin_user){
-    // 200件取得
-    $cond_v_limit = 96;
-    // privateのものも取得対象にする
-    $cond_s_private = "";
-    $cond_s_private_m2 = "";
+    // 名称1発指定の条件
+    $cond_s_byname = " AND m1.name = " . $dbh->quote($_GET["w_byname"]);
   }
+
   // --------SQLのWhere句を設定 ここまで--------
 
 
@@ -119,6 +129,10 @@ if(isset($callback)) {
   // orderパラメータがあって、解釈okだったら
   if(isset($_GET["order"]) && !empty($orderby_key_value[$_GET["order"]])){
     $orderby_cols[] = $orderby_key_value[$_GET["order"]];
+  }
+  // orderパラメータなければ、score順をデフォルトに
+  else{
+    $orderby_cols[] = $orderby_key_value["o_rec-d"];
   }
   
   // 優先度最後にはidソート
@@ -143,6 +157,7 @@ if(isset($callback)) {
     ,m1.accessibility
     ,m1.crowdness_ave
     ,m1.place_type
+    ,m1.place_type_second
     ,m1.image_url_top
   FROM
     MHM_M_POINT_DATA m1
@@ -160,6 +175,8 @@ if(isset($callback)) {
   $query .= $cond_s_score;
   // nameの条件
   $query .= $cond_s_keyword;
+  // bynameの条件(1件指定)
+  $query .= $cond_s_byname;
   // has no imgの条件
   $query .= $cond_s_hasimg;
 
@@ -197,6 +214,7 @@ if(isset($callback)) {
       "accessibility"=>$r["accessibility"],
       "crowdness"=>$r["crowdness_ave"],
       "place_type"=>$r["place_type"],
+      "place_type2"=>$r["place_type_second"],
       "favorite"=>$r["favorite"],
       "image_url"=>$r["image_url_top"]
     );
@@ -273,11 +291,6 @@ else{
     // admin判定用プロパティをたてる
     $_SESSION["imtasokori"] = $is_admin_user;
   }
-
-  if (!isset($_COOKIE["isnot-first-visit"])){
-      $is_first_visit = true;
-      setcookie("isnot-first-visit", $is_first_visit);
-  }
 }
 
 // 解放
@@ -307,7 +320,13 @@ $dbh = null;
 
   <style>
   body{
-    opacity: 1.0;
+    opacity: 0.15;
+  }
+  img{
+    opacity: 0.4 !important;
+  }
+  .panel_img{
+    opacity: 0.4 !important;
   }
   #search-cond-disp-area{
     overflow: hidden;
@@ -330,12 +349,6 @@ $dbh = null;
   <?php
   if($is_admin_user){
     echo '<admin-memo memo-master-name="MHM-memo" access-key="myts"></admin-memo>';
-  }
-  ?>
-
-  <?php
-  if($is_first_visit){
-    echo "<p> is first visit</p>";
   }
   ?>
 

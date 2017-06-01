@@ -25,7 +25,7 @@
   display: flex;
 }
 .box{
-  width: 25%;
+  width: 20%;
 }
 </style>
 
@@ -44,7 +44,7 @@
             <a href="{{detail_item.image_url}}" data-lightbox="main_images" data-title="{{detail_item.comment}}">
               <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
               <p class="item_detail" style="font-size: 70%;">
-                @{{detail_item.visit_date}}, by {{detail_item.author}}
+                <span ng-hide="detail_item.visit_date!='0000-00-00'">@{{detail_item.visit_date}}</span> by {{detail_item.author}}
               </p>
             </a>
           </div>
@@ -54,15 +54,16 @@
       <div class="comment-text">
         {{selected_item.caption|conv2br}}
       </div>
-      here, regist-comment exits....
-      <regist-comment current-comment="selected_item.caption" current-id="selected_item.id" memo-master-name="MHM-Detail-Comment">{{selected_item.caption}}</regist-comment>
+      <regist-comment current-comment="selected_item.caption" current-id="selected_item.id" memo-master-name="MHM-Detail-Comment"></regist-comment>
 
-      <div class="">
+      <div id="item_rate_list_wrapper">
         <ul class="item_rate_list">
           <li class="box"><span class="item_name">favorite</span>
           <p>{{selected_item.favorite}}</p></li>
           <li class="box"><span class="item_name">place type</span>
           <p>{{selected_item.place_type}}</p></li>
+          <li class="box"><span class="item_name">place type 2nd</span>
+          <p>{{selected_item.place_type2}}</p></li>
           <li class="box"><span class="item_name">accessibility</span>
           <p>{{selected_item.accessibility}}</p></li>
           <li class="box"><span class="item_name">crowdness</span>
@@ -70,11 +71,13 @@
         </ul>
       </div>
 
-      <div class="item_name">住所</div>
-      <div class="item_detail">
-        <span class="item_zip">{{selected_item.zip_no}}</span>
-        <p>{{selected_item.address}}</p>
-        <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.name}}">GoogleMapで開く</a>
+      <div id="item_address_wrapper">
+        <div class="item_name">住所</div>
+        <div class="item_detail">
+          <span class="item_zip">{{selected_item.zip_no}}</span>
+          <p>{{selected_item.address}}</p>
+          <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.name}}">GoogleMapで開く</a>
+        </div>
       </div>
 
       <!--
@@ -182,14 +185,28 @@
           </div>
         </div>
         <div>{{selected_item.prefecture}}</div>
+      </div> -->
 
+      <adsense-notwork></adsense-notwork>
 
+      <!-- 関連コンテンツの表示 -->
+      <div id="related_posts_wrapper" ng-hide="has_no_data">
+        <div class="related_posts_pref">
+          <button ng-click="searchRelated('PREF')">
+            {{selected_item.prefecture}}の他の場所を探す
+          </button>
+        </div>
+
+        <div class="related_posts_type">
+          <button ng-click="searchRelated('TYPE')">
+            関連するタイプの他の場所を探す
+          </button>
+        </div>
       </div>
-    </div>--> <!-- /.card -->
+
+    </div> <!-- /.card -->
 
   </div><!-- /#detail -->
-
-  <adsense></adsense>
 
 </div><!-- /.row -->
 

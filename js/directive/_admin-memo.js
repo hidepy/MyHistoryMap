@@ -45,7 +45,7 @@
                     var choco_post = function(send_data){
                         return $http({
                             method: "POST",
-                            url: "/webapps/utils/choco-memo/index.php",
+                            url: "/webapps/components/choco-memo/index.php",
                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},// でPOST強制するか、
                             data: $.param(send_data)
                         });

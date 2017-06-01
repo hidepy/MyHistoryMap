@@ -97,17 +97,17 @@ class SheetsManager {
 	}
 
 	// this method returns thenable object.
-    getValue(sheet_name, range_string){
+    getValue(range_string){
     	// 呼出元でthenする
     	return this.googleClient.sheets.spreadsheets.values.get({
           spreadsheetId: this.sheet_id,
-          range: sheet_name + "!" + range_string
+          range: range_string
         });
     }
 
     // this method returns thenable object. 
-    findValue(sheet_name, range_string, find_value, search_all){
-    	return this.getValue(sheet_name, range_string)
+    findValue(range_string, find_value, search_all){
+    	return this.getValue(range_string)
     		.then(function(response){
     			console.log("in findvalue getvalue callback");
     			return new Promise(function(resolve, reject){
@@ -147,19 +147,11 @@ class SheetsManager {
     	return String.fromCharCode(65 + n);
     }
 
-    // this method returns thenable object.
-    updateValue(sheet_name, range_string, update_values/* as 2dim arr */){
-    	if(!this.sheet_id){
-    		console.log("no sheet selected... quit process");
-    		return;
-    	}
-    	if(!this.isSignedIn()){
-    		console.log("no auth... quit process");
-    		return;
-    	}
+    // this method returns thenable object. range_string contains sheet name
+    updateValue(range_string, update_values/* as 2dim arr */){
     	return this.googleClient.sheets.spreadsheets.values.update({
           spreadsheetId: this.sheet_id,
-          range: sheet_name + "!" + range_string,
+          range: range_string,
           valueInputOption: "USER_ENTERED",
           values: update_values
     	});

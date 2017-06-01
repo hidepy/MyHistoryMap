@@ -6,7 +6,7 @@
             return {
                 restrict: "E",
                 template: '<div id="regist-comment-wrapper"><button id="regist-comment-toggler">ここタップでコメント登録フィールド表示</button>'
-                        + '  <div id="regist-comment-content">'
+                        + '  <div id="regist-comment-content" style="position: relative;">'
                         + '    <div><textarea ng-model="currentComment"></textarea><button ng-click="insert()">INS</button></div>'
                         + '  </div>'
                         + '</div>',
@@ -15,7 +15,7 @@
 
                     jQuery("#regist-comment-content textarea").css({
                         width: "100%",
-                        height: "256px"
+                        height: "128px"
                     });
 
                     jQuery("#regist-comment-content").hide();
@@ -36,31 +36,38 @@
 
 console.log("in registComment controller");
 
-                    function appendMsg(msg){
-                        var el_msg = angular.element("<div class='alert alert-info'>" + msg + "</div>");
-
-                        el_msg
+                    angular.element("#regist-comment-content").append(
+                        angular.element("<div id='regist-comment-msg-wrapper'></div>")
                             .css({
                                 position: "absolute",
                                 top: 0,
-                                left: 0,
-                                opacity: 0
+                                left: 0
                             })
-                            .animate({
-                                opacity: 1.0
-                            }, 500)
-                            .delay(
-                                3000
-                            )
-                            .fadeOut(
-                                "slow"
-                            )
-                            .queue(function(){
-                                this.remove();
-                            });
+                    );
 
-                        // append
-                        angular.element("#regist-comment-wrapper").append(el_msg);
+                    function appendMsg(msg){
+                        angular.element("#regist-comment-msg-wrapper").append(
+                            angular.element("<div class='alert alert-info'>" + msg + "</div>")
+                                .css({
+                                    opacity: 0
+                                })
+                                .click(function(el){
+                                    console.log(el);
+                                    el.target.display = "none";
+                                })
+                                .animate({
+                                    opacity: 1.0
+                                }, 100)
+                                .delay(
+                                    4000
+                                )
+                                .fadeOut(
+                                    "slow"
+                                )
+                                .queue(function(){
+                                    this.remove();
+                                })
+                        );
                     }
 
                     // SheetsManagerをインスタンス化
@@ -76,10 +83,10 @@ console.log("in registComment controller");
                     $scope.sheetsManager = window.sheetsManager;
 
                     // 投稿先はどのopでも同じなんで外出し
-                    var choco_post = function(send_data){
+                    var post_mhm_comment = function(send_data){
                         return $http({
                             method: "POST",
-                            url: "/webapps/components/choco-memo/index.php",
+                            url: "/webapps/components/mhm-comment-updater/index.php",
                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},// でPOST強制するか、
                             data: $.param(send_data)
                         });
@@ -87,20 +94,27 @@ console.log("in registComment controller");
                     $scope.insert = function(){
                         console.log("id=" + $scope.currentId);
 
+                        if(!$scope.sheetsManager.isSignedIn()){
+                            console.log("is not isSignedIn...");
+                            appendMsg("Googleアカウントにサインインしてくださいね!!");
+                            return;
+                        }
+
+                        appendMsg("コメント登録処理を開始します");
+
+                        // 1. Sheet更新, 2. DB更新
+
                         // Sheet更新-> memo insert -> DB更新のフローで
-                        $scope.sheetsManager.findValue("MHM_M_POINT_DATA", "A2:A1024", $scope.currentId, false)
+                        $scope.sheetsManager.findValue("MHM_M_POINT_DATA!A2:A1024", $scope.currentId, false)
+                            // this then -> find and get value
                             .then(
                                 // success
-                                function(result){
-// 発見-> 既存値取得-> update
-                                    console.log("findvalue-> success-> result");
-                                    console.log(result);
-                                    
+                                function(result){                                    
                                     var pos_r = result[0].row;
                                     var pos_c = result[0].col;
 
                                     // SheetsManagerのfindValueはresult.length > 0のみresolveする
-                                    return $scope.sheetsManager.getValue("MHM_M_POINT_DATA", "H" + (2 + pos_r));
+                                    return $scope.sheetsManager.getValue("MHM_M_POINT_DATA!H" + (2 + pos_r));
                                 },
                                 // failure...
                                 function(error){
@@ -108,52 +122,71 @@ console.log("in registComment controller");
                                     console.log(error);
                                 }
                             )
+                            // this then -> update phase
                             .then(
                                 // get value success
                                 function(response){
                                     return new Promise(function(resolve, reject){
-                                        console.log("in get value success!!");
-                                        console.log(response);
+                                        try{
+                                            console.log("in get value success!!");
+                                            if(!(response && response.result && response.result.range)){
+                                                console.log("response not filled...");
+                                                reject();
+                                            }
 
-                                        if(!(response && response.result && response.result.range)){
-                                            console.log("response not filled...");
+                                            var current_text = (response.result.values && response.result.values[0] ?  response.result.values[0][0] : "") || ""; // 絶対に空に落とす
+                                            var new_text = current_text + $scope.currentComment.replace(/\n/g, "/br");
+                                            var values = [
+                                                [new_text]
+                                            ];
+
+                                            // ここでresolve or rejectしてないから次のthenが起動しなかったという気づき...まぁ、これでいいよね
+                                            return $scope.sheetsManager.updateValue(response.result.range, values)
+                                            .then(function(response){
+                                                console.log("update success!!");
+                                                console.log(response);
+
+                                                appendMsg("MHMデータ管理シートを更新しました!!");
+
+                                                resolve(new_text);
+                                            })
+                                        }
+                                        catch(e){
+                                            console.log("fatal error occured... in get value success");
+                                            console.log(e);
+
                                             reject();
                                         }
-
-                                        var current_text = (response.result.values && response.result.values[0] ?  response.result.values[0][0] : "") || ""; // 絶対に空に落とす
-
-                                        console.log("current_text=" + current_text);
-
-                                        return $scope.sheetsManager.updateValue("MHM_M_POINT_DATA", response.result.range, [
-                                            [current_text + $scope.currentComment.replace(/\n/g, "/br")]
-                                        ]);
                                     });
                                 }
+                            )/*
+                            .catch(
+                                function(error_info){
+                                    console.log("Fatal error occured... in sheet update process");
+                                    console.log(error_info);
+                                }    
                             )
-                            .then(
-                                function(response){
-                                    console.log("final callback...");
-                                    console.log(response);
-
-                                    appendMsg("Spreadsheet Update Finished!!");
+                            */
+                            // this then -> update db table
+                            .then(function(response_update_text){
+                                try{
+                                    // update db
+                                    post_mhm_comment({
+                                        action: "update",
+                                        id: $scope.currentId,
+                                        caption: $scope.currentComment.replace(/\n/g, "/br")
+                                    })
+                                        .then(function(data){
+                                            //alert("テーブル(COMMON_D_MEMO)にコメントを登録しました。後に手動でテーブルからMHMデータ管理シートに値をコピーしてください");
+                                            appendMsg("テーブル(MHM_M_POINT_DATA)のコメントを更新しました");
+                                        });
                                 }
-                            )
-                            ;/*
-                            .catch(function(error){
-                                console.log("findValue Failured...");
-                                console.log(error);
-                            });*/
-
-                        choco_post({
-                            action: "insert",
-                            type: $scope.memoMasterName,
-                            text: $scope.currentComment.replace(/\n/g, "/br"),
-                            additional1: $scope.currentId
-                        })
-                            .then(function(data){
-                                //alert("テーブル(COMMON_D_MEMO)にコメントを登録しました。後に手動でテーブルからMHMデータ管理シートに値をコピーしてください");
-                                appendMsg("テーブル(COMMON_D_MEMO)にコメントを登録しました。後に手動でテーブルからMHMデータ管理シートに値をコピーしてください");
-                            });
+                                catch(e){
+                                    console.log("fatal error occured... in db update process");
+                                    console.log(e);
+                                }
+                            })
+                        ;
                     };
 
                 }

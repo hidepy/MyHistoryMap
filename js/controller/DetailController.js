@@ -15,6 +15,9 @@
             // carousel 有効/無効制御
             $scope.thumbLoaded = false;
 
+            // データロード失敗
+            $scope.has_no_data = false;
+
             // slick(carouselのやつ)の設定
             $scope.slickConfig = {
                 //enabled: true,
@@ -113,12 +116,13 @@ console.log("unsatisfy first root detai init... try to get detail info");
                     // 詳細画面フラグ(=戻る/タイトルへボタンの制御)を折る.　戻った時にブラウザ戻るじゃなくてホームへ戻って欲しい
                     $scope.binding.is_detail_page = false;
 
-                    // 名称からデータを検索する
+                    // 名称からデータを検索する(1件検索用にbynameに値セット)
                     MapPointDataAdapter.getData({
                         w_pref : "",
                         w_ptype: "",
                         w_score: "",
-                        w_name : $routeParams.name  || "",
+                        w_name : "",
+                        w_byname : $routeParams.name  || "",
                         w_hasnoimg : "",
                         order  : ""
                     })
@@ -128,6 +132,7 @@ console.log("detail MapPointDataAdapter callback.  items=");
                             if(!items || !items[0]){
                                 $scope.selected_item.name = "(データなし)";
                                 $scope.is_detail_page = false;
+                                $scope.has_no_data = true;
                             }
                             // レコードがあった場合
                             else{
@@ -141,6 +146,24 @@ console.log("detail MapPointDataAdapter callback.  items=");
             $scope.selectThumbnailImg = function(index){
                 $scope.selected_img_index = index;
                 $scope.selected_item_detail = $scope.selected_item.detail_info[$scope.selected_img_index];
+            };
+
+            $scope.searchRelated = function(type){
+
+                var param = {};
+
+                // where句のprefに関する絞込条件を設定
+                // 地域のみ指定
+                param["w_pref"] = (type == "PREF") ? $scope.selected_item.prefecture : "";
+                // タイプ指定
+                if(type == "TYPE"){
+                    param["w_ptype"]  = $scope.selected_item.place_type  : "";
+                    param["w_ptype2"] = $scope.selected_item.place_type2 : "";
+                }
+                // imgに関しては指定をかけない
+                param["w_hasnoimg"] = "1";
+
+                $scope.move("/", param);
             };
 
             // event when location change

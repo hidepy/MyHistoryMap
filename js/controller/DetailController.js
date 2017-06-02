@@ -157,8 +157,8 @@ console.log("detail MapPointDataAdapter callback.  items=");
                 param["w_pref"] = (type == "PREF") ? $scope.selected_item.prefecture : "";
                 // タイプ指定
                 if(type == "TYPE"){
-                    param["w_ptype"]  = $scope.selected_item.place_type  : "";
-                    param["w_ptype2"] = $scope.selected_item.place_type2 : "";
+                    param["w_ptype"]  = $scope.selected_item.place_type  || "";
+                    param["w_ptype2"] = $scope.selected_item.place_type2 || "";
                 }
                 // imgに関しては指定をかけない
                 param["w_hasnoimg"] = "1";

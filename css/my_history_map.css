@@ -159,6 +159,7 @@ nav > .navbar-toggler-right{
 #carousel-wrapper{
     /*max-width: 640px;*/
     /*margin: 0 auto;*/
+    overflow-x: hidden;
 }
 #thumbnail-carousel .slick-slide {
     height: auto !important;

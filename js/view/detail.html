@@ -44,7 +44,7 @@
             <a href="{{detail_item.image_url}}" data-lightbox="main_images" data-title="{{detail_item.comment}}">
               <img class="d-block img-fluid" ng-src="{{detail_item.image_url_thumb}}" />
               <p class="item_detail" style="font-size: 70%;">
-                <span ng-hide="detail_item.visit_date!='0000-00-00'">@{{detail_item.visit_date}}</span> by {{detail_item.author}}
+                <span ng-show="detail_item.visit_date!='0000-00-00'">@{{detail_item.visit_date}}</span> by {{detail_item.author}}
               </p>
             </a>
           </div>

@@ -42,7 +42,7 @@
                 return !!map;
             };
             this.loadMap = function(el_map_selector, lat, lng){
-                var latlng = new mp.LatLng(!!lat ? lat : 35.8, !!lng ? lng : 138.5);
+                var latlng = new mp.LatLng(!!lat ? lat : 35.9, !!lng ? lng : 138.0);
                 map = new mp.Map(angular.element(el_map_selector)[0], {
                       center: latlng,
                       zoom: 7
@@ -61,10 +61,13 @@
                 console.log(this.map_element_selector);
                 console.log(this.stored_map_element);
             }
-            this.update = function(lat, lng){
+            this.update = function(lat, lng, zoom){
                 mp.event.trigger(map, "resize");
                 if(!!lat && !!lng){
                     map.setCenter(new mp.LatLng(lat, lng));
+                }
+                if(!!zoom){
+                    map.setZoom(zoom);
                 }
             };
             this.addMarker = function(item, options, callback){

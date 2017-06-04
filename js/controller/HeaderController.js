@@ -201,8 +201,9 @@
 
                 console.log("HeaderController -> init");
 
-                // 何度もMap読み込みされると迷惑なんで、初回ロードのみ問合せ, 以降は描画済elementから値を取得する
-                if(!MapHandler.isLoaded()){
+                // 何度もMap読み込みされると迷惑なんで、初回ロードのみ問合せ, 以降は描画済elementから値を取得する. マップが空の場合も再取得する
+                if(!MapHandler.isLoaded() || (window.CommonFunctions.isEmpty(document.getElementById("history_map").innerHTML))){
+                    console.log("Map Reload Executed...!!");
                     MapHandler.loadMap("#history_map");
                 }
                 else{
@@ -218,6 +219,7 @@
 
                 var lat = null;
                 var lng = null;
+                var zoom = null;
 
                 // 変更点があるか                    
                 if(SEARCH_COND_ID.filter(v=> !(($routeParams[v] || "") == (CurrentState.searchCondition[v] || ""))).length > 0){
@@ -239,6 +241,8 @@ console.log("forceSearch");
                         }
                         lat /= latlngs_filtered.length;
                         lng /= latlngs_filtered.length;
+
+                        zoom = 9;
 
                         console.log("calclated latlng=" + lat + "," + lng);
                     }
@@ -310,7 +314,7 @@ console.log("else... maybe first load");
                     jQuery("#tab-card").removeClass("active");
                     jQuery("#tab-list").removeClass("active");
 
-                    MapHandler.update(lat, lng);
+                    MapHandler.update(lat, lng, zoom);
                 }
 
                 CurrentState.selectedTab = tabname;

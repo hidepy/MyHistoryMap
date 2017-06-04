@@ -319,6 +319,7 @@ $dbh = null;
   <script type="text/javascript" src="js/storageManager.js"></script>
 
   <style>
+  /*
   body{
     opacity: 0.15;
   }
@@ -328,6 +329,7 @@ $dbh = null;
   .panel_img{
     opacity: 0.4 !important;
   }
+  */
   #search-cond-disp-area{
     overflow: hidden;
     text-overflow: ellipsis;

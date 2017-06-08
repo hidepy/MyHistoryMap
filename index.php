@@ -304,7 +304,7 @@ $dbh = null;
     
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "zkm") ?></title>
+  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "日本の絶景マップ") ?></title>
 
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">

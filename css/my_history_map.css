@@ -30,9 +30,10 @@ adsense{
     background: rgba(0, 0, 0, .2);
 }
 
-#header h1
+.navbar-brand > h1
 {
-    font-size: 6.2em;
+    /*font-size: 6.2em;*/
+    font-size: 28px;
     font-weight: bold;
 }
 #header p

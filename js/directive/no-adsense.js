@@ -5,7 +5,7 @@
         .directive("adsense", function(){
             return {
                 restrict: "E",
-                template: 'YOU ARE ADMIN!!',
+                template: '',
                 compile: function(el, attr){
                     
                 }

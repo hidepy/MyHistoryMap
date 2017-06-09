@@ -81,8 +81,39 @@
                 //{id: "H", name: "宿"}
             ];
             $scope.type2_list = [
-                {id: "",  name: "(指定なし)"}
-
+                {id: "",  name: "(指定なし)"},
+                {id: "HL", name: "高原"},
+                {id: "MT", name: "山"},
+                {id: "RV", name: "川"},
+                {id: "FR", name: "森"},
+                {id: "GF", name: "草原"},
+                {id: "SE", name: "海"},
+                {id: "LK", name: "湖"},
+                {id: "WE", name: "湿原"},
+                {id: "RD", name: "道"},
+                {id: "PR", name: "岬"},
+                {id: "PA", name: "峠"},
+                {id: "OB", name: "展望スポット"},
+                {id: "PK", name: "公園"},
+                {id: "MU", name: "美術館など"},
+                {id: "VA", name: "渓谷"},
+                {id: "FA", name: "滝"},
+                {id: "TP", name: "テーマパーク"},
+                {id: "FJ", name: "富士山ビュースポット"},
+                {id: "CB", name: "桜/梅ビュースポット"},
+                {id: "OS", name: "昔の街並み"},
+                {id: "BL", name: "建造物"},
+                {id: "SS", name: "観光地"},
+                {id: "FW", name: "お花スポット"},
+                {id: "RW", name: "ロープウェイ/リフト"},
+                {id: "RL", name: "紅葉スポット"},
+                {id: "WH", name: "世界遺産"},
+                {id: "NV", name: "夜景が綺麗"},
+                {id: "SI", name: "静か"},
+                {id: "NJ", name: "日本じゃないみたい"},
+                {id: "TN", name: "棚田"},
+                {id: "RH", name: "休憩施設など"},
+                {id: "AN", name: "動物"}
             ];
             $scope.score_list = [
                 {id: "8", name: "最高の絶景のみ！"},
@@ -114,8 +145,9 @@
                 is_detail_page: false
             };
 
-            // 詳細ページか否か
-            //$scope.is_detail_page = false; //bindingに以降
+            var tag_map = {};
+            for(var key in $scope.type2_list)
+                tag_map = $scope.type2_list[key];
 
             // ---------- methods -------i---
             $scope.showMessage = function(message, status){
@@ -194,7 +226,8 @@
                                     crowdness: item.crowdness,
                                     place_type: item.place_type,
                                     image_url: item.image_url,
-                                    detail_info: response.detail_info[item.id]
+                                    detail_info: response.detail_info[item.id],
+                                    tag_info: response.tag_info[item.id]
                                 });
                             }
                         }

@@ -63,7 +63,7 @@
                             param["w_ptype"] = $scope.selected_type.join("-");
                         }
                         if($scope.selected_type2 && ($scope.selected_type2.length > 0)){
-                            param["w_ptype2"] = $scope.selected_type2.join("-");
+                            param["w_tags"] = $scope.selected_type2.join("-");
                         }
                         if($scope.selected_score){
                             param["w_score"] = $scope.selected_score;

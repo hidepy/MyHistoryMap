@@ -56,7 +56,7 @@
                 "鹿児島": {lat: "31.5227198", lng: "130.2756005"},
                 "沖縄": {lat: "26.5838881", lng: "127.1568673"}
             };
-            var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "w_ptype2", "order", "w_name", "w_hasnoimg"];
+            var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "w_tags", "order", "w_name", "w_hasnoimg"];
             var SEARCH_COND_NAME_MAP = {
                 "w_pref": {
                     name: "地域"
@@ -74,8 +74,8 @@
                         }, "")
                     }
                 },
-                "w_ptype2": {
-                    name: "詳細タイプ",
+                "w_tags": {
+                    name: "タグ",
                     convFunc: s=>{
                         if(!s) return s;
                         return s.split("-").reduce((p, c)=>{
@@ -246,11 +246,12 @@ console.log("forceSearch");
 
                         console.log("calclated latlng=" + lat + "," + lng);
                     }
-
+console.log("HeaderController init before updateMapPoints");
+console.log($routeParams);
                     $scope.updateMapPoints({
                         w_pref : $routeParams.w_pref  || "",
                         w_ptype: $routeParams.w_ptype || "",
-                        w_ptype2: $routeParams.w_ptype2 || "",
+                        w_tags : $routeParams.w_tags || "",
                         w_score: $routeParams.w_score || "",
                         w_name : $routeParams.w_name  || "",
                         w_hasnoimg : $routeParams.w_hasnoimg  || "",
@@ -289,9 +290,15 @@ console.log("else... maybe first load");
                     CurrentState.selectedTab = "C";
                 }
 
-                $scope.selectTab(CurrentState.selectedTab, lat, lng);
+                // ロード時は、タブ部分のactiveが付与されていないので手で付与する
+                jQuery("#header-page-wrapper .nav-tab-" + CurrentState.selectedTab + " > a").addClass("active");
+
+                $scope.selectTab(CurrentState.selectedTab, lat, lng, zoom);
             };
-            $scope.selectTab = function(tabname, lat, lng){
+            $scope.selectTab = function(tabname, lat, lng, zoom){
+
+                // 値が無ければデフォルトを
+                zoom = zoom || 7;
 
                 if(tabname == "C"){
                     jQuery("#tab-card").tab("show");

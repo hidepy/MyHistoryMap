@@ -76,6 +76,7 @@
 
                 function setup(item){
 console.log("in setup function");
+console.log(item);
 
                     $scope.selected_item = item;
                     $scope.selected_item_detail = item.detail_info ? 
@@ -99,48 +100,77 @@ console.log("in setup function");
                     }, 1);
                 }
 
+                // ※※あとで、seession_storageを使ってdetailの問合せをより減らせるように変更すること
+
+                var header_info = null;
+
                 // 苗画面有で、名称が一致する場所情報を保有していれば
                 if(CurrentState.searchedItems 
                     && (CurrentState.index >= 0 && CurrentState.index < CurrentState.searchedItems.length)
                     && (CurrentState.searchedItems.filter(v=>v.name == $routeParams.name).length > 0)
                 ){
-                    console.log("satisfy first root detai init");
+                    console.log("DetailController-> init: has header info!!");
                     // 画面表示用にデータコピーなど...
-                    setup(CurrentState.searchedItems[CurrentState.index]);
+                    //setup(CurrentState.searchedItems[CurrentState.index]);
+                    header_info = CurrentState.searchedItems[CurrentState.index];
                 }
                 // 詳細画面直できた場合
                 else{
-
-console.log("unsatisfy first root detai init... try to get detail info");
-
                     // 詳細画面フラグ(=戻る/タイトルへボタンの制御)を折る.　戻った時にブラウザ戻るじゃなくてホームへ戻って欲しい
                     $scope.binding.is_detail_page = false;
-
-                    // 名称からデータを検索する(1件検索用にbynameに値セット)
-                    MapPointDataAdapter.getData({
-                        w_pref : "",
-                        w_ptype: "",
-                        w_score: "",
-                        w_name : "",
-                        w_byname : $routeParams.name  || "",
-                        w_hasnoimg : "",
-                        order  : ""
-                    })
-                        .then(function(items){
-console.log("detail MapPointDataAdapter callback.  items=");
-                            // レコードなしの場合
-                            if(!items || !items[0]){
-                                $scope.selected_item.name = "(データなし)";
-                                $scope.is_detail_page = false;
-                                $scope.has_no_data = true;
-                            }
-                            // レコードがあった場合
-                            else{
-                                // 画面表示用にデータコピーなど...共通処理へ
-                                setup(items[0]);
-                            }
-                        });
                 }
+
+                
+                // 名称からデータを検索する(1件検索用にbynameに値セット)
+                MapPointDataAdapter.getData({
+                    w_pref   : "",
+                    w_ptype  : "",
+                    w_score  : "",
+                    w_name   : "",
+                    w_byname : $routeParams.name  || "",
+                    w_id     :  header_info ? header_info.id : "",
+                    w_hasnoimg : "1",
+                    dontneed_header: !!header_info,
+                    order    : ""
+                })
+                    .then(function(items){
+console.log("detail MapPointDataAdapter callback");
+                        // レコードなしの場合
+                        if(!items || !items[0]){
+                            $scope.selected_item.name = "(データなし)";
+                            $scope.is_detail_page = false;
+                            $scope.has_no_data = true;
+                        }
+                        // レコードがあった場合
+                        else{
+                            var display_info = {};
+                            // 既にヘッダ情報を持っているなら詳細だけコピー, まだないなら全てコピー
+                            if(!!header_info){
+                                header_info.detail_info = items[0].detail_info;
+                                header_info.tag_info = items[0].tag_info;
+                                display_info = header_info;
+                            }
+                            else{
+                                display_info = items[0];
+                            }
+
+                            // タイプ名称を取得
+                            display_info.place_type_name = $scope.getName(display_info.place_type, "type_list");
+
+                            // タグ名称を取得
+                            display_info.tag_info = (display_info.tag_info || []).map(function(v){
+                                return {
+                                    id: v.id,
+                                    tag_id: v.tag_id,
+                                    tag_name: $scope.getName(v.tag_id, "type2_list")
+                                };
+                            });
+
+                            // 画面表示用にデータコピーなど...共通処理へ
+                            setup(display_info);
+                        }
+                    });
+                
             };
 
             $scope.selectThumbnailImg = function(index){
@@ -148,18 +178,27 @@ console.log("detail MapPointDataAdapter callback.  items=");
                 $scope.selected_item_detail = $scope.selected_item.detail_info[$scope.selected_img_index];
             };
 
-            $scope.searchRelated = function(type){
+            $scope.searchRelated = function(type, options){
 
                 var param = {};
 
                 // where句のprefに関する絞込条件を設定
                 // 地域のみ指定
-                param["w_pref"] = (type == "PREF") ? $scope.selected_item.prefecture : "";
+                if(type == "PREF"){
+                    param["w_pref"] = $scope.selected_item.prefecture;
+                }
+                
                 // タイプ指定
                 if(type == "TYPE"){
                     param["w_ptype"]  = $scope.selected_item.place_type  || "";
-                    param["w_ptype2"] = $scope.selected_item.place_type2 || "";
+                    //param["w_ptype2"] = $scope.selected_item.place_type2 || "";
                 }
+
+                // タグ指定
+                if(type == "TAG"){
+                    param["w_tags"] = options;
+                }
+
                 // imgに関しては指定をかけない
                 param["w_hasnoimg"] = "1";
 

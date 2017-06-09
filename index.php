@@ -46,16 +46,22 @@ if(isset($callback)) {
     $cond_s_private_m2 = "";
   }
 
+  // ---------- ↓ 1件検索時のパラメータ ↓----------
   // 名称1発指定の条件
   $cond_s_byname = "";
+  $cond_s_id = "";
+  // 名称1発指定の場合に、ヘッダ情報が不要か
+  $dont_need_header_info = false;
+  // ---------- ↑ 1件検索時のパラメータ ↑----------
 
   $cond_s_area = "";
   $cond_s_ptype = "";
   $cond_s_score = "";
   $cond_s_keyword = "";
   $cond_s_hasimg = " AND ((m1.image_url_top <> '') AND (m1.image_url_top IS NOT NULL))"; // デフォルトは画像を持っているレコードのみが対象
+  $inrj_s_tags = "";
   
-  // 名称1発指定でなければ通常フロー
+  // 名称1発指定でなければ通常フロー(Head検索フロー)
   if(empty($_GET["w_byname"])){
     // 取得prefを設定
     if(isset($_GET["w_pref"]) && !empty($_GET["w_pref"])){
@@ -101,183 +107,267 @@ if(isset($callback)) {
     if(isset($_GET["w_hasnoimg"]) && !empty($_GET["w_hasnoimg"]) && ($_GET["w_hasnoimg"] == "1")) {
       $cond_s_hasimg = "";
     }
+
+    // タグで絞り込み(第2タイプ)
+    if(isset($_GET["w_tags"]) && !empty($_GET["w_tags"])){
+      $splitted_tags_arr = explode("-", $_GET["w_tags"], 8);
+      if(count($splitted_tags_arr) > 0){
+        for($i = 0; $i < count($splitted_tags_arr); $i++){
+          $splitted_tags_arr[$i] = $dbh->quote($splitted_tags_arr[$i]);
+        }
+        $inrj_s_tags = "
+        INNER JOIN
+        (
+          SELECT
+            m2.id as id
+            ,m2.tag_id as tag_id
+          FROM
+            MHM_M_TAGS m2
+          WHERE
+            m2.tag_id IN (".join(",", $splitted_tags_arr).")
+        ) v1
+          ON v1.id = m1.id
+        ";
+      }
+    }
   }
   // 名称1発指定の場合
   else{
+      // ヘッダ情報は必ず1件まで
       $cond_v_limit = 1;
 
     // 名称1発指定の条件
     $cond_s_byname = " AND m1.name = " . $dbh->quote($_GET["w_byname"]);
-  }
+    // Headerを既に取得していて, idを持っている場合
+    $cond_s_id = empty($_GET["w_id"]) ? "" : $dbh->quote($_GET["w_id"]);
+    // ヘッダ不要がONで渡されて、ちゃんとidを持っている場合はヘッダ不要ルートへ
+    $dont_need_header_info = (($_GET["dontneed_header"] == "true") || ($_GET["dontneed_header"] == "1")) && !empty($cond_s_id);
+
+    $if_return["msg"] .= "in byname root. dont_need_header_info is=".$dont_need_header_info.", dont_need_header_info=".$_GET["dontneed_header"].", left condition=".(($_GET["dontneed_header"] == "true") || ($_GET["dontneed_header"] == "1")).", cond_s_id=".$cond_s_id."(END)";
+  } 
 
   // --------SQLのWhere句を設定 ここまで--------
 
 
-  // --------SQLのOrderBy句を設定 ここから--------
-  $orderby_key_value = array(
-    "o_rec-d"=> "m1.favorite desc",
-    "o_new-d"=> "m1.update_datetime desc",
-    "o_new-a"=> "m1.update_datetime asc",
-    "o_cro-d"=> "m1.crowdness_ave desc",
-    "o_cro-a"=> "m1.crowdness_ave asc",
-    "o_acc-d"=> "m1.accessibility desc",
-    "o_acc-a"=> "m1.accessibility asc"
-  );
-
-  $orderby_s = " ORDER BY ";
-  $orderby_cols = array();
-  // orderパラメータがあって、解釈okだったら
-  if(isset($_GET["order"]) && !empty($orderby_key_value[$_GET["order"]])){
-    $orderby_cols[] = $orderby_key_value[$_GET["order"]];
-  }
-  // orderパラメータなければ、score順をデフォルトに
-  else{
-    $orderby_cols[] = $orderby_key_value["o_rec-d"];
-  }
-  
-  // 優先度最後にはidソート
-  $orderby_cols[] = "m1.id desc";
-  
-  // 配列をカンマjoinする
-  $orderby_s .= join(",", $orderby_cols);
-  // --------SQLのOrderBy句を設定 ここまで--------
-
-  //DB選択成功の場合
-  $query = "
-  SELECT
-    m1.id
-    ,m1.name
-    ,m1.lat
-    ,m1.lng
-    ,m1.prefecture
-    ,m1.zip_no
-    ,m1.address
-    ,m1.caption
-    ,m1.favorite
-    ,m1.accessibility
-    ,m1.crowdness_ave
-    ,m1.place_type
-    ,m1.place_type_second
-    ,m1.image_url_top
-  FROM
-    MHM_M_POINT_DATA m1
-  WHERE
-    1 = 1 
-  ";
-  
-  // privateレコードの取得制限
-  $query .= $cond_s_private;
-  // areaレコードの条件
-  $query .= $cond_s_area;
-  // ptypeの条件
-  $query .= $cond_s_ptype;
-  // scoreの条件
-  $query .= $cond_s_score;
-  // nameの条件
-  $query .= $cond_s_keyword;
-  // bynameの条件(1件指定)
-  $query .= $cond_s_byname;
-  // has no imgの条件
-  $query .= $cond_s_hasimg;
-
-  // ソート指定
-  $query .= $orderby_s;
-
-  // 制限を付与
-  $query .= " LIMIT ".$cond_v_limit;
-  //$query .= " LIMIT 40";
-
-  $res = array();
-  $res_details = array();
-  $query_condition = "";
-
-  $stmt = $dbh->prepare($query);
-  // パラメータセット
-  {
-    // 取得件数のバインド
-    //$stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
-  }
-  $stmt->execute();
-
-  while($r = $stmt->fetch()){
-    $res[] = array(
-      "id"=>$r["id"],
-      "name"=>$r["name"],
-      "lat"=>$r["lat"],
-      "lng"=>$r["lng"],
-      "pref"=>$r["prefecture"],
-      "zip_no"=>$r["zip_no"],
-      "address"=>$r["address"],
-      "caption"=>$r["caption"],
-      "season"=>"",
-      "season_monthly"=>"",
-      "accessibility"=>$r["accessibility"],
-      "crowdness"=>$r["crowdness_ave"],
-      "place_type"=>$r["place_type"],
-      "place_type2"=>$r["place_type_second"],
-      "favorite"=>$r["favorite"],
-      "image_url"=>$r["image_url_top"]
+  // ヘッダ情報が不要でなければ
+  if(!$dont_need_header_info){
+    // --------SQLのOrderBy句を設定 ここから--------
+    $orderby_key_value = array(
+      "o_rec-d"=> "m1.favorite desc",
+      "o_new-d"=> "m1.update_datetime desc",
+      "o_new-a"=> "m1.update_datetime asc",
+      "o_cro-d"=> "m1.crowdness_ave desc",
+      "o_cro-a"=> "m1.crowdness_ave asc",
+      "o_acc-d"=> "m1.accessibility desc",
+      "o_acc-a"=> "m1.accessibility asc"
     );
 
-    if($query_condition != ""){
-      $query_condition .= ", ";
+    $orderby_s = " ORDER BY ";
+    $orderby_cols = array();
+    // orderパラメータがあって、解釈okだったら
+    if(isset($_GET["order"]) && !empty($orderby_key_value[$_GET["order"]])){
+      $orderby_cols[] = $orderby_key_value[$_GET["order"]];
     }
-    $query_condition .= $r["id"];
+    // orderパラメータなければ、score順をデフォルトに
+    else{
+      $orderby_cols[] = $orderby_key_value["o_rec-d"];
+    }
+    
+    // 優先度最後にはidソート
+    $orderby_cols[] = "m1.id desc";
+    
+    // 配列をカンマjoinする
+    $orderby_s .= join(",", $orderby_cols);
+    // --------SQLのOrderBy句を設定 ここまで--------
+
+    //DB選択成功の場合
+    $query = "
+    SELECT
+      m1.id
+      ,m1.name
+      ,m1.lat
+      ,m1.lng
+      ,m1.prefecture
+      ,m1.zip_no
+      ,m1.address
+      ,m1.caption
+      ,m1.favorite
+      ,m1.accessibility
+      ,m1.crowdness_ave
+      ,m1.place_type
+      ,m1.place_type_second
+      ,m1.image_url_top
+    FROM
+      MHM_M_POINT_DATA m1
+    "
+    .$inrj_s_tags.
+    "
+    WHERE
+      1 = 1 
+    ";
+    
+    // privateレコードの取得制限
+    $query .= $cond_s_private;
+    // areaレコードの条件
+    $query .= $cond_s_area;
+    // ptypeの条件
+    $query .= $cond_s_ptype;
+    // scoreの条件
+    $query .= $cond_s_score;
+    // nameの条件
+    $query .= $cond_s_keyword;
+    // bynameの条件(1件指定)
+    $query .= $cond_s_byname;
+    // has no imgの条件
+    $query .= $cond_s_hasimg;
+
+    // ソート指定
+    $query .= $orderby_s;
+
+    // 制限を付与
+    $query .= " LIMIT ".$cond_v_limit;
+    //$query .= " LIMIT 40";
+
+$if_return["msg"] .= "header-sql=".$query."(END)";
+
+    $res = array();
+    $res_details = array();
+    $res_tags = array();
+    $query_condition = "";
+
+    $stmt = $dbh->prepare($query);
+    // パラメータセット
+    {
+      // 取得件数のバインド
+      //$stmt->bindValue(':limit', $cond_v_limit, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+
+    while($r = $stmt->fetch()){
+      $res[] = array(
+        "id"=>$r["id"],
+        "name"=>$r["name"],
+        "lat"=>$r["lat"],
+        "lng"=>$r["lng"],
+        "pref"=>$r["prefecture"],
+        "zip_no"=>$r["zip_no"],
+        "address"=>$r["address"],
+        "caption"=>$r["caption"],
+        "season"=>"",
+        "season_monthly"=>"",
+        "accessibility"=>$r["accessibility"],
+        "crowdness"=>$r["crowdness_ave"],
+        "place_type"=>$r["place_type"],
+        "place_type2"=>$r["place_type_second"],
+        "favorite"=>$r["favorite"],
+        "image_url"=>$r["image_url_top"]
+      );
+
+      if($query_condition != ""){
+        $query_condition .= ", ";
+      }
+      $query_condition .= $r["id"];
+    }
+  }
+  else{
+
+$if_return["msg"] .= "in dontneed_header, creating blank header(END)";
+
+    // ヘッダ情報が不要なら、検索条件idをセットしておく
+    $query_condition = $cond_s_id;
+    // ヘッダ情報が1件もないと、取得側でエラー判定になってしまうので空を作っておく
+    $res[] = array(
+        "id"=>$_GET["w_id"] // originalのものでないとquoteされてしまっている...
+      );
   }
 
-  $query_detail = "
-  SELECT
-    m2.id
-    ,m2.seq
-    ,m2.image_url
-    ,m2.image_url_thumb
-    ,m2.comment
-    ,m2.visit_date
-    ,m2.month
-    ,m2.timing_of_month
-    ,m2.author
-    ,m2.recomend
-  FROM
-    MHM_M_PICTURES m2
-  WHERE
-    m2.id IN (" . $query_condition . ") "
-  ;
+  // 名称1発検索の場合(=DetailPage)
+  if(!empty($_GET["w_byname"])){
 
-  // privateレコードの取得制限
-  $query_detail .= $cond_s_private_m2;
+$if_return["msg"] .= "in detail info get(END)";
 
-  if($query_condition != ""){
-    $select_res_detail = $dbh->query($query_detail);
+    // 明細検索の必要があれば
+    if($query_condition != ""){
+      // 1. PICTURESに問合せ
+      $query_detail = "
+      SELECT
+        m2.id
+        ,m2.seq
+        ,m2.image_url
+        ,m2.image_url_thumb
+        ,m2.comment
+        ,m2.visit_date
+        ,m2.month
+        ,m2.timing_of_month
+        ,m2.author
+        ,m2.recomend
+      FROM
+        MHM_M_PICTURES m2
+      WHERE
+        m2.id IN (" . $query_condition . ") "
+      ;
 
-    while($r = $select_res_detail->fetch(PDO::FETCH_ASSOC)){
+      // privateレコードの取得制限
+      $query_detail .= $cond_s_private_m2;
+      // 実行
+      $select_res_detail = $dbh->query($query_detail);
+      // 取得分ループ
+      while($r = $select_res_detail->fetch(PDO::FETCH_ASSOC)){
+        // 現在のdetailを取得
+        $current = $res_details[$r["id"]];
+        // なければつくる
+        if(!$current) $current = array();
 
-      $current = $res_details[$r["id"]];
+        array_push($current, array(
+          "id"=>$r["id"],
+          "seq"=>$r["seq"],
+          "image_url"=>$r["image_url"],
+          "image_url_thumb"=>$r["image_url_thumb"],
+          "comment"=>$r["comment"],
+          "visit_date"=>$r["visit_date"],
+          "month"=>$r["month"],
+          "timing_of_month"=>$r["timing_of_month"],
+          "author"=>$r["author"],
+          "recomend"=>$r["recomend"]
+        ));
 
-      if(!$current){
-        $current = array();
+        $res_details[$r["id"]] = $current;
       }
 
-      array_push($current, array(
-        "id"=>$r["id"],
-        "seq"=>$r["seq"],
-        "image_url"=>$r["image_url"],
-        "image_url_thumb"=>$r["image_url_thumb"],
-        "comment"=>$r["comment"],
-        "visit_date"=>$r["visit_date"],
-        "month"=>$r["month"],
-        "timing_of_month"=>$r["timing_of_month"],
-        "author"=>$r["author"],
-        "recomend"=>$r["recomend"]
-      ));
+      // 2.tagsに問合せ
+      $query_tags = "
+      SELECT
+        m3.id
+        ,m3.tag_id
+      FROM
+        MHM_M_TAGS m3
+      WHERE
+        m3.id IN (" . $query_condition . ") "
+      ;
 
-      $res_details[$r["id"]] = $current;
+      // tag取得実行
+      $select_res_tags = $dbh->query($query_tags);
+      // tags取得分ループ
+      while($r = $select_res_tags->fetch(PDO::FETCH_ASSOC)){
+        // 現在までのタグを取得
+        $current_tag = $res_tags[$r["id"]];
+        // まだなければ作る
+        if(!$current_tag) $current_tag = array();
+
+        array_push($current_tag, array(
+          "id"=>$r["id"],
+          "tag_id"=>$r["tag_id"]
+        ));
+
+        $res_tags[$r["id"]] = $current_tag;
+      }
     }
   }
 
   header( 'Content-Type: text/javascript; charset=utf-8' );
 
   // jsonpとしてcallback実行させる
-  echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . ", if_return: ". json_encode($if_return) ."})";
+  echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . ", tag_info: " . json_encode($res_tags) .", if_return: ". json_encode($if_return) ."})";
   
   // 解放
   $dbh = null;
@@ -301,10 +391,10 @@ $dbh = null;
 <html ng-app="MHM-APP">
 <head>
   <meta charset="utf-8">
-    
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "日本の絶景マップ") ?></title>
+  <title><?php echo ($is_admin_user ? "MyHistoryMap" : "日本の絶景マップ｜写真と地図で本当の絶景が一目で分かる！") ?></title>
+  <meta name="description" content="実際に訪れた日本の絶景を写真と地図で見やすく紹介しています。旅行で訪れる地域の周辺スポットの検索や、「富士山ビュースポット」「桜のビュースポット」など目的別スポット検索などもできます。" />
 
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
@@ -321,7 +411,7 @@ $dbh = null;
   <style>
   /*
   body{
-    opacity: 0.15;
+    opacity: 0.20;
   }
   img{
     opacity: 0.4 !important;
@@ -376,7 +466,7 @@ $dbh = null;
   <script src="js/directive/navSearch.js"></script>
   <?php
   if(!$is_admin_user){
-    echo '<script src="js/directive/adsense.js"></script>';
+    echo '<script src="js/directive/no-adsense.js"></script>';
   }
   else{
     echo '<script src="js/directive/no-adsense.js"></script>';

@@ -1,7 +1,20 @@
 <nav class="navbar navbar-light bg-faded" id="nav-top">
-	<button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
+	
+	<div style="position: absolute; top: 0; right: 0;">
+	<button class="nav-button" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+		<i class="fa fa-question-circle"></i>
     </button>
+
+<!--
+	<button class="navbar-toggler navbar-toggler-right" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+		<i class="fa fa-search"></i>
+    </button>
+    -->
+    <button class="nav-button" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+		<i class="fa fa-search"></i>
+    </button>
+    </div>
+
     <a class="navbar-brand" href="#" ng-click="moveBack($event)">
     	<h1 ng-hide="binding.is_detail_page">{{binding.title}}</h1>
     	<span ng-show="binding.is_detail_page">Back</span>

@@ -28,7 +28,7 @@
   
 }
 #related_posts_wrapper > div{
-  margin: 8px 4px;
+  margin: 8px 0;
 }
 #item_tag_list_wrapper > ul > li{
   display: inline-block;
@@ -71,6 +71,33 @@
   border-left: 4px solid #ccc;
   font-size: 16px;
 }
+
+.tag_info_disp{
+
+}
+.item_rating_title{
+  display: inline-block;
+  background: linear-gradient(transparent 70%, #93dfb8 70%);
+}
+
+#item_address_wrapper{
+  margin-top: .75em;
+  margin-bottom: .25em;
+}
+.comment-text, #item_address_wrapper > .item_detail{
+  margin: .5em;
+}
+
+.item_rate_list > div{
+  width: 45%;
+}
+@media screen and (min-width:768px) { 
+    /*　画面サイズが480pxからはここを読み込む　*/
+  .item_rate_list > div{
+    width: 25%;
+  }
+}
+
 </style>
 
 <div id="map_detailarea_wrapper" ng-init="init()">
@@ -96,8 +123,6 @@
       </div>
 
       <div>
-        <h3 class="sub-section">{{selected_item.name}} の情報</h3>
-
         <p class="sub-sub-section">コメント</p>
         <div class="comment-text">
           {{selected_item.caption|conv2br}}
@@ -105,25 +130,30 @@
 
         <regist-comment current-comment="selected_item.caption" current-id="selected_item.id" memo-master-name="MHM-Detail-Comment"></regist-comment>
 
-        <div id="item_rate_list_wrapper">
-          <ul class="item_rate_list row">
-            <li class="box col-6　col-xs-6 col-md-3 col-lg-3 col-xl-3" ><span class="item_name">オススメ度</span>
-            <p>{{selected_item.favorite}}</p></li>
-            <li class="box col-6　col-xs-6 col-md-3 col-lg-3 col-xl-3"><span class="item_name">場所タイプ</span>
-            <p>{{selected_item.place_type_name}}</p></li>
-            <li class="box col-6　col-xs-6 col-md-3 col-lg-3 col-xl-3"><span class="item_name">アクセスし易さ</span>
-            <p>{{selected_item.accessibility}}</p></li>
-            <li class="box col-6　col-xs-6 col-md-3 col-lg-3 col-xl-3"><span class="item_name">混雑度</span>
-            <p>{{selected_item.crowdness}}</p></li>
-          </ul>
-        </div>
-        <div id="item_tag_list_wrapper">
-          <span class="sub-sub-section">タグ</span>
-          <ul>
-            <li ng-repeat="tag in selected_item.tag_info">
-              <span>{{tag.tag_name}}</span>
-            </li>
-          </ul>
+        <div id="item_rate_list_wrapper row">
+          <div class="item_rate_list">
+            <div>
+              <p class="item_rating_title">オススメ度</p>
+              <p>{{selected_item.favorite}}</p>
+            </div>
+            <div>
+              <span class="item_rating_title">場所タイプ</span>
+              <p>{{selected_item.place_type_name}}</p>
+              <p>
+                <span class="tag_info_disp" ng-repeat="tag in selected_item.tag_info">
+                  {{tag.tag_name}}
+                </span>
+              </p>
+            </div>
+            <div>
+              <span class="item_rating_title">アクセスし易さ</span>
+              <p>{{selected_item.accessibility}}</p>
+            </div>
+            <div>
+              <span class="item_rating_title">混雑度</span>
+              <p>{{selected_item.crowdness}}</p>
+            </div>
+          </div>
         </div>
 
         <div id="item_address_wrapper">
@@ -131,7 +161,7 @@
           <div class="item_detail">
             <span class="item_zip">{{selected_item.zip_no}}</span>
             <p>{{selected_item.address}}</p>
-            <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.name}}">GoogleMapで開く</a>
+            <a ng-show="!!selected_item.lat && !!selected_item.lng" target="_blank" href="http://maps.apple.com/?q={{selected_item.gmap_search_param}}">GoogleMapで開く</a>
           </div>
         </div>
       </div>
@@ -142,10 +172,10 @@
       <!-- 関連コンテンツの表示 -->
       <div id="related_posts_wrapper" ng-hide="has_no_data">
 
-        <h3 class="sub-section">もっと他の場所を探す</h3>
+        <p class="sub-section">他の場所を探す</p>
 
         <div id="related_posts_tags">
-          <p class="sub-sub-section">タグから他の場所を探す</p>
+          <p class="sub-sub-section">タグで探す</p>
           <span ng-repeat="tag in selected_item.tag_info">
             <button class="btn btn-link" ng-click="searchRelated('TAG', tag.tag_id)">
               {{tag.tag_name}}
@@ -156,14 +186,14 @@
         <div id="related_posts_pref">
           <p class="sub-sub-section">同じ県の他の場所を探す</p>
           <button class="btn btn-success" ng-click="searchRelated('PREF')">
-            {{selected_item.prefecture}}の他の絶景を検索
+            「{{selected_item.prefecture}}」の他の絶景を検索
           </button>
         </div>
 
         <div id="related_posts_type">
           <p class="sub-sub-section">関連するタイプの他の場所を探す</p>
           <button class="btn btn-success" ng-click="searchRelated('TYPE')">
-            {{selected_item.place_type_name}}の他の絶景を検索
+            「{{selected_item.place_type_name}}」の他の絶景を検索
           </button>
         </div>
       </div>

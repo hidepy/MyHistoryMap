@@ -118,9 +118,8 @@ if(isset($callback)) {
         $inrj_s_tags = "
         INNER JOIN
         (
-          SELECT
+          SELECT DISTINCT
             m2.id as id
-            ,m2.tag_id as tag_id
           FROM
             MHM_M_TAGS m2
           WHERE
@@ -195,7 +194,7 @@ if(isset($callback)) {
       ,m1.accessibility
       ,m1.crowdness_ave
       ,m1.place_type
-      ,m1.place_type_second
+      ,m1.gmap_by_latlng
       ,m1.image_url_top
     FROM
       MHM_M_POINT_DATA m1
@@ -258,7 +257,7 @@ $if_return["msg"] .= "header-sql=".$query."(END)";
         "accessibility"=>$r["accessibility"],
         "crowdness"=>$r["crowdness_ave"],
         "place_type"=>$r["place_type"],
-        "place_type2"=>$r["place_type_second"],
+        "gmap_by_latlng"=>$r["gmap_by_latlng"],
         "favorite"=>$r["favorite"],
         "image_url"=>$r["image_url_top"]
       );
@@ -401,6 +400,8 @@ $dbh = null;
   <link rel="stylesheet" href="lib/slick/slick.css">
   <link rel="stylesheet" href="lib/slick/slick-theme.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAC5TnApJHV0fXpLJ7NyEsrKevtWEefP_M"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

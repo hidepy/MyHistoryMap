@@ -35,6 +35,7 @@ adsense{
     /*font-size: 6.2em;*/
     font-size: 28px;
     font-weight: bold;
+    color: #666;
 }
 #header p
 {
@@ -268,16 +269,14 @@ nav > .navbar-toggler-right{
 .item_rate_list {
     padding: 0;
 }
-.item_rate_list li {
+.item_rate_list > div{
     list-style: none;
-    background: aliceblue;
+    background: #fafafa/*aliceblue*/;
     padding: 5px 10px;
-    margin-bottom: 5px;
+    margin: 5px 5px 5px 5px;
     border-radius: 5px;
 }
-.item_rate_list li p {
-    padding-left: 15px;
-}
+
 @media (max-width: 575px) {
     .item_rate_list {
         display: -webkit-flex;
@@ -366,6 +365,14 @@ ul.thumb_group li
 
 #nav-top{
     height: 54px;
+}
+#nav-top button{
+    height: 48px;
+    width: 54px;
+    margin: 3px auto;
+}
+#nav-top button > .fa{
+    font-size: 24px;
 }
 
 .card_wrapper

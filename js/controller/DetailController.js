@@ -76,7 +76,6 @@
 
                 function setup(item){
 console.log("in setup function");
-console.log(item);
 
                     $scope.selected_item = item;
                     $scope.selected_item_detail = item.detail_info ? 
@@ -156,6 +155,9 @@ console.log("detail MapPointDataAdapter callback");
 
                             // タイプ名称を取得
                             display_info.place_type_name = $scope.getName(display_info.place_type, "type_list");
+
+                            // GoogleMapで開く時のパラメータ
+                            display_info.gmap_search_param = display_info.gmap_by_latlng ? display_info.lat + "," + display_info.lng : display_info.name;
 
                             // タグ名称を取得
                             display_info.tag_info = (display_info.tag_info || []).map(function(v){

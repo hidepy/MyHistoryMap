@@ -225,6 +225,7 @@
                                     accessibility: item.accessibility,
                                     crowdness: item.crowdness,
                                     place_type: item.place_type,
+                                    gmap_by_latlng: item.gmap_by_latlng == "1",
                                     image_url: item.image_url,
                                     detail_info: response.detail_info[item.id],
                                     tag_info: response.tag_info[item.id]

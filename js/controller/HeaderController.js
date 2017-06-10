@@ -247,7 +247,7 @@ console.log("forceSearch");
                         console.log("calclated latlng=" + lat + "," + lng);
                     }
 console.log("HeaderController init before updateMapPoints");
-console.log($routeParams);
+
                     $scope.updateMapPoints({
                         w_pref : $routeParams.w_pref  || "",
                         w_ptype: $routeParams.w_ptype || "",

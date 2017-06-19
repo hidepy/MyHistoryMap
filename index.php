@@ -1,5 +1,7 @@
 <?php
 
+define("LOG_FILE", "./log/request.log");
+
 // 全ユーザ対象にセッションを開始する
 session_start();
 
@@ -363,8 +365,28 @@ $if_return["msg"] .= "in detail info get(END)";
     }
   }
 
-  header( 'Content-Type: text/javascript; charset=utf-8' );
 
+  // アクセスログを出力する
+  $request_type = empty($_GET["w_byname"]) ? "H" : "D";
+  $req_parameter = array(
+    $_GET["w_pref"],
+    $_GET["w_ptype"],
+    $_GET["w_score"],
+    $_GET["w_name"],
+    $_GET["w_hasnoimg"],
+    $_GET["w_tags"]
+  );
+  $byname = $_GET["w_byname"];
+  try{
+    // ログ出力
+    error_log(implode(array(date("[Y/m/d H:i:s]"), $request_type, implode($req_parameter, ","), $byname, $_SERVER["REMOTE_ADDR"], $is_admin_user, "\n"), "\t"), 3, LOG_FILE);
+  }
+  catch(Exception $e){
+    $if_return["msg"] .= "logging failure...";
+  }
+
+  // 返却
+  header( 'Content-Type: text/javascript; charset=utf-8' );
   // jsonpとしてcallback実行させる
   echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . ", tag_info: " . json_encode($res_tags) .", if_return: ". json_encode($if_return) ."})";
   
@@ -387,7 +409,7 @@ $dbh = null;
 
 ?>
 
-<html ng-app="MHM-APP">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -412,7 +434,7 @@ $dbh = null;
   <style>
   /*
   body{
-    opacity: 0.20;
+    opacity: 0.15;
   }
   img{
     opacity: 0.4 !important;
@@ -432,12 +454,18 @@ $dbh = null;
     overflow: hidden;
     max-height: 1.2em;
   }
+
   </style>
 
   <base href="/webapps/zekkei-map/">
 </head> 
 
 <body ng-controller="RootController">
+
+  <div id="initial-view">
+    <img src="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png" />
+    <p>Loading...</p>
+  </div>
 
   <?php
   if($is_admin_user){
@@ -467,7 +495,7 @@ $dbh = null;
   <script src="js/directive/navSearch.js"></script>
   <?php
   if(!$is_admin_user){
-    echo '<script src="js/directive/no-adsense.js"></script>';
+    echo '<script src="js/directive/adsense.js"></script>';
   }
   else{
     echo '<script src="js/directive/no-adsense.js"></script>';

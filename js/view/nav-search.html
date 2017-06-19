@@ -20,9 +20,15 @@
 <div ng-show="search_toggle_state" class="search_wrap">
 	<div class="row form-group">
 		<div class="col-md-3 col-sm-6 col-12 mb-3">
-			<label class="col-form-label-sm" for="select_list_pref">地域（複数指定可）</label>
+			<label class="col-form-label-sm" for="select_list_pref">都道府県（複数指定可）</label>
 			<select id="select_list_pref" class="form-control" multiple ng-model="selected_pref">
 				<option ng-repeat="option in pref_list" value="{{option}}">{{option}}</option>
+			</select>
+		</div>
+		<div class="col-md-3 col-sm-6 col-12 mb-3">
+			<label class="col-form-label-sm" for="select_list_area">地域</label>
+			<select id="select_list_area" class="form-control" multiple ng-model="selected_area">
+				<option ng-repeat="option in area_list" value="{{option.id}}">{{option.name}}</option>
 			</select>
 		</div>
 		<div class="col-md-3 col-sm-6 col-12 mb-3">

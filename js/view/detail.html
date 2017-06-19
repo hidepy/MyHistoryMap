@@ -200,8 +200,15 @@
 
     </div> <!-- /.card -->
 
+    <div>
+      <a class="navbar-brand" href="#" ng-click="moveBack($event)">
+        <h1 ng-hide="binding.is_detail_page">{{binding.title}}</h1>
+        <span ng-show="binding.is_detail_page">Back</span>
+      </a>
+
+    </div>
+
   </div><!-- /#detail -->
 
 </div><!-- /.row -->
-
 

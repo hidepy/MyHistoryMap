@@ -16,6 +16,7 @@
                     // ----------- Search Params ----------
                     // 選択された検索条件
                     $scope.selected_pref = [];
+                    $scope.selected_area = "";
                     $scope.selected_type = [];
                     $scope.selected_type2 = [];
                     $scope.selected_score = "";
@@ -56,8 +57,13 @@
                         var param = {};
 
                         // where句のprefに関する絞込条件を設定
+                        // 県
                         if($scope.selected_pref && ($scope.selected_pref.length > 0)){
                             param["w_pref"] = $scope.selected_pref.join("-");
+                        }
+                        // 地域が指定されていれば県を上書きする
+                        if($scope.selected_area){
+                            param["w_pref"] = $scope.selected_area;
                         }
                         if($scope.selected_type && ($scope.selected_type.length > 0)){
                             param["w_ptype"] = $scope.selected_type.join("-");

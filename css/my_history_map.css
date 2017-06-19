@@ -408,10 +408,7 @@ ul.thumb_group li
     font-size: 0.85rem;
 }
 
-#cards_wrapper {
-    /* display: none; */
-}
-#cards_wrapper .list_panel
+.card_wrapper .list_panel
 {
     background: #fff;
 }
@@ -422,19 +419,19 @@ ul.thumb_group li
     padding-left: 5px;
 }
 
-#cards_wrapper .panel
+.card_wrapper .panel
 {
     border: none;
 }
 
-#cards_wrapper .panel-heading
+.card_wrapper .panel-heading
 {
     position: relative;
 
     padding: 0;
 }
 
-#cards_wrapper .panel-heading .panel_img
+.card_wrapper .panel-heading .panel_img
 {
     width: 100%;
     height: 144px;
@@ -444,12 +441,12 @@ ul.thumb_group li
     background-size: cover;
 }
 
-#cards_wrapper .panel-heading .ravel
+.card_wrapper .panel-heading .ravel
 {
     position: absolute;
     top: 3px;
 }
-#cards_wrapper .panel-heading .ravel > .prefecture
+.card_wrapper .panel-heading .ravel > .prefecture
 {
     right: 0;
     display: inline-block;/* もとはblock */
@@ -460,12 +457,12 @@ ul.thumb_group li
     background: rgba(0, 86, 160, 0.74);
     font-size: 0.8rem;
 }
-#cards_wrapper .panel-heading .ravel > .card-score
+.card_wrapper .panel-heading .ravel > .card-score
 {
     left: 0;
     opacity: 0.74;
 }
-#cards_wrapper .panel-heading .ravel > .card-recommend
+.card_wrapper .panel-heading .ravel > .card-recommend
 {
     left: 16px;
     opacity: 0.74;

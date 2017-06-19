@@ -59,7 +59,8 @@
             var SEARCH_COND_ID = ["w_pref", "w_score", "w_ptype", "w_tags", "order", "w_name", "w_hasnoimg"];
             var SEARCH_COND_NAME_MAP = {
                 "w_pref": {
-                    name: "地域"
+                    name: "地域",
+                    convFunc: s=>$scope.getName(s, "area_list")
                 },
                 "w_score": {
                     name: "評価",

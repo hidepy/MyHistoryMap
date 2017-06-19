@@ -409,7 +409,7 @@ $dbh = null;
 
 ?>
 
-<html ng-app="MHM-APP">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -454,12 +454,18 @@ $dbh = null;
     overflow: hidden;
     max-height: 1.2em;
   }
+
   </style>
 
   <base href="/webapps/zekkei-map/">
 </head> 
 
 <body ng-controller="RootController">
+
+  <div id="initial-view">
+    <img src="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png" />
+    <p>Loading...</p>
+  </div>
 
   <?php
   if($is_admin_user){

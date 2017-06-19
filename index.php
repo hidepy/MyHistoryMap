@@ -416,6 +416,10 @@ $dbh = null;
 
   <title><?php echo ($is_admin_user ? "MyHistoryMap" : "日本の絶景マップ｜写真と地図で本当の絶景が一目で分かる！") ?></title>
   <meta name="description" content="実際に訪れた日本の絶景を写真と地図で見やすく紹介しています。旅行で訪れる地域の周辺スポットの検索や、「富士山ビュースポット」「桜のビュースポット」など目的別スポット検索などもできます。" />
+  <meta property="og:image"  content="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png">
+  <meta name="twitter:image" content="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png">
+  <meta itemprop="image"     content="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png">
+
 
   <link rel="stylesheet" type="text/css" href="css/my_history_map.css">
   <link rel="stylesheet" type="text/css" href="lib/lightbox/css/lightbox.css">
@@ -462,9 +466,9 @@ $dbh = null;
 
 <body ng-controller="RootController">
 
-  <div id="initial-view">
-    <img src="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png" />
-    <p>Loading...</p>
+  <div id="initial-view" style="position: absolute; text-align: center; width: 100%;">
+    <img src="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png" style="border-radius: 50%;" />
+    <p>Loading...<img src="../common/img/support-loading.gif" style="width: 24px;"></p>
   </div>
 
   <?php

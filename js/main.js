@@ -21,6 +21,12 @@
 
         angular.bootstrap(document, ['MHM-APP']);
 
+        angular.element("#initial-view").animate({
+            opacity: 0
+        }, 100)
+        .queue(function(){
+            this.remove();
+        })
 
     });
 

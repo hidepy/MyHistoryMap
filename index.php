@@ -466,9 +466,8 @@ $dbh = null;
 
 <body ng-controller="RootController">
 
-  <div id="initial-view" style="position: absolute; text-align: center; width: 100%;">
-    <img src="http://tasokori.net/wp/wp-content/uploads/2017/06/zekkei-circle.png" style="border-radius: 50%;" />
-    <p>Loading...<img src="../common/img/support-loading.gif" style="width: 24px;"></p>
+  <div id="initial-view" style="position: absolute; text-align: center; width: 100%; height: 100%; display: table;">
+    <p style="display: table-cell; vertical-align: middle; ">Loading...<img src="../common/img/support-loading.gif" style="width: 24px;"></p>
   </div>
 
   <?php

@@ -18,7 +18,6 @@
         };
         // このあたりで初回ロードか否かを判定するためのlocalStorageをセットしておく
 
-
         angular.bootstrap(document, ['MHM-APP']);
 
         angular.element("#initial-view").animate({
@@ -83,6 +82,7 @@
 
             // 検索条件のリスト. 文字解釈にも使用する
             $scope.area_list = [
+                {id: "", name: "(指定なし)"},
                 {id: "北海道-青森-岩手-宮城-秋田-山形-福島", name: "北海道/東北"},
                 {id: "茨城-栃木-群馬-埼玉-千葉-東京-神奈川", name: "関東"},
                 {id: "新潟-富山-石川-福井-山梨-長野-岐阜-静岡-愛知-三重", name: "中部"},

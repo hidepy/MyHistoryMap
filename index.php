@@ -32,6 +32,33 @@ if(isset($callback)) {
   // 共通戻りI/Fオブジェクト
   $if_return = array("return_cd"=> 0, "msg"=> "", "item"=> "");
 
+  // --------共通関数定義 ここから--------
+  // DBからのレコードをヘッダのオブジェクトに変換(複数使用するんで)
+  function getHeaderObj($r){
+      return array(
+        "id"=>$r["id"],
+        "name"=>$r["name"],
+        "lat"=>$r["lat"],
+        "lng"=>$r["lng"],
+        "pref"=>$r["prefecture"],
+        "zip_no"=>$r["zip_no"],
+        "address"=>$r["address"],
+        "caption"=>$r["caption"],
+        "season"=>"",
+        "season_monthly"=>"",
+        "accessibility"=>$r["accessibility"],
+        "crowdness"=>$r["crowdness_ave"],
+        "place_type"=>$r["place_type"],
+        "gmap_by_latlng"=>$r["gmap_by_latlng"],
+        "favorite"=>$r["favorite"],
+        "image_url"=>$r["image_url_top"],
+        "tag"=>$r["tag"] // タグの関連情報で引いてきた場合のみセットされる
+      );
+  }
+
+  // --------共通関数定義ここまで--------
+
+
   // --------SQLのWhere句を設定 ここから--------
   // レコード取得件数を絞り込み
   $cond_v_limit = 48;
@@ -105,11 +132,6 @@ if(isset($callback)) {
       $cond_s_keyword .= " AND m1.name LIKE " . $dbh->quote("%".$_GET["w_name"]."%");
     }
 
-    // 画像を持つレコードのみを対象とする
-    if(isset($_GET["w_hasnoimg"]) && !empty($_GET["w_hasnoimg"]) && ($_GET["w_hasnoimg"] == "1")) {
-      $cond_s_hasimg = "";
-    }
-
     // タグで絞り込み(第2タイプ)
     if(isset($_GET["w_tags"]) && !empty($_GET["w_tags"])){
       $splitted_tags_arr = explode("-", $_GET["w_tags"], 8);
@@ -146,6 +168,11 @@ if(isset($callback)) {
 
     $if_return["msg"] .= "in byname root. dont_need_header_info is=".$dont_need_header_info.", dont_need_header_info=".$_GET["dontneed_header"].", left condition=".(($_GET["dontneed_header"] == "true") || ($_GET["dontneed_header"] == "1")).", cond_s_id=".$cond_s_id."(END)";
   } 
+
+    // 画像を持つレコードのみを対象とするか
+    if($_GET["w_hasnoimg"] == "1") {
+      $cond_s_hasimg = "";
+    }
 
   // --------SQLのWhere句を設定 ここまで--------
 
@@ -229,11 +256,13 @@ if(isset($callback)) {
     $query .= " LIMIT ".$cond_v_limit;
     //$query .= " LIMIT 40";
 
-$if_return["msg"] .= "header-sql=".$query."(END)";
+    $if_return["msg"] .= "header-sql=".$query."(END)";
 
     $res = array();
     $res_details = array();
     $res_tags = array();
+    $res_related_pref = array(); // 関連として表示する情報(prefで紐づく)
+    $res_related_tags = array(); // 関連として表示する情報(tagで紐づく)
     $query_condition = "";
 
     $stmt = $dbh->prepare($query);
@@ -245,24 +274,7 @@ $if_return["msg"] .= "header-sql=".$query."(END)";
     $stmt->execute();
 
     while($r = $stmt->fetch()){
-      $res[] = array(
-        "id"=>$r["id"],
-        "name"=>$r["name"],
-        "lat"=>$r["lat"],
-        "lng"=>$r["lng"],
-        "pref"=>$r["prefecture"],
-        "zip_no"=>$r["zip_no"],
-        "address"=>$r["address"],
-        "caption"=>$r["caption"],
-        "season"=>"",
-        "season_monthly"=>"",
-        "accessibility"=>$r["accessibility"],
-        "crowdness"=>$r["crowdness_ave"],
-        "place_type"=>$r["place_type"],
-        "gmap_by_latlng"=>$r["gmap_by_latlng"],
-        "favorite"=>$r["favorite"],
-        "image_url"=>$r["image_url_top"]
-      );
+      $res[] = getHeaderObj($r);
 
       if($query_condition != ""){
         $query_condition .= ", ";
@@ -272,7 +284,7 @@ $if_return["msg"] .= "header-sql=".$query."(END)";
   }
   else{
 
-$if_return["msg"] .= "in dontneed_header, creating blank header(END)";
+    $if_return["msg"] .= "in dontneed_header, creating blank header(END)";
 
     // ヘッダ情報が不要なら、検索条件idをセットしておく
     $query_condition = $cond_s_id;
@@ -285,7 +297,7 @@ $if_return["msg"] .= "in dontneed_header, creating blank header(END)";
   // 名称1発検索の場合(=DetailPage)
   if(!empty($_GET["w_byname"])){
 
-$if_return["msg"] .= "in detail info get(END)";
+    $if_return["msg"] .= "in detail info get(END)";
 
     // 明細検索の必要があれば
     if($query_condition != ""){
@@ -305,8 +317,8 @@ $if_return["msg"] .= "in detail info get(END)";
       FROM
         MHM_M_PICTURES m2
       WHERE
-        m2.id IN (" . $query_condition . ") "
-      ;
+        m2.id = " . $query_condition
+      ;// このルートに入る時、$query_conditionにはidが1件しか存在しないはず
 
       // privateレコードの取得制限
       $query_detail .= $cond_s_private_m2;
@@ -335,6 +347,7 @@ $if_return["msg"] .= "in detail info get(END)";
         $res_details[$r["id"]] = $current;
       }
 
+
       // 2.tagsに問合せ
       $query_tags = "
       SELECT
@@ -343,11 +356,14 @@ $if_return["msg"] .= "in detail info get(END)";
       FROM
         MHM_M_TAGS m3
       WHERE
-        m3.id IN (" . $query_condition . ") "
+        m3.id = " . $query_condition . ""
       ;
+      // 後続で使用する可能性があるのでタグをカンマ区切りにして保持する
+      $tags_string_arr = array();
 
       // tag取得実行
       $select_res_tags = $dbh->query($query_tags);
+
       // tags取得分ループ
       while($r = $select_res_tags->fetch(PDO::FETCH_ASSOC)){
         // 現在までのタグを取得
@@ -360,7 +376,109 @@ $if_return["msg"] .= "in detail info get(END)";
           "tag_id"=>$r["tag_id"]
         ));
 
+        // idは1個のはずなんで特に構わず連結していく
+        $tags_string_arr[] = $r["tag_id"];
+
         $res_tags[$r["id"]] = $current_tag;
+      }
+
+
+      // 3. 【暫定】 pref, tagsそれぞれランダムに6件ずつ関連情報として取得する
+      $query_related_pref = "
+      SELECT
+        m1.id
+        ,m1.name
+        ,m1.lat
+        ,m1.lng
+        ,m1.prefecture
+        ,m1.zip_no
+        ,m1.address
+        ,m1.caption
+        ,m1.favorite
+        ,m1.accessibility
+        ,m1.crowdness_ave
+        ,m1.place_type
+        ,m1.gmap_by_latlng
+        ,m1.image_url_top
+      FROM
+        MHM_M_POINT_DATA m1
+        INNER JOIN
+        (
+          SELECT
+            m2.prefecture
+          FROM
+            MHM_M_POINT_DATA m2
+          WHERE
+            m2.id = " . $query_condition . "
+        ) v1
+          ON
+            v1.prefecture = m1.prefecture
+      ORDER BY
+        RAND()
+      LIMIT
+        0, 6
+      ";
+
+      // 関連ヘッダ(pref)取得実行
+      $select_res_related_pref = $dbh->query($query_related_pref);
+
+      // 取得分ループ
+      while($r = $select_res_related_pref->fetch(PDO::FETCH_ASSOC)){
+        $res_related_pref[$r["id"]] = getHeaderObj($r);
+      }
+
+
+      // 4. 【暫定】 tagsランダムに6件ずつ関連情報として取得する
+      
+      if(count($tags_string_arr) > 0){
+        for($i = 0; $i < count($tags_string_arr); $i++){
+          $tags_string_arr[$i] = $dbh->quote($tags_string_arr[$i]);
+        }
+
+        $query_related_tags = "
+        SELECT
+          m1.id
+          ,m1.name
+          ,m1.lat
+          ,m1.lng
+          ,m1.prefecture
+          ,m1.zip_no
+          ,m1.address
+          ,m1.caption
+          ,m1.favorite
+          ,m1.accessibility
+          ,m1.crowdness_ave
+          ,m1.place_type
+          ,m1.gmap_by_latlng
+          ,m1.image_url_top
+          ,v1.tag_id as tag
+        FROM
+          MHM_M_POINT_DATA m1
+          INNER JOIN
+          (
+            SELECT
+              m2.id
+              ,m2.tag_id
+            FROM
+              MHM_M_TAGS m2
+            WHERE
+              m2.tag_id IN (" . join(",", $tags_string_arr) . ")
+          ) v1
+            ON
+              v1.id = m1.id
+        ORDER BY
+          RAND()
+        LIMIT
+          0, 6
+        ";
+
+        // 関連ヘッダ(tags)取得実行
+        $select_res_related_tags = $dbh->query($query_related_tags);
+
+        // 取得分ループ
+        while($r = $select_res_related_tags->fetch(PDO::FETCH_ASSOC)){
+          $res_related_tags[$r["id"]] = getHeaderObj($r);
+        }
       }
     }
   }
@@ -388,7 +506,7 @@ $if_return["msg"] .= "in detail info get(END)";
   // 返却
   header( 'Content-Type: text/javascript; charset=utf-8' );
   // jsonpとしてcallback実行させる
-  echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . ", tag_info: " . json_encode($res_tags) .", if_return: ". json_encode($if_return) ."})";
+  echo $callback . "({head_info: " . json_encode($res). ", detail_info: " . json_encode($res_details) . ", tag_info: " . json_encode($res_tags) . ", related_pref: " . json_encode($res_related_pref) . ", related_tags: " . json_encode($res_related_tags) .", if_return: ". json_encode($if_return) ."})";
   
   // 解放
   $dbh = null;
@@ -447,6 +565,7 @@ $dbh = null;
     opacity: 0.4 !important;
   }
   */
+  
   #search-cond-disp-area{
     overflow: hidden;
     text-overflow: ellipsis;
@@ -458,7 +577,7 @@ $dbh = null;
     overflow: hidden;
     max-height: 1.2em;
   }
-
+  
   </style>
 
   <base href="/webapps/zekkei-map/">

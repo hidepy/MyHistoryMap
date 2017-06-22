@@ -246,8 +246,13 @@
                                     place_type: item.place_type,
                                     gmap_by_latlng: item.gmap_by_latlng == "1",
                                     image_url: item.image_url,
+                                    tag: response.tag || "", // タグの関連場所検索の場合のみセットされる
                                     detail_info: response.detail_info[item.id],
-                                    tag_info: response.tag_info[item.id]
+                                    tag_info: response.tag_info[item.id],
+                                    related_info: {
+                                        pref: response.related_pref || [],
+                                        tags: response.related_tags || []
+                                    }
                                 });
                             }
                         }

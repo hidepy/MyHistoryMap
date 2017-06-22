@@ -174,11 +174,11 @@
 
         <p class="sub-section">他の場所を探す</p>
 
+        <!--
         <div>
           <p class="sub-sub-section">こんな場所が人気です</p>
           <div class="card_wrapper col-md-4 col-4" ng-repeat="(card_idx, item) in selected_item.related_info" >
-              <!--<div class="panel" ng-click="selectCard(card_idx)">-->
-              <div class="panel">
+              <div class="panel" ng-click="selectCard(card_idx)">
                 <div class="panel-heading">
                   <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
                   <div class="ravel">
@@ -192,26 +192,62 @@
               </div>
           </div>
         </div>
+        -->
 
         <div id="related_posts_tags">
           <p class="sub-sub-section">タグで探す</p>
           <span ng-repeat="tag in selected_item.tag_info">
-            <button class="btn btn-link" ng-click="searchRelated('TAG', tag.tag_id)">
+            <button class="btn btn-link btn-search-related" ng-click="searchRelated('TAG', tag.tag_id)">
               {{tag.tag_name}}
             </button>
           </span>
+
+          <div class="row no-gutters">
+            <div class="card_wrapper col-md-4 col-4" ng-repeat="(card_idx, item) in selected_item.related_info.tags" >
+              <div class="panel" ng-click="selectCardByName(item.name)">
+                <div class="panel-heading">
+                  <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
+                  <div class="ravel">
+                    <span class="card-score badge" ng-class="{'badge-danger': item.favorite >= 8, 'badge-warning': (item.favorite < 8 && item.favorite >= 6), 'badge-default': item.favorite < 6}">{{item.favorite}}</span>
+                    <span class="tag">{{item.tag}}</span>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  {{item.name}}
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <div id="related_posts_pref">
           <p class="sub-sub-section">同じ県の他の場所を探す</p>
-          <button class="btn btn-success" ng-click="searchRelated('PREF')">
+          <button class="btn btn-success btn-search-related" ng-click="searchRelated('PREF')">
             「{{selected_item.prefecture}}」の他の絶景を検索
           </button>
+
+          <div class="row no-gutters">
+            <div class="card_wrapper col-md-4 col-4" ng-repeat="(card_idx, item) in selected_item.related_info.pref" >
+              <div class="panel" ng-click="selectCardByName(item.name)">
+                <div class="panel-heading">
+                  <div class="panel_img" ng-style="{'background-image': 'url('+ item.image_url +')'}"></div>
+                  <div class="ravel">
+                    <span class="card-score badge" ng-class="{'badge-danger': item.favorite >= 8, 'badge-warning': (item.favorite < 8 && item.favorite >= 6), 'badge-default': item.favorite < 6}">{{item.favorite}}</span>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  {{item.name}}
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <div id="related_posts_type">
           <p class="sub-sub-section">関連するタイプの他の場所を探す</p>
-          <button class="btn btn-success" ng-click="searchRelated('TYPE')">
+          <button class="btn btn-success btn-search-related" ng-click="searchRelated('TYPE')">
             「{{selected_item.place_type_name}}」の他の絶景を検索
           </button>
         </div>

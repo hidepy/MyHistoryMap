@@ -413,6 +413,8 @@ if(isset($callback)) {
         ) v1
           ON
             v1.prefecture = m1.prefecture
+      WHERE
+        m1.is_private <> '1'
       ORDER BY
         RAND()
       LIMIT
@@ -466,6 +468,8 @@ if(isset($callback)) {
           ) v1
             ON
               v1.id = m1.id
+        WHERE
+          m1.is_private <> '1'
         ORDER BY
           RAND()
         LIMIT

@@ -77,6 +77,9 @@
                 function setup(item){
 console.log("in setup function");
 
+console.log(item);
+
+
                     $scope.selected_item = item;
                     $scope.selected_item_detail = item.detail_info ? 
                         item.detail_info[$scope.selected_img_index]
@@ -133,15 +136,21 @@ console.log("in setup function");
                     order    : ""
                 })
                     .then(function(items){
-console.log("detail MapPointDataAdapter callback");
+console.log("detail MapPointDataAdapter callback. items=");
+console.log(items);
                         // レコードなしの場合
                         if(!items || !items[0]){
                             $scope.selected_item.name = "(データなし)";
                             $scope.is_detail_page = false;
                             $scope.has_no_data = true;
+
+                            console.log("detail no data...");
                         }
                         // レコードがあった場合
                         else{
+
+console.log("detail got data!!");
+
                             var display_info = {};
                             // 既にヘッダ情報を持っているなら詳細だけコピー, まだないなら全てコピー
                             if(!!header_info){

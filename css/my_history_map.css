@@ -457,6 +457,19 @@ ul.thumb_group li
     background: rgba(0, 86, 160, 0.74);
     font-size: 0.8rem;
 }
+.card_wrapper .panel-heading .ravel > .tag
+{
+    right: 0;
+    display: inline-block;/* もとはblock */
+    width: 72px;
+    height: 2em;
+    overflow: hidden;
+    padding: 4px;
+    text-align: center;
+    color: #0275d8;
+    background: rgba(255, 255, 255, 0.74);
+    font-size: 0.8rem;
+}
 .card_wrapper .panel-heading .ravel > .card-score
 {
     left: 0;

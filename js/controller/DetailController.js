@@ -147,6 +147,7 @@ console.log("detail MapPointDataAdapter callback");
                             if(!!header_info){
                                 header_info.detail_info = items[0].detail_info;
                                 header_info.tag_info = items[0].tag_info;
+                                header_info.related_info = items[0].related_info;
                                 display_info = header_info;
                             }
                             else{
@@ -168,6 +169,11 @@ console.log("detail MapPointDataAdapter callback");
                                 };
                             });
 
+                            // タグ名称解釈を関連場所側にも... なんかもったいない...
+                            for(var t in display_info.related_info.tags){
+                                display_info.related_info.tags[t]["tag"] = $scope.getName(display_info.related_info.tags[t]["tag"], "type2_list");
+                            }
+
                             // 画面表示用にデータコピーなど...共通処理へ
                             setup(display_info);
                         }
@@ -179,6 +185,11 @@ console.log("detail MapPointDataAdapter callback");
                 $scope.selected_img_index = index;
                 $scope.selected_item_detail = $scope.selected_item.detail_info[$scope.selected_img_index];
             };
+
+            // 名称が
+            $scope.selectCardByName = function(name){
+                $scope.move("/detail/" + name);
+            }
 
             $scope.searchRelated = function(type, options){
 

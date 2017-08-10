@@ -370,6 +370,7 @@ ul.thumb_group li
     height: 48px;
     width: 54px;
     margin: 3px auto;
+    vertical-align: top;
 }
 #nav-top button > .fa{
     font-size: 24px;

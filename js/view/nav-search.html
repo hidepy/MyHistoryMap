@@ -1,14 +1,17 @@
 <nav class="navbar navbar-light bg-faded" id="nav-top">
 	
 	<div style="position: absolute; top: 0; right: 0;">
-	<!--
-	<button class="nav-button" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
-		<i class="fa fa-question-circle"></i>
-    </button>
-    -->
-    <button class="nav-button" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
-		<i class="fa fa-search"></i>
-    </button>
+		<button class="nav-button" ng-click="moveBack($event)" type="button" aria-label="Toggle navigation">
+			<span style="font-size: 12px;">全国の絶景</span>
+		</button>
+		<!--
+		<button class="nav-button" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+			<i class="fa fa-question-circle"></i>
+	    </button>
+	    -->
+	    <button class="nav-button" ng-click="toggleSearchMenu()" type="button" aria-label="Toggle navigation">
+			<i class="fa fa-search"></i>
+	    </button>
     </div>
 
     <a class="navbar-brand" href="#" ng-click="moveBack($event)">
